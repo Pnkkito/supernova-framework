@@ -372,7 +372,7 @@
 			echo "<strong>$tipoerror[$numerr]</strong> :: <strong>$menserr</strong>\nArchivo: <strong>$nombrearchivo</strong> -> Linea <strong>$numlinea</strong>\n";
 			echo "</pre>";
 			// guardar al registro de errores, y enviarme un e-mail si hay un error crítico de usuario
-			error_log($err, 3, $_SERVER['DOCUMENT_ROOT']."/logs/errors.xml");
+			error_log($err, 3, ROOT . DS . "logs" .DS . "errors.xml");
 		}
 		
 		if (defined(DEVELOPMENT_EMAIL)){

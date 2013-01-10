@@ -106,7 +106,6 @@ class Html {
 						$path = Inflector::camel_to_array($name);
 						$this->_formController = Inflector::pluralize($path[0]);
 					}
-					debug ($this->params);
 					if (!empty($this->params)){
 						foreach ($this->params as $keyParam => $eachParam){
 							if (!empty($eachParam) && is_numeric($eachParam)){

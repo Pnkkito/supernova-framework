@@ -100,9 +100,6 @@ class SQLQuery {
 					$output.= $e."<br/>";
 				}
 			}
-			ob_start();
-			warning ($output);
-			ob_flush();
 			$this->_SQLDebug = array();
 		}
 	}
@@ -380,7 +377,7 @@ class SQLQuery {
 		$table = Inflector::tableName($modelName);
 		$query = 'SELECT '.strtoupper($in).' FROM `'.strtoupper($table).'` '.($this->parseConditions($args,$modelName));
 		$this->_SQLDebug['Find '.$modelName][]=$query;
-		$result = mysql_query($query, $this->_dbHandle) or die(warning(mysql_error()));
+		$result = mysql_query($query, $this->_dbHandle) or warning(mysql_error());
 		$x = 0;
 		while ($row = mysql_fetch_array($result,MYSQL_ASSOC)){
 			$ar[$modelName][$x]=$this->unparseId($row,$modelName);
@@ -440,7 +437,7 @@ class SQLQuery {
 								$actualTMM = $prefixTMM.$modelTMM['primaryKey'];
 								$queryMany = 'SELECT * FROM `'.strtoupper($table).'` '.($this->parseConditions($manyArgs_TOOMANY,$eachTMM));
 								$this->_SQLDebug['Find HasTooMany '.$eachTMM][]=$queryMany;
-								$resultMany = mysql_query($queryMany, $this->_dbHandle) or die(warning(mysql_error()));
+								$resultMany = mysql_query($queryMany, $this->_dbHandle) or warning(mysql_error());
 								while ($rowMany = mysql_fetch_array($resultMany,MYSQL_ASSOC)){
 									$getIDS[] = $rowMany;
 								}
@@ -595,13 +592,13 @@ class SQLQuery {
 	 * @return	object			Parsed database query
 	 */
 	function parseConditions($conditions, $model = null){
-		$rv = '';
+		$rv = " WHERE '1'='1' ";
 		if (is_array($conditions)){
 			if (key_exists('conditions',$conditions)){
-				$rv.="WHERE '1'='1' AND ";
 				if (is_array($conditions['conditions'])){
 					foreach ($conditions['conditions'] as $k2 => $v2){
 						if (!empty($v2)){
+							$rv.=" AND ";
 							$k2 = ($model) ? $this->parseId($k2,$model) : $this->parseId($k2); 
 							if (!is_array($v2)){
 								/* Buscamos por algun operador de condicion */
@@ -626,8 +623,6 @@ class SQLQuery {
 							if(count($conditions['conditions']) > 1){
 								$rv.=" AND ";
 							}
-						}else{
-							$rv = "WHERE '1'='1'";
 						}
 					}
 					if(count($conditions['conditions']) > 1){
@@ -654,7 +649,6 @@ class SQLQuery {
 		$errors = mysql_error();
 		if ($errors){
 			warning ($errors);
-			die();
 		}
 		$ar = array();
 		if (!empty($result)){
@@ -697,7 +691,7 @@ class SQLQuery {
 			$query = 'DELETE FROM '.$table.' WHERE `'.$idKey.'`=\''.Security::sanitize($id).'\'';
 			$this->_SQLDebug['Delete'][]=$query;
 			$this->DebugSQL();
-			$result = mysql_query($query, $this->_dbHandle) or die(warning(mysql_error()));
+			$result = mysql_query($query, $this->_dbHandle) or warning(mysql_error());
 
 			if ($result == 0) {
 				return false;
@@ -819,7 +813,7 @@ class SQLQuery {
 							$query = $this->insertQuery($data,$eachModel);
 							if ($query){
 								$this->_SQLDebug['Save Insert'][]=$query;
-								$result = mysql_query($query, $this->_dbHandle) or die(warning(mysql_error()));
+								$result = mysql_query($query, $this->_dbHandle) or warning(mysql_error());
 								$this->_lastInsertedId[$eachModel] = $results_ids[$eachModel][] = mysql_insert_id($this->_dbHandle);
 							}
 						}
@@ -829,7 +823,7 @@ class SQLQuery {
 							$query = $this->updateQuery($data,$eachModel,$id);
 							if ($query){
 								$this->_SQLDebug['Save Update'][]=$query;
-								$result = mysql_query($query, $this->_dbHandle) or die(warning(mysql_error()));
+								$result = mysql_query($query, $this->_dbHandle) or warning(mysql_error());
 								$results_ids[$eachModel][] = $id;
 							}
 						}
@@ -868,7 +862,7 @@ class SQLQuery {
 											$uv2 = $eachPrimaryValue.", ".$each_id;
 											$query = 'INSERT INTO '.$table.' ('.$uc2.') VALUES ('.$uv2.')';
 											$this->_SQLDebug['Save Insert HasTooMany'][]=$query;
-											$result = mysql_query($query, $this->_dbHandle) or die(warning(mysql_error()));	
+											$result = mysql_query($query, $this->_dbHandle) or warning(mysql_error());	
 										}
 									}
 								}

@@ -25,7 +25,7 @@ class Controller {
 	/**
 	 * @ignore 
 	 */
-	protected $data;
+	protected $data, $get;
 	/**
 	 * @ignore
 	 */
@@ -171,11 +171,16 @@ class Controller {
 				$this->$model->$check3[0] = $check3[1];
 			}
 		}
-		
-		debug ($params);
 
-		$this->_template = new View($controller,$action,$parse_id);
+		/* _GET params */
+		if (!empty($_GET)){
+			foreach ($_GET as $key => $value){
+				$this->get[$key] = $value;
+			}
+		}
+		unset ($_GET);
 		
+		$this->_template = new View($controller,$action,$parse_id);
 		$this->_template->errors = $this->errors;
 		$this->_template->data = $this->data;
 		$this->_template->params = $params;
