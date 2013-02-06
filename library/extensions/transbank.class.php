@@ -47,16 +47,15 @@ class Transbank{
 						file_put_contents($logPath."cgilog_".$tbkPost['TBK_ID_TRANSACCION'].".txt", time().' => '.$result[0], FILE_APPEND);	
 					*/
 
-					// Si ambos no funcionan, pidele a tu proveedor de hosting que te permita el "exec" del php o cgi
+					// Si ambos no funcionan, pidele a tu proveedor de hosting que te permita el "exec" del cgi
 
 					// Comprobacion el resultado del cgi de MAC
 					if($result[0]=="CORRECTO"){
 						// Comprobacion de Orden de Compra
-						// $ordenCompra = $this->Pago->find('first', array('conditions' => array('TBK_ORDEN_COMPRA' => $this->tbkPost['TBK_ORDEN_COMPRA']),'order' => 'TBK_ORDEN_COMPRA DESC','limit' => '1'));
 						if (!empty($ordenCompra)){
 							// Comprobacion de Monto
-							// $trs_monto = substr($this->tbkPost['TBK_MONTO'],0,-2).".00";
-							$trs_monto = substr($tbkPost['TBK_MONTO'],0,-2);
+							// $trs_monto = substr($this->tbkPost['TBK_MONTO'],0,-2).".00"; // KCC 5.1
+							$trs_monto = substr($tbkPost['TBK_MONTO'],0,-2); // KCC 6.0
 							if ($ordenCompra['Pago']['TBK_MONTO'] == $trs_monto){
 								return true;
 							}else{
