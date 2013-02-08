@@ -33,17 +33,21 @@ class Html {
 	public $errors = array();
 	
 	/**
-	 * controller params for view
-	 * @var Array
-	 */
-	public $params = array();
-
-	/**
 	 * Post Data
 	 * @var mixed	
 	 */
 	public $data;
 
+	/**
+	 * Translate class
+	 * @var object	
+	 */
+	public $translater;
+
+
+	function __construct(){
+		$this->translater = new Translate;
+	}
 	/**
 	* Create tinyURL url
 	* 
@@ -106,14 +110,7 @@ class Html {
 						$path = Inflector::camel_to_array($name);
 						$this->_formController = Inflector::pluralize($path[0]);
 					}
-					if (!empty($this->params)){
-						foreach ($this->params as $keyParam => $eachParam){
-							if (!empty($eachParam) && is_numeric($eachParam)){
-								$path[]=$eachParam;
-							}
-						}
-					}
-					$data = "<form name='".$name."' action='".Inflector::array_to_path($path)."' class='form-horizontal' enctype='multipart/form-data' method='POST'>";
+					$data = "<form name='".$name."' action='".Inflector::array_to_path($path)."' enctype='multipart/form-data' method='POST'>";
 					break;
 			case 'submit':	if (!$name){
 						$name = 'Submit';
@@ -124,7 +121,7 @@ class Html {
 							$extrasParsed.=$k."='".$v."'";
 						}
 					}
-					$data = "<input type='submit' class='btn btn-primary' value='$name' $extrasParsed />";
+					$data = "<input type='submit' value='$name' $extrasParsed />";
 					break;
 			case 'end':	$data = "</form>";
 					$this->_formController = null;
@@ -146,11 +143,6 @@ class Html {
 		$path = ( strpos($path,'http://') !== false) ? $path : '/'.Inflector::getBasePath().$path;
 		$ext = '';
 		$confirmMessage = null;
-
-		if(empty($extras) || !isset($extras['class'])){
-			$extras['class']='btn';
-		}
-
 		if(!empty($extras)){
 			if (isset($extras['prompt']) && !empty($extras['prompt'])){
 				$confirmMessage = $extras['prompt'];
@@ -205,42 +197,72 @@ class Html {
 	 * @return	object		Input element
 	 */
 	function input($name, $title = '', $items = array('type' => 'textbox')){
-		$explodeName = explode(".",$name);
-		if (count($explodeName)>1){
-			$model = $explodeName[0];
-			$name = $explodeName[1];
-		}else{
-			$model = ucfirst(Inflector::singularize((!$this->_formModel)?$this->cm['controller']:$this->_formController));
-		}
-		
-		$errorBootstrap = "";
-		if (isset($this->errors[$name])){
-			$errorList = array_values($this->errors[$name]);
-			if ($errorList){
-				$errorBootstrap = (in_array("error",$errorList)) ? "error" : "";
+		if(!is_array($name)){
+			$explodeName = explode(".",$name);
+			if (count($explodeName)>1){
+				$model = $explodeName[0];
+				$name = $explodeName[1];
+			}else{
+				$model = ucfirst(Inflector::singularize((!$this->_formModel)?$this->cm['controller']:$this->_formController));
+			}	
+		} else {
+			foreach($name as $n){
+				$explodeName = explode(".",$n);
+				if (count($explodeName)>1){
+					$modelArr[] = $explodeName[0];
+					$nameArr[] = $explodeName[1];
+				}else{
+					$nameArr[] = $n;
+					$modelArr[] = ucfirst(Inflector::singularize((!$this->_formModel)?$this->cm['controller']:$this->_formController));
+				}	
 			}
 		}
 
-		$data ="<div class='control-group $errorBootstrap'>";
+		
+		
+		$data ="<div class='grid_16' style='clear:both; float:left;'>";
 		$ext='';
 		
 		$errorClass = '';
-		if(!empty($this->errors[$name])){
-			foreach($this->errors[$name] as $errorKey => $val){
-				if($val){
-					$errorClass[] = $errorKey;
-				} 
-			}
-			if(!empty($errorClass)){
-				$errorClass[] = 'error';
-				$errorClass = implode(' ',$errorClass);
-			} else $errorClass = "";
-			if(!empty($items['class'])){
-				$items['class'] = $items['class'].$errorClass;
-			} else {
-				$items['class'] = $errorClass;
+		if(!is_array($name)){
+			if(!empty($this->errors[$name])){
+				foreach($this->errors[$name] as $errorKey => $val){
+					if($val){
+						$errorClass[] = $errorKey;
+					} 
+				}
+				if(!empty($errorClass)){
+					$errorClass[] = 'error';
+					$errorClass = implode(' ',$errorClass);
+				} else $errorClass = "";
+				if(!empty($items['class'])){
+					$items['class'] = $items['class']." ".$errorClass;
+				} else {
+					$items['class'] = $errorClass;
+				}
+			}	
+		} else {
+			foreach($name as $n){
+				if(!empty($this->errors[$n])){
+					foreach($this->errors[$n] as $errorKey => $val){
+						if($val){
+							$errorClass[] = $errorKey;
+						} 
+					}
+					if(!empty($errorClass)){
+						$errorClass[] = 'error';
+						$errorClass = implode(' ',$errorClass);
+					} else $errorClass = "";
+					if(!empty($items['class'])){
+						$items['class'] = $items['class']." ".$errorClass;
+					} else {
+						$items['class'] = $errorClass;
+					}
+				}
 			}
 		}
+
+		
 		
 		$value='';
 		// foreach ($items as $k => $v){
@@ -264,38 +286,41 @@ class Html {
 			}
 			
 		}
-		
-		if (!isset($value) && isset($this->data[$model][$name]) && !empty($this->data[$model][$name])){
-			$value = $this->data[$model][$name];
+		if(!is_array($name)){
+			if (isset($this->data[$model][$name])){
+				$value = $this->data[$model][$name];
+			}	
 		}
+		
 
 		if($type != 'textarea'){
 			if($type != 'daterange'){
 				if($type != 'submit' && $type != 'hidden' ){
-					if (!empty($title) && $type != 'checkbox'){
-						$data .= "<label class='control-label' for='$name'>$title</label>";
-					}
-					else{
-						if ($type == 'checkbox'){
-							$data .= "<label class='checkbox'>";
-						}else{
-							"<label>";
-						}
-					}
+				//	if (!empty($title) && $type != 'checkbox'){
+					$data .= "<label for='$name'>$title</label>";
+				//	}
 				}
-				
-				$data .= ($type == 'checkbox') ? "<div>" : "<div class='controls' >";
-				$data .= "<input type='$type' ".(($type=="checkbox") ? 'class="checkbox"' : '')."  name='data[$model][$name]$check' value='$value' id='$name' $ext/>";
-				$data .= ($type == 'checkbox') ? " ".$title."</label>" : '';
-				$data .= "</div>";
+				//$data .= ($type == 'checkbox') ? '<p class="checkboxtext">'.$title.'</p>' : '';
+				$data .= "<input type='$type' name='data[$model][$name]$check' value='$value' id='$name' $ext/>";
+				if($this->errors[$name]){
+					$errorArr = array_unique($this->errors[$name]);
+					$data .= "<span class='errorSpan'>".implode('<br />',$errorArr)."</span>";
+				}
 			} else {
 				if(is_array($name)){
 					$data = "";
 					foreach($name as $k => $n){
-						$idStr[] = "#".$n;
-						$data .="<div style='clear:both;'>";
-						$data .= "<label for='$name'>".$title[$k]."</label>";
-						$data .= "<input type='datetime' name='data[$model][$n]' value='".$value[$k]."' id='$n' $ext/>";
+						if (isset($this->data[$model][$n])){
+							$value[$k] = $this->data[$model][$n];
+						}
+						$idStr[] = "#".str_replace('.', '', $n);
+						$data .="<div class='grid_16' style='clear:both; float:left;'>";
+						$data .= "<label for='$n'>".$title[$k]."</label>";
+						$data .= "<input type='datetime' name='data[".$modelArr[$k]."][".$nameArr[$k]."]' value='".$value[$k]."' id='".str_replace('.', '', $n)."' $ext/>";
+						if($this->errors[$n]){
+							$errorArr = array_unique($this->errors[$n]);
+							$data .= "<span class='errorSpan'>".implode('<br />',$errorArr)."</span>";
+						}
 						$data .= "</div>";
 					}
 					$data.= "
@@ -309,9 +334,9 @@ class Html {
 									'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
 									monthNamesShort: ['Ene','Feb','Mаr','Abr','Mаy','Jun',
 									'Jul','Ago','Sep','Oct','Nov','Dic'],
-									dayNames: ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'],
-									dayNamesShort: ['Lun','Mar','Mie','Jue','Vie','Sab','Dom'],
-									dayNamesMin: ['Lu','Ma','Mi','Ju','Vi','Sa','Do'],
+									dayNames: ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'],
+									dayNamesShort: ['Dom','Lun','Mar','Mie','Jue','Vie','Sab'],
+									dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sa'],
 									weekHeader: '',
 									dateFormat: 'dd/mm/yy',
 									firstDay: 1,
@@ -347,6 +372,10 @@ class Html {
 				$data .= "<label for='$name'>$title</label>";
 			}
 			$data .= "<textarea name='data[$model][$name]$check' $ext>$value</textarea>";
+			if($this->errors[$name]){
+				$errorArr = array_unique($this->errors[$name]);
+				$data .= "<span class='errorSpan'>".implode('<br />',$errorArr)."</span>";
+			}
 		}
 		$data .="</div>";
 		
@@ -362,9 +391,9 @@ class Html {
 					'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
 					monthNamesShort: ['Ene','Feb','Mаr','Abr','Mаy','Jun',
 					'Jul','Ago','Sep','Oct','Nov','Dic'],
-					dayNames: ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'],
-					dayNamesShort: ['Lun','Mar','Mie','Jue','Vie','Sab','Dom'],
-					dayNamesMin: ['Lu','Ma','Mi','Ju','Vi','Sa','Do'],
+					dayNames: ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'],
+					dayNamesShort: ['Dom','Lun','Mar','Mie','Jue','Vie','Sab'],
+					dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sa'],
 					weekHeader: '',
 					dateFormat: 'dd/mm/yy',
 					firstDay: 1,
@@ -406,7 +435,7 @@ class Html {
 			}	
 		}
 		
-		$data ="<div rel='ajax".$model.$name."' style='clear:both;'>";
+		$data ="<div rel='ajax".$model.$name."' style='clear:both; float:left;'>";
 		
 		$ext='';
 		$value='';
@@ -487,7 +516,7 @@ class Html {
 		$fielded = ($options['fields']) ? true : false;
 		$type = ($options['type']) ? $options['type'] : false;
 		$actions = ($options['actions']) ? $options['actions'] : false;
-		$class = ($option['class']) ? $options['class'] : 'table table-bordered table-striped';  
+		$class = ($option['class']) ? $options['class'] : 'listTable';  
 		if (!empty($data)){
 			$modelName = array_keys($data);
 			$modelName = $modelName[0];
@@ -616,8 +645,8 @@ class Html {
 					if ($actions){
 						$out.="<td>";
 						if (!is_array($actions)){
-							$out.=$this->link('<i class="icon-edit"></i> Edit', array('controller' => $controller, 'action' => 'edit', $route => true, $level[$modelFK]));
-							$out.=$this->link('<i class="icon-remove"></i> Delete', array('controller' => $controller, 'action' => 'delete', $route => true, $level[$modelFK]));	
+							$out.=$this->link('Edit', array('controller' => $controller, 'action' => 'edit', $route => true, $level[$modelFK]));
+							$out.=$this->link('Delete', array('controller' => $controller, 'action' => 'delete', $route => true, $level[$modelFK]));	
 						}else{
 							foreach ($actions as $name => $action){
 								$out.=$this->link($name, array('controller' => $controller, 'action' => $action, $route => true, $level[$modelFK]));
@@ -673,9 +702,8 @@ class Html {
 			$model = ucfirst(Inflector::singularize((!$this->_formModel)?$this->cm['controller']:$this->_formController));
 		}
 
-		$output ="<div style='control-group'>";
-		$output.= "<label class='control-label' for='$name'>$title</label>";
-		$output.= "<div class='controls'>";
+		$output ="<div class='grid_16' style='clear:both; float:left;'>";
+		$output.= "<label for='$name'>$title</label>";
 		$output2 = $output;
 		$options = '';
 
@@ -741,9 +769,6 @@ class Html {
 		$output.= "</select>";
 
 		$output.= "</div>";
-		$output.= "</div>";
-		$output2.= "</div>";
-		$output2.= "</div>";
 
 		if ($checkboxed){
 			return $output2;
@@ -856,8 +881,10 @@ class Html {
 			}
 		} else {
 			return 'http://img.youtube.com/vi/'.$video_id.'/2.jpg';
-		}
-		
-		
+		}	
+	}
+
+	function translate($str = ''){
+		return $this->translater->__($str);
 	}
 }
