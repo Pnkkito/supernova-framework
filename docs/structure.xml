@@ -1,0 +1,4134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project version="2.0.0a12" title="Supernova Framework">
+  <file path="bootstrap.php" hash="5d7a48a76f96c2f35711094f321f3ba2" package="Default">
+    <docblock line="2">
+      <description>Supernova Framework</description>
+      <long-description></long-description>
+    </docblock>
+    <include line="142" type="Require Once" package="Default">
+      <name/>
+    </include>
+    <include line="144" type="Require Once" package="Default">
+      <name/>
+    </include>
+    <include line="146" type="Require Once" package="Default">
+      <name/>
+    </include>
+    <include line="148" type="Require Once" package="Default">
+      <name/>
+    </include>
+    <constant namespace="global" line="34" package="Default">
+      <name>$_k</name>
+      <full_name>\$_k</full_name>
+      <value>$_v</value>
+    </constant>
+    <constant namespace="global" line="53" package="Default">
+      <name>SITE_URL</name>
+      <full_name>\SITE_URL</full_name>
+      <value>substr($_SERVER['SERVER_NAME'], -1) != "/" ? "http://" . $_SERVER['SERVER_NAME'] . "/" : "http://" . $_SERVER['SERVER_NAME']</value>
+    </constant>
+    <function namespace="global" line="76" package="Default">
+      <name>callHook</name>
+      <full_name>\callHook</full_name>
+      <docblock line="72">
+        <description>Main call function</description>
+        <long-description></long-description>
+        <tag line="72" name="ignore" description=""/>
+      </docblock>
+    </function>
+    <function namespace="global" line="128" package="Default">
+      <name>supernova_autoloader</name>
+      <full_name>\supernova_autoloader</full_name>
+      <docblock line="124">
+        <description>Autoload any classes that are required</description>
+        <long-description></long-description>
+        <tag line="124" name="ignore" description=""/>
+      </docblock>
+      <argument line="128">
+        <name>$className</name>
+        <default></default>
+        <type/>
+      </argument>
+    </function>
+    <function namespace="global" line="162" package="Default">
+      <name>style</name>
+      <full_name>\style</full_name>
+      <docblock line="158">
+        <description>Print style on screen for debug</description>
+        <long-description></long-description>
+        <tag line="158" name="ignore" description=""/>
+      </docblock>
+    </function>
+    <function namespace="global" line="207" package="Default">
+      <name>debug</name>
+      <full_name>\debug</full_name>
+      <docblock line="199">
+        <description>Debug</description>
+        <long-description>&lt;p&gt;Returns the line and place where debug is called
+and prints their values in screen&lt;/p&gt;</long-description>
+        <tag line="199" name="param" description="Mixed var" type="mixed" variable="$str">
+          <type by_reference="false">mixed</type>
+        </tag>
+      </docblock>
+      <argument line="207">
+        <name>$str</name>
+        <default></default>
+        <type/>
+      </argument>
+    </function>
+    <function namespace="global" line="235" package="Default">
+      <name>maildebug</name>
+      <full_name>\maildebug</full_name>
+      <docblock line="227">
+        <description>Mail Debug</description>
+        <long-description>&lt;p&gt;Returns the line and place where debug is called
+and prints their values and send them to Development_Email&lt;/p&gt;</long-description>
+        <tag line="227" name="param" description="Mixed var" type="mixed" variable="$mixed">
+          <type by_reference="false">mixed</type>
+        </tag>
+      </docblock>
+      <argument line="235">
+        <name>$mixed</name>
+        <default></default>
+        <type/>
+      </argument>
+    </function>
+    <function namespace="global" line="265" package="Default">
+      <name>warning</name>
+      <full_name>\warning</full_name>
+      <docblock line="261">
+        <description>Warning box</description>
+        <long-description></long-description>
+        <tag line="261" name="ignore" description=""/>
+      </docblock>
+      <argument line="265">
+        <name>$str</name>
+        <default></default>
+        <type/>
+      </argument>
+    </function>
+    <function namespace="global" line="280" package="Default">
+      <name>errorHandler</name>
+      <full_name>\errorHandler</full_name>
+      <docblock line="276">
+        <description>Error Handler</description>
+        <long-description></long-description>
+        <tag line="276" name="ignore" description=""/>
+      </docblock>
+      <argument line="280">
+        <name>$numerr</name>
+        <default></default>
+        <type/>
+      </argument>
+      <argument line="280">
+        <name>$menserr</name>
+        <default></default>
+        <type/>
+      </argument>
+      <argument line="280">
+        <name>$nombrearchivo</name>
+        <default></default>
+        <type/>
+      </argument>
+      <argument line="280">
+        <name>$numlinea</name>
+        <default></default>
+        <type/>
+      </argument>
+      <argument line="280">
+        <name>$vars</name>
+        <default></default>
+        <type/>
+      </argument>
+    </function>
+  </file>
+  <file path="extensions\arrays.class.php" hash="f367c8517cd5d9943f0e99affbf5742a" package="Default">
+    <docblock line="2">
+      <description>Supernova Framework</description>
+      <long-description></long-description>
+    </docblock>
+    <include line="20" type="Include" package="Default">
+      <name/>
+    </include>
+    <class final="false" abstract="false" namespace="global" line="10" package="MVC\View\Arrays">
+      <extends/>
+      <name>Arrays</name>
+      <full_name>\Arrays</full_name>
+      <docblock line="5">
+        <description>Arrays handler</description>
+        <long-description></long-description>
+        <tag line="5" name="package" description="MVC_View_Arrays"/>
+      </docblock>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="17" package="MVC\View\Arrays">
+        <name>get</name>
+        <full_name>get</full_name>
+        <docblock line="11">
+          <description>Get static array values from file</description>
+          <long-description></long-description>
+          <tag line="11" name="param" description="Filename with array $values inside" type="string" variable="$filename">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="11" name="return" description="$values Return tinuURL" type="mixed">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="17">
+          <name>$filename</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+    </class>
+  </file>
+  <file path="extensions\auth.class.php" hash="b3a5cc0e6465d7220f885982e6bcad6d" package="Default">
+    <docblock line="2">
+      <description>Supernova Framework</description>
+      <long-description></long-description>
+    </docblock>
+    <class final="false" abstract="false" namespace="global" line="10" package="MVC\Controller\Auth">
+      <extends/>
+      <name>Auth</name>
+      <full_name>\Auth</full_name>
+      <docblock line="5">
+        <description>Authentication handler</description>
+        <long-description></long-description>
+        <tag line="5" name="package" description="MVC_Controller_Auth"/>
+      </docblock>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="17" package="MVC\Controller\Auth">
+        <name>login</name>
+        <full_name>login</full_name>
+        <docblock line="11">
+          <description>Login user data into a Session with the name AuthUser</description>
+          <long-description></long-description>
+          <tag line="11" name="param" description="User data" type="mixed" variable="$data">
+            <type by_reference="false">mixed</type>
+          </tag>
+          <tag line="11" name="return" description="Return success" type="boolean">
+            <type by_reference="false">boolean</type>
+          </tag>
+        </docblock>
+        <argument line="17">
+          <name>$data</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="28" package="MVC\Controller\Auth">
+        <name>logout</name>
+        <full_name>logout</full_name>
+        <docblock line="23">
+          <description>Logout user data from a Session with the name AuthUser</description>
+          <long-description></long-description>
+          <tag line="23" name="return" description="Return success" type="boolean">
+            <type by_reference="false">boolean</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="42" package="MVC\Controller\Auth">
+        <name>checkField</name>
+        <full_name>checkField</full_name>
+        <docblock line="34">
+          <description>Compare some fields in the database with the data sended</description>
+          <long-description></long-description>
+          <tag line="34" name="param" description="Model name" type="string" variable="$model">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="34" name="param" description="Field name" type="string" variable="$field">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="34" name="param" description="Data for comparation" type="mixed" variable="$data">
+            <type by_reference="false">mixed</type>
+          </tag>
+          <tag line="34" name="return" description="Return true if comparation success" type="boolean">
+            <type by_reference="false">boolean</type>
+          </tag>
+        </docblock>
+        <argument line="42">
+          <name>$model</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="42">
+          <name>$field</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="42">
+          <name>$data</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="57" package="MVC\Controller\Auth">
+        <name>user</name>
+        <full_name>user</full_name>
+        <docblock line="52">
+          <description>Get user data from Session with name AuthUser</description>
+          <long-description></long-description>
+          <tag line="52" name="return" description="Return data, else return false (not logged)" type="boolean">
+            <type by_reference="false">boolean</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="74" package="MVC\Controller\Auth">
+        <name>isTypeLogged</name>
+        <full_name>isTypeLogged</full_name>
+        <docblock line="67">
+          <description>Check for user type from Session with name AuthUser</description>
+          <long-description></long-description>
+          <tag line="67" name="param" description="Field name" type="string" variable="$field">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="67" name="param" description="Type id or name" type="string" variable="$type">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="67" name="return" description="" type="boolean">
+            <type by_reference="false">boolean</type>
+          </tag>
+        </docblock>
+        <argument line="74">
+          <name>$field</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="74">
+          <name>$type</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="94" package="MVC\Controller\Auth">
+        <name>passwordHash</name>
+        <full_name>passwordHash</full_name>
+        <docblock line="88">
+          <description>Password Hashing</description>
+          <long-description></long-description>
+          <tag line="88" name="param" description="Password string" type="string" variable="$password">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="88" name="return" description="$hash Hassed password or false on errors" type="mixed">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="94">
+          <name>$password</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="111" package="MVC\Controller\Auth">
+        <name>passwordVerify</name>
+        <full_name>passwordVerify</full_name>
+        <docblock line="104">
+          <description>Password Verification</description>
+          <long-description></long-description>
+          <tag line="104" name="param" description="Current Hashed Password" type="string" variable="$password">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="104" name="param" description="Verification password" type="string" variable="$password2">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="104" name="return" description="Return true if got correct verification" type="boolean">
+            <type by_reference="false">boolean</type>
+          </tag>
+        </docblock>
+        <argument line="111">
+          <name>$password</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="111">
+          <name>$password2</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+    </class>
+  </file>
+  <file path="extensions\bcrypt.class.php" hash="b54799b0de39792955ab089251e51cc8" package="Default">
+    <docblock line="2">
+      <description>Supernova Framework</description>
+      <long-description></long-description>
+    </docblock>
+    <class final="false" abstract="false" namespace="global" line="11" package="MVC\Controller\Auth\Bcrypt">
+      <extends/>
+      <name>Bcrypt</name>
+      <full_name>\Bcrypt</full_name>
+      <docblock line="5">
+        <description>Encryption handler</description>
+        <long-description></long-description>
+        <tag line="5" name="package" description="MVC_Controller_Auth_Bcrypt"/>
+      </docblock>
+      <property final="false" static="false" visibility="private" line="16" namespace="global" package="Default">
+        <name>$rounds</name>
+        <default></default>
+        <docblock line="12">
+          <description>Rounds</description>
+          <long-description></long-description>
+          <tag line="12" name="var" description="" type="Integer">
+            <type by_reference="false">Integer</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="private" line="78" namespace="global" package="Default">
+        <name>$randomState</name>
+        <default></default>
+        <docblock line="74">
+          <description>Random state</description>
+          <long-description></long-description>
+          <tag line="74" name="ignore" description=""/>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="22" package="MVC\Controller\Auth\Bcrypt">
+        <name>__construct</name>
+        <full_name>__construct</full_name>
+        <docblock line="18">
+          <description>Construct for password hashing</description>
+          <long-description></long-description>
+          <tag line="18" name="ignore" description=""/>
+        </docblock>
+        <argument line="22">
+          <name>$rounds</name>
+          <default>12</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="35" package="MVC\Controller\Auth\Bcrypt">
+        <name>hash</name>
+        <full_name>hash</full_name>
+        <docblock line="29">
+          <description>Hash string</description>
+          <long-description></long-description>
+          <tag line="29" name="param" description="String to hash" type="string" variable="$input">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="29" name="return" description="$hash Hashed string of false in errors" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="35">
+          <name>$input</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="53" package="MVC\Controller\Auth\Bcrypt">
+        <name>verify</name>
+        <full_name>verify</full_name>
+        <docblock line="46">
+          <description>Verify string</description>
+          <long-description></long-description>
+          <tag line="46" name="param" description="String to verify" type="string" variable="$input">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="46" name="param" description="Already existing hash" type="string" variable="$existingHash">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="46" name="return" description="" type="boolean">
+            <type by_reference="false">boolean</type>
+          </tag>
+        </docblock>
+        <argument line="53">
+          <name>$input</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="53">
+          <name>$existingHash</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="global" line="67" package="MVC\Controller\Auth\Bcrypt">
+        <name>getSalt</name>
+        <full_name>getSalt</full_name>
+        <docblock line="63">
+          <description>Get security random salt</description>
+          <long-description></long-description>
+          <tag line="63" name="ignore" description=""/>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="global" line="84" package="MVC\Controller\Auth\Bcrypt">
+        <name>getRandomBytes</name>
+        <full_name>getRandomBytes</full_name>
+        <docblock line="80">
+          <description>Random bytes</description>
+          <long-description></long-description>
+          <tag line="80" name="ignore" description=""/>
+        </docblock>
+        <argument line="84">
+          <name>$count</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="global" line="122" package="MVC\Controller\Auth\Bcrypt">
+        <name>encodeBytes</name>
+        <full_name>encodeBytes</full_name>
+        <docblock line="118">
+          <description>Encode bytes</description>
+          <long-description></long-description>
+          <tag line="118" name="ignore" description=""/>
+        </docblock>
+        <argument line="122">
+          <name>$input</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+    </class>
+  </file>
+  <file path="extensions\behavior.class.php" hash="8268a47614f609f317ff183339037f2d" package="Default">
+    <docblock line="2">
+      <description>Supernova Framework</description>
+      <long-description></long-description>
+    </docblock>
+    <class final="false" abstract="false" namespace="global" line="9" package="MVC\Model\Behavior">
+      <extends/>
+      <name>Behavior</name>
+      <full_name>\Behavior</full_name>
+      <docblock line="5">
+        <description>Behavior handler</description>
+        <long-description></long-description>
+        <tag line="5" name="package" description="MVC_Model_Behavior"/>
+      </docblock>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="15" package="MVC\Model\Behavior">
+        <name>file</name>
+        <full_name>file</full_name>
+        <docblock line="11">
+          <description>File</description>
+          <long-description></long-description>
+          <tag line="11" name="param" description="File data" type="array" variable="$files">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="15">
+          <name>$files</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+    </class>
+  </file>
+  <file path="extensions\controller.class.php" hash="94cd90cbcf7ae43946603363eb85f665" package="Default">
+    <docblock line="2">
+      <description>Supernova Framework</description>
+      <long-description></long-description>
+    </docblock>
+    <class final="false" abstract="false" namespace="global" line="16" package="MVC\Controller">
+      <extends/>
+      <name>Controller</name>
+      <full_name>\Controller</full_name>
+      <docblock line="5">
+        <description>Controller handler</description>
+        <long-description>&lt;p&gt;A controller handles feedback from the user and logic specific to the application.
+A controllers job is to receive input from a user,
+via controls found on the user interface of a view, to process it,
+communicating with a model if necessary, and then to send output to the user,
+usually by populating a view with relevant content.&lt;/p&gt;</long-description>
+        <tag line="5" name="package" description="MVC_Controller"/>
+      </docblock>
+      <property final="false" static="false" visibility="protected" line="20" namespace="global" package="Default">
+        <name>$_model</name>
+        <default></default>
+        <docblock line="17">
+          <description></description>
+          <long-description></long-description>
+          <tag line="17" name="ignore" description=""/>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="protected" line="20" namespace="global" package="Default">
+        <name>$_controller</name>
+        <default></default>
+        <docblock line="17">
+          <description></description>
+          <long-description></long-description>
+          <tag line="17" name="ignore" description=""/>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="protected" line="20" namespace="global" package="Default">
+        <name>$_action</name>
+        <default></default>
+        <docblock line="17">
+          <description></description>
+          <long-description></long-description>
+          <tag line="17" name="ignore" description=""/>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="protected" line="24" namespace="global" package="Default">
+        <name>$_template</name>
+        <default></default>
+        <docblock line="21">
+          <description></description>
+          <long-description></long-description>
+          <tag line="21" name="ignore" description=""/>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="protected" line="24" namespace="global" package="Default">
+        <name>$_layout</name>
+        <default></default>
+        <docblock line="21">
+          <description></description>
+          <long-description></long-description>
+          <tag line="21" name="ignore" description=""/>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="protected" line="24" namespace="global" package="Default">
+        <name>$_url</name>
+        <default></default>
+        <docblock line="21">
+          <description></description>
+          <long-description></long-description>
+          <tag line="21" name="ignore" description=""/>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="protected" line="28" namespace="global" package="Default">
+        <name>$data</name>
+        <default></default>
+        <docblock line="25">
+          <description></description>
+          <long-description></long-description>
+          <tag line="25" name="ignore" description=""/>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="private" line="32" namespace="global" package="Default">
+        <name>$_admin</name>
+        <default></default>
+        <docblock line="29">
+          <description></description>
+          <long-description></long-description>
+          <tag line="29" name="ignore" description=""/>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="private" line="32" namespace="global" package="Default">
+        <name>$_islogged</name>
+        <default></default>
+        <docblock line="29">
+          <description></description>
+          <long-description></long-description>
+          <tag line="29" name="ignore" description=""/>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="37" namespace="global" package="Default">
+        <name>$controller</name>
+        <default></default>
+        <docblock line="34">
+          <description></description>
+          <long-description></long-description>
+          <tag line="34" name="ignore" description=""/>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="37" namespace="global" package="Default">
+        <name>$action</name>
+        <default></default>
+        <docblock line="34">
+          <description></description>
+          <long-description></long-description>
+          <tag line="34" name="ignore" description=""/>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="37" namespace="global" package="Default">
+        <name>$Session</name>
+        <default></default>
+        <docblock line="34">
+          <description></description>
+          <long-description></long-description>
+          <tag line="34" name="ignore" description=""/>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="42" namespace="global" package="Default">
+        <name>$route</name>
+        <default></default>
+        <docblock line="39">
+          <description></description>
+          <long-description></long-description>
+          <tag line="39" name="ignore" description=""/>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="48" package="MVC\Controller">
+        <name>__get</name>
+        <full_name>__get</full_name>
+        <docblock line="44">
+          <description>Getter any class</description>
+          <long-description></long-description>
+          <tag line="44" name="ignore" description=""/>
+        </docblock>
+        <argument line="48">
+          <name>$class</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="57" package="MVC\Controller">
+        <name>__construct</name>
+        <full_name>__construct</full_name>
+        <docblock line="54">
+          <description></description>
+          <long-description></long-description>
+          <tag line="54" name="ignore" description=""/>
+        </docblock>
+        <argument line="57">
+          <name>$model</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="57">
+          <name>$controller</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="57">
+          <name>$action</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="57">
+          <name>$url</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="57">
+          <name>$admin</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="199" package="MVC\Controller">
+        <name>set</name>
+        <full_name>set</full_name>
+        <docblock line="194">
+          <description>Set variables to the view</description>
+          <long-description></long-description>
+          <tag line="194" name="param" description="Key for value or array with values" type="mixed" variable="$name">
+            <type by_reference="false">mixed</type>
+          </tag>
+          <tag line="194" name="param" description="Values" type="mixed" variable="$value">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="199">
+          <name>$name</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="199">
+          <name>$value</name>
+          <default>null</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="212" package="MVC\Controller">
+        <name>__destruct</name>
+        <full_name>__destruct</full_name>
+        <docblock line="209">
+          <description></description>
+          <long-description></long-description>
+          <tag line="209" name="ignore" description=""/>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="220" package="MVC\Controller">
+        <name>layout</name>
+        <full_name>layout</full_name>
+        <docblock line="216">
+          <description>Set layout template</description>
+          <long-description></long-description>
+          <tag line="216" name="param" description="Layout name" type="String" variable="$layout">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+        <argument line="220">
+          <name>$layout</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="229" package="MVC\Controller">
+        <name>setMessage</name>
+        <full_name>setMessage</full_name>
+        <docblock line="224">
+          <description>Set message to the template</description>
+          <long-description></long-description>
+          <tag line="224" name="param" description="Message" type="String" variable="$msg">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="224" name="param" description="Class name" type="String" variable="$class">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+        <argument line="229">
+          <name>$msg</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="229">
+          <name>$class</name>
+          <default>'notice'</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="238" package="MVC\Controller">
+        <name>redirect</name>
+        <full_name>redirect</full_name>
+        <docblock line="234">
+          <description>Redirect to url</description>
+          <long-description></long-description>
+          <tag line="234" name="param" description="Url or array width controller and action" type="mixed" variable="$url">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="238">
+          <name>$url</name>
+          <default>null</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="252" package="MVC\Controller">
+        <name>isAjax</name>
+        <full_name>isAjax</full_name>
+        <docblock line="247">
+          <description>Check if layout is Ajax or not</description>
+          <long-description></long-description>
+          <tag line="247" name="return" description="" type="boolean">
+            <type by_reference="false">boolean</type>
+          </tag>
+        </docblock>
+      </method>
+    </class>
+  </file>
+  <file path="extensions\html.class.php" hash="d017b587e426a86354640bdd0fadeab8" package="Default">
+    <docblock line="2">
+      <description>Supernova Framework</description>
+      <long-description></long-description>
+    </docblock>
+    <class final="false" abstract="false" namespace="global" line="10" package="MVC\View\Html">
+      <extends/>
+      <name>Html</name>
+      <full_name>\Html</full_name>
+      <docblock line="5">
+        <description>Template handler</description>
+        <long-description></long-description>
+        <tag line="5" name="package" description="MVC_View_Html"/>
+      </docblock>
+      <property final="false" static="false" visibility="private" line="15" namespace="global" package="Default">
+        <name>$js</name>
+        <default>array()</default>
+        <docblock line="11">
+          <description>Javascript objects</description>
+          <long-description></long-description>
+          <tag line="11" name="var" description="" type="Array">
+            <type by_reference="false">Array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="private" line="21" namespace="global" package="Default">
+        <name>$_formController</name>
+        <default>null</default>
+        <docblock line="17">
+          <description>Controller name in case Form use</description>
+          <long-description></long-description>
+          <tag line="17" name="var" description="" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="protected" line="27" namespace="global" package="Default">
+        <name>$cm</name>
+        <default>array()</default>
+        <docblock line="23">
+          <description>Controller and module name loaded in the instance</description>
+          <long-description></long-description>
+          <tag line="23" name="var" description="" type="Array">
+            <type by_reference="false">Array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="33" namespace="global" package="Default">
+        <name>$errors</name>
+        <default>array()</default>
+        <docblock line="29">
+          <description>Validation errors</description>
+          <long-description></long-description>
+          <tag line="29" name="var" description="" type="Array">
+            <type by_reference="false">Array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="39" namespace="global" package="Default">
+        <name>$data</name>
+        <default></default>
+        <docblock line="35">
+          <description>Post Data</description>
+          <long-description></long-description>
+          <tag line="35" name="var" description="" type="mixed">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="47" package="MVC\View\Html">
+        <name>tinyUrl</name>
+        <full_name>tinyUrl</full_name>
+        <docblock line="41">
+          <description>Create tinyURL url</description>
+          <long-description></long-description>
+          <tag line="41" name="param" description="url" type="string" variable="$url">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="41" name="return" description="$url Return tinuURL" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="47">
+          <name>$url</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="global" line="57" package="MVC\View\Html">
+        <name>_fetchTinyUrl</name>
+        <full_name>_fetchTinyUrl</full_name>
+        <docblock line="52">
+          <description>Create tinyUrl with CURL</description>
+          <long-description></long-description>
+          <tag line="52" name="ignore" description=""/>
+          <tag line="52" name="param" description="Url" type="string" variable="$url">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="57">
+          <name>$url</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="73" package="MVC\View\Html">
+        <name>__set</name>
+        <full_name>__set</full_name>
+        <docblock line="68">
+          <description>Setter
+Sets Controller and Model values for use in html class</description>
+          <long-description></long-description>
+          <tag line="68" name="ignore" description=""/>
+        </docblock>
+        <argument line="73">
+          <name>$val</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="73">
+          <name>$var</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="81" package="MVC\View\Html">
+        <name>__get</name>
+        <full_name>__get</full_name>
+        <docblock line="77">
+          <description>Getter</description>
+          <long-description></long-description>
+          <tag line="77" name="ignore" description=""/>
+        </docblock>
+        <argument line="81">
+          <name>$var</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="92" package="MVC\View\Html">
+        <name>form</name>
+        <full_name>form</full_name>
+        <docblock line="85">
+          <description>Create Form</description>
+          <long-description></long-description>
+          <tag line="85" name="param" description="Create, Submit or End forms" type="String" variable="$type">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="85" name="param" description="Form name" type="String" variable="$name">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="85" name="param" description="Extra elements" type="Array" variable="$extras">
+            <type by_reference="false">Array</type>
+          </tag>
+          <tag line="85" name="return" description="Form element" type="object">
+            <type by_reference="false">object</type>
+          </tag>
+        </docblock>
+        <argument line="92">
+          <name>$type</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="92">
+          <name>$name</name>
+          <default>null</default>
+          <type/>
+        </argument>
+        <argument line="92">
+          <name>$extras</name>
+          <default>array()</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="131" package="MVC\View\Html">
+        <name>link</name>
+        <full_name>link</full_name>
+        <docblock line="123">
+          <description>Create Link</description>
+          <long-description></long-description>
+          <tag line="123" name="param" description="" type="string" variable="$text">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="123" name="param" description="" type="array" variable="$path">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="123" name="param" description="" type="array" variable="$extras">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="123" name="return" description="$data link element" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="131">
+          <name>$text</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="131">
+          <name>$path</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="131">
+          <name>$extras</name>
+          <default>array()</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="162" package="MVC\View\Html">
+        <name>image</name>
+        <full_name>image</full_name>
+        <docblock line="155">
+          <description>Create Image</description>
+          <long-description></long-description>
+          <tag line="155" name="param" description="image name in /img/" type="string" variable="$image">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="155" name="param" description="if key in array is 'url', the image turn into a link image" type="array" variable="$args">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="155" name="return" description="$data image element" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="162">
+          <name>$image</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="162">
+          <name>$args</name>
+          <default>null</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="188" package="MVC\View\Html">
+        <name>input</name>
+        <full_name>input</full_name>
+        <docblock line="181">
+          <description>Create Input</description>
+          <long-description></long-description>
+          <tag line="181" name="param" description="Database name" type="String" variable="$name">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="181" name="param" description="Label name" type="String" variable="$title">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="181" name="param" description="Extra items for input" type="Array" variable="$items">
+            <type by_reference="false">Array</type>
+          </tag>
+          <tag line="181" name="return" description="Input element" type="object">
+            <type by_reference="false">object</type>
+          </tag>
+        </docblock>
+        <argument line="188">
+          <name>$name</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="188">
+          <name>$title</name>
+          <default>''</default>
+          <type/>
+        </argument>
+        <argument line="188">
+          <name>$items</name>
+          <default>array('type' =&gt; 'textbox')</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="316" package="MVC\View\Html">
+        <name>ajaxInput</name>
+        <full_name>ajaxInput</full_name>
+        <docblock line="309">
+          <description>Create Ajax Input (adding and removing dinamicly)</description>
+          <long-description></long-description>
+          <tag line="309" name="param" description="Database name" type="String" variable="$name">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="309" name="param" description="Label name" type="String" variable="$title">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="309" name="param" description="Extra items for input" type="Array" variable="$items">
+            <type by_reference="false">Array</type>
+          </tag>
+          <tag line="309" name="return" description="Input element" type="object">
+            <type by_reference="false">object</type>
+          </tag>
+        </docblock>
+        <argument line="316">
+          <name>$name</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="316">
+          <name>$title</name>
+          <default>''</default>
+          <type/>
+        </argument>
+        <argument line="316">
+          <name>$items</name>
+          <default>array('type' =&gt; 'text')</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="405" package="MVC\View\Html">
+        <name>table</name>
+        <full_name>table</full_name>
+        <docblock line="399">
+          <description>Create automagic table (normal or for forms)</description>
+          <long-description></long-description>
+          <tag line="399" name="param" description="Array from find result" type="Array" variable="$data">
+            <type by_reference="false">Array</type>
+          </tag>
+          <tag line="399" name="param" description="" type="Array" variable="$options">
+            <type by_reference="false">Array</type>
+          </tag>
+          <tag line="399" name="return" description="Formed html table" type="object">
+            <type by_reference="false">object</type>
+          </tag>
+        </docblock>
+        <argument line="405">
+          <name>$data</name>
+          <default>array()</default>
+          <type/>
+        </argument>
+        <argument line="405">
+          <name>$options</name>
+          <default>array()</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="563" package="MVC\View\Html">
+        <name>date</name>
+        <full_name>date</full_name>
+        <docblock line="558">
+          <description>Formats date</description>
+          <long-description></long-description>
+          <tag line="558" name="param" description="Date to format" type="String" variable="$date">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="558" name="param" description="Date format" type="String" variable="$format">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+        <argument line="563">
+          <name>$date</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="563">
+          <name>$format</name>
+          <default>null</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="586" package="MVC\View\Html">
+        <name>select</name>
+        <full_name>select</full_name>
+        <docblock line="579">
+          <description>Create Select element</description>
+          <long-description></long-description>
+          <tag line="579" name="param" description="Database name" type="String" variable="$name">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="579" name="param" description="Title for label" type="String" variable="$title">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="579" name="param" description="Options for select" type="Array" variable="$values">
+            <type by_reference="false">Array</type>
+          </tag>
+          <tag line="579" name="return" description="Select html element" type="object">
+            <type by_reference="false">object</type>
+          </tag>
+        </docblock>
+        <argument line="586">
+          <name>$name</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="586">
+          <name>$title</name>
+          <default>''</default>
+          <type/>
+        </argument>
+        <argument line="586">
+          <name>$values</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="675" package="MVC\View\Html">
+        <name>includeJs</name>
+        <full_name>includeJs</full_name>
+        <docblock line="671">
+          <description>Include JavaScript in html</description>
+          <long-description></long-description>
+          <tag line="671" name="param" description="Filename without extension" type="String" variable="$fileName">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+        <argument line="675">
+          <name>$fileName</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="685" package="MVC\View\Html">
+        <name>includeCss</name>
+        <full_name>includeCss</full_name>
+        <docblock line="680">
+          <description>Include CSS in html</description>
+          <long-description></long-description>
+          <tag line="680" name="param" description="Filename without extension" type="String" variable="$fileName">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="680" name="param" description="CSS type" type="String" variable="$media">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+        <argument line="685">
+          <name>$fileName</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="685">
+          <name>$media</name>
+          <default>'screen'</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="694" package="MVC\View\Html">
+        <name>breadcrumbs</name>
+        <full_name>breadcrumbs</full_name>
+        <docblock line="690">
+          <description>Create BreadCrumbs</description>
+          <long-description></long-description>
+          <tag line="690" name="param" description="Steps" type="Object" variable="$steps">
+            <type by_reference="false">Object</type>
+          </tag>
+        </docblock>
+        <argument line="694">
+          <name>$steps</name>
+          <default>array()</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="753" package="MVC\View\Html">
+        <name>parseYoutube</name>
+        <full_name>parseYoutube</full_name>
+        <docblock line="746">
+          <description>Method to obtain Youtube frame</description>
+          <long-description></long-description>
+          <tag line="746" name="param" description="Youtube URL" type="string" variable="$url">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="746" name="param" description="Youtube ID type" type="string" variable="$type">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="746" name="return" description="Youtube iframe" type="object">
+            <type by_reference="false">object</type>
+          </tag>
+        </docblock>
+        <argument line="753">
+          <name>$url</name>
+          <default>""</default>
+          <type/>
+        </argument>
+        <argument line="753">
+          <name>$type</name>
+          <default>'id'</default>
+          <type/>
+        </argument>
+      </method>
+    </class>
+  </file>
+  <file path="extensions\inflector.class.php" hash="cce76748c285693c9edbe20337fb6dd7" package="Default">
+    <docblock line="2">
+      <description>Supernova Framework</description>
+      <long-description></long-description>
+    </docblock>
+    <class final="false" abstract="false" namespace="global" line="10" package="Inflector">
+      <extends/>
+      <name>Inflector</name>
+      <full_name>\Inflector</full_name>
+      <docblock line="5">
+        <description>Inflect strings or arrays</description>
+        <long-description></long-description>
+        <tag line="5" name="package" description="Inflector"/>
+      </docblock>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="19" package="Inflector">
+        <name>getBaseUrl</name>
+        <full_name>getBaseUrl</full_name>
+        <docblock line="12">
+          <description>Get Base URL</description>
+          <long-description>&lt;p&gt;Get the relative URL where the application is be located in your server&lt;/p&gt;</long-description>
+          <tag line="12" name="return" description="" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="32" package="Inflector">
+        <name>getBasePath</name>
+        <full_name>getBasePath</full_name>
+        <docblock line="25">
+          <description>Get Base Path</description>
+          <long-description>&lt;p&gt;Get the static location of your application in your server&lt;/p&gt;</long-description>
+          <tag line="25" name="return" description="" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="48" package="Inflector">
+        <name>tableName</name>
+        <full_name>tableName</full_name>
+        <docblock line="43">
+          <description>Get Table name</description>
+          <long-description></long-description>
+          <tag line="43" name="param" description="Model Name" type="string" variable="$modelName">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="43" name="return" description="Parse table name" type="object">
+            <type by_reference="false">object</type>
+          </tag>
+        </docblock>
+        <argument line="48">
+          <name>$modelName</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="63" package="Inflector">
+        <name>getModelPrefix</name>
+        <full_name>getModelPrefix</full_name>
+        <docblock line="55">
+          <description>Get model prefix</description>
+          <long-description>&lt;p&gt;Get the model prefix from the database and its index&lt;/p&gt;</long-description>
+          <tag line="55" name="param" description="Model name" type="string" variable="$modelName">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="55" name="return" description="" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="63">
+          <name>$modelName</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="78" package="Inflector">
+        <name>unparseFields</name>
+        <full_name>unparseFields</full_name>
+        <docblock line="70">
+          <description>Unparse Fields</description>
+          <long-description>&lt;p&gt;Get the human readable fields from prefixed table in the model&lt;/p&gt;</long-description>
+          <tag line="70" name="param" description="field" type="string" variable="$val">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="70" name="param" description="Model name" type="string" variable="$modelName">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="70" name="return" description="$newval Parsed field" type="mixed">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="78">
+          <name>$val</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="78">
+          <name>$modelName</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="120" package="Inflector">
+        <name>array_to_path</name>
+        <full_name>array_to_path</full_name>
+        <docblock line="115">
+          <description>Transform Array to String Path</description>
+          <long-description></long-description>
+          <tag line="115" name="param" description="Parse array to form correct path" type="array" variable="$path">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="115" name="return" description="Parsed path" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="120">
+          <name>$path</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="171" package="Inflector">
+        <name>camel_to_under</name>
+        <full_name>camel_to_under</full_name>
+        <docblock line="166">
+          <description>Transform Camelized string to Underscore</description>
+          <long-description></long-description>
+          <tag line="166" name="param" description="Text to inflect" type="string" variable="$str">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="166" name="return" description="$str Inflected text" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="171">
+          <name>$str</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="182" package="Inflector">
+        <name>camel_to_array</name>
+        <full_name>camel_to_array</full_name>
+        <docblock line="177">
+          <description>Transform Camelized string to relative path</description>
+          <long-description></long-description>
+          <tag line="177" name="param" description="Text to inflect" type="string" variable="$str">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="177" name="return" description="$aux2 Inflected array" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="182">
+          <name>$str</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="196" package="Inflector">
+        <name>under_to_camel</name>
+        <full_name>under_to_camel</full_name>
+        <docblock line="190">
+          <description>Transform Underscore string to Camelized</description>
+          <long-description></long-description>
+          <tag line="190" name="param" description="String to parse" type="String" variable="$str">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="190" name="param" description="Capitalize first character" type="Boolean" variable="$capitaliseFirst">
+            <type by_reference="false">Boolean</type>
+          </tag>
+          <tag line="190" name="return" description="Inflected string" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+        <argument line="196">
+          <name>$str</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="196">
+          <name>$capitaliseFirst</name>
+          <default>true</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="209" package="Inflector">
+        <name>singularize</name>
+        <full_name>singularize</full_name>
+        <docblock line="204">
+          <description>Singularize string</description>
+          <long-description></long-description>
+          <tag line="204" name="param" description="Text to inflect" type="string" variable="$str">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="204" name="return" description="$str Inflected text" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="209">
+          <name>$str</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="222" package="Inflector">
+        <name>pluralize</name>
+        <full_name>pluralize</full_name>
+        <docblock line="217">
+          <description>Pluralize string</description>
+          <long-description></long-description>
+          <tag line="217" name="param" description="Text to inflect" type="string" variable="$str">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="217" name="return" description="$str Inflected text" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="222">
+          <name>$str</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="235" package="Inflector">
+        <name>slug</name>
+        <full_name>slug</full_name>
+        <docblock line="230">
+          <description>Slug a word</description>
+          <long-description></long-description>
+          <tag line="230" name="param" description="Text to slug" type="String" variable="$str">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="230" name="return" description="Sluged text" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+        <argument line="235">
+          <name>$str</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="247" package="Inflector">
+        <name>youtubeCode</name>
+        <full_name>youtubeCode</full_name>
+        <docblock line="242">
+          <description>Youtube Code</description>
+          <long-description></long-description>
+          <tag line="242" name="param" description="Url from Youtube" type="String" variable="$str">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="242" name="return" description="Extracted code" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+        <argument line="247">
+          <name>$str</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+    </class>
+  </file>
+  <file path="extensions\mail.class.php" hash="899b6ef283a293446ac30cdfc64513e4" package="Default">
+    <docblock line="2">
+      <description>Supernova Framework</description>
+      <long-description></long-description>
+    </docblock>
+    <class final="false" abstract="false" namespace="global" line="30" package="MVC\Controller\Mail">
+      <extends/>
+      <name>Mail</name>
+      <full_name>\Mail</full_name>
+      <docblock line="5">
+        <description>Mail handler</description>
+        <long-description></long-description>
+        <tag line="5" name="package" description="MVC_Controller_Mail"/>
+      </docblock>
+      <property final="false" static="false" visibility="public" line="36" namespace="global" package="Default">
+        <name>$sendto</name>
+        <default>array()</default>
+        <docblock line="32">
+          <description>List of To addresses</description>
+          <long-description></long-description>
+          <tag line="32" name="var" description="" type="Array">
+            <type by_reference="false">Array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="42" namespace="global" package="Default">
+        <name>$acc</name>
+        <default>array()</default>
+        <docblock line="38">
+          <description>Array with CC</description>
+          <long-description></long-description>
+          <tag line="38" name="var" description="" type="Array">
+            <type by_reference="false">Array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="48" namespace="global" package="Default">
+        <name>$abcc</name>
+        <default>array()</default>
+        <docblock line="44">
+          <description>Array with BCC</description>
+          <long-description></long-description>
+          <tag line="44" name="var" description="" type="Array">
+            <type by_reference="false">Array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="54" namespace="global" package="Default">
+        <name>$aattach</name>
+        <default>array()</default>
+        <docblock line="50">
+          <description>Array with Attachments path files</description>
+          <long-description></long-description>
+          <tag line="50" name="var" description="" type="Array">
+            <type by_reference="false">Array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="60" namespace="global" package="Default">
+        <name>$xheaders</name>
+        <default>array()</default>
+        <docblock line="56">
+          <description>List of message headers</description>
+          <long-description></long-description>
+          <tag line="56" name="var" description="" type="Array">
+            <type by_reference="false">Array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="66" namespace="global" package="Default">
+        <name>$priorities</name>
+        <default>array('1 (Highest)', '2 (High)', '3 (Normal)', '4 (Low)', '5 (Lowest)')</default>
+        <docblock line="62">
+          <description>Message priorities referential</description>
+          <long-description></long-description>
+          <tag line="62" name="var" description="" type="Array">
+            <type by_reference="false">Array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="72" namespace="global" package="Default">
+        <name>$charset</name>
+        <default>"utf-8"</default>
+        <docblock line="68">
+          <description>Character set of message</description>
+          <long-description></long-description>
+          <tag line="68" name="var" description="" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="78" namespace="global" package="Default">
+        <name>$ctencoding</name>
+        <default>"7bit"</default>
+        <docblock line="74">
+          <description>Character encoding</description>
+          <long-description></long-description>
+          <tag line="74" name="var" description="" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="84" namespace="global" package="Default">
+        <name>$receipt</name>
+        <default>0</default>
+        <docblock line="80">
+          <description>Receipt</description>
+          <long-description></long-description>
+          <tag line="80" name="var" description="" type="Boolean">
+            <type by_reference="false">Boolean</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="90" package="MVC\Controller\Mail">
+        <name>Mail</name>
+        <full_name>Mail</full_name>
+        <docblock line="87">
+          <description>Mail constructor</description>
+          <long-description></long-description>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="99" package="MVC\Controller\Mail">
+        <name>autoCheck</name>
+        <full_name>autoCheck</full_name>
+        <docblock line="95">
+          <description>Activate or desactivate the email address validator</description>
+          <long-description></long-description>
+          <tag line="95" name="param" description="Set to true to turn on the auto validation" type="boolean" variable="$bool">
+            <type by_reference="false">boolean</type>
+          </tag>
+        </docblock>
+        <argument line="99">
+          <name>$bool</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="110" package="MVC\Controller\Mail">
+        <name>Subject</name>
+        <full_name>Subject</full_name>
+        <docblock line="106">
+          <description>Define the subject line of the email</description>
+          <long-description></long-description>
+          <tag line="106" name="param" description="Any monoline string" type="string" variable="$subject">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="110">
+          <name>$subject</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="119" package="MVC\Controller\Mail">
+        <name>From</name>
+        <full_name>From</full_name>
+        <docblock line="115">
+          <description>Set the sender of the mail</description>
+          <long-description></long-description>
+          <tag line="115" name="param" description="Should be an email address" type="string" variable="$from">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="119">
+          <name>$from</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="132" package="MVC\Controller\Mail">
+        <name>ReplyTo</name>
+        <full_name>ReplyTo</full_name>
+        <docblock line="128">
+          <description>Set the Reply-To header</description>
+          <long-description></long-description>
+          <tag line="128" name="param" description="Should be an email address" type="string" variable="$address">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="132">
+          <name>$address</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="150" package="MVC\Controller\Mail">
+        <name>Receipt</name>
+        <full_name>Receipt</full_name>
+        <docblock line="140">
+          <description>Add Receipt</description>
+          <long-description>&lt;p&gt;Add a receipt to the email ie. a confirmation is returned to the "From" address
+(or "ReplyTo" if defined) when the receiver open the message&lt;/p&gt;</long-description>
+          <tag line="140" name="warning" description="this functionality is *not* a standard, thus only some mail clients are compliants"/>
+          <tag line="140" name="return" description="" type="\type">
+            <type by_reference="false">\type</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="159" package="MVC\Controller\Mail">
+        <name>To</name>
+        <full_name>To</full_name>
+        <docblock line="155">
+          <description>Set the mail recipient</description>
+          <long-description></long-description>
+          <tag line="155" name="param" description="Email address, accept both a single address or an array of addresses" type="string" variable="$to">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="159">
+          <name>$to</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="179" package="MVC\Controller\Mail">
+        <name>Cc</name>
+        <full_name>Cc</full_name>
+        <docblock line="172">
+          <description>Set the CC headers</description>
+          <long-description>&lt;p&gt;CC or Carbon copy&lt;/p&gt;</long-description>
+          <tag line="172" name="param" description="Accept both array and string of email addresses" type="mixed" variable="$cc">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="179">
+          <name>$cc</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="199" package="MVC\Controller\Mail">
+        <name>Bcc</name>
+        <full_name>Bcc</full_name>
+        <docblock line="192">
+          <description>Set the BCC headers</description>
+          <long-description>&lt;p&gt;BCC or Blank carbon copy&lt;/p&gt;</long-description>
+          <tag line="192" name="param" description="email addresses, accept both array and string" type="mixed" variable="$bcc">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="199">
+          <name>$bcc</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="221" package="MVC\Controller\Mail">
+        <name>Body</name>
+        <full_name>Body</full_name>
+        <docblock line="212">
+          <description>Set the Body message of the mail</description>
+          <long-description>&lt;p&gt;Set the text message asnd define the charset if the message contains extended characters (accents)
+By default it uses us-ascii&lt;/p&gt;</long-description>
+          <tag line="212" name="param" description="" type="string" variable="$body">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="212" name="param" description="" type="string" variable="$charset">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="221">
+          <name>$body</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="221">
+          <name>$charset</name>
+          <default>""</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="237" package="MVC\Controller\Mail">
+        <name>Organization</name>
+        <full_name>Organization</full_name>
+        <docblock line="233">
+          <description>Organization header</description>
+          <long-description></long-description>
+          <tag line="233" name="param" description="" type="string" variable="$org">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="237">
+          <name>$org</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="249" package="MVC\Controller\Mail">
+        <name>Priority</name>
+        <full_name>Priority</full_name>
+        <docblock line="244">
+          <description>Set the mail Priority</description>
+          <long-description></long-description>
+          <tag line="244" name="param" description="Integer taket between 1 (highest) and 5 (lowest)" type="int" variable="$priority">
+            <type by_reference="false">int</type>
+          </tag>
+        </docblock>
+        <argument line="249">
+          <name>$priority</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="271" package="MVC\Controller\Mail">
+        <name>Attach</name>
+        <full_name>Attach</full_name>
+        <docblock line="264">
+          <description>Attach a file to the mail</description>
+          <long-description></long-description>
+          <tag line="264" name="param" description="Path of the file to attach" type="string" variable="$filename">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="264" name="param" description="MIME-type of the file. Default to 'application/x-unknown-content-type'" type="string" variable="$filetype">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="264" name="param" description="Instruct the Mailclient to display the file if possible (&quot;inline&quot;) or always as a link (&quot;attachment&quot;) possible values are &quot;inline&quot;, &quot;attachment&quot;" type="string" variable="$disposition">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="271">
+          <name>$filename</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="271">
+          <name>$filetype</name>
+          <default>""</default>
+          <type/>
+        </argument>
+        <argument line="271">
+          <name>$disposition</name>
+          <default>"inline"</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="285" package="MVC\Controller\Mail">
+        <name>BuildMail</name>
+        <full_name>BuildMail</full_name>
+        <docblock line="281">
+          <description>Build the email message</description>
+          <long-description></long-description>
+          <tag line="281" name="ignore" description=""/>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="335" package="MVC\Controller\Mail">
+        <name>Send</name>
+        <full_name>Send</full_name>
+        <docblock line="331">
+          <description>Format and send the email</description>
+          <long-description></long-description>
+          <tag line="331" name="return" description="" type="boolean">
+            <type by_reference="false">boolean</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="354" package="MVC\Controller\Mail">
+        <name>Get</name>
+        <full_name>Get</full_name>
+        <docblock line="347">
+          <description>Return the whole email, headers and message</description>
+          <long-description>&lt;p&gt;Can be used for displaying the message in plain text or logging it&lt;/p&gt;</long-description>
+          <tag line="347" name="return" description="" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="369" package="MVC\Controller\Mail">
+        <name>ValidEmail</name>
+        <full_name>ValidEmail</full_name>
+        <docblock line="363">
+          <description>Check an email adress validity</description>
+          <long-description></long-description>
+          <tag line="363" name="param" description="email address to check" type="string" variable="$address">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="363" name="return" description="" type="boolean">
+            <type by_reference="false">boolean</type>
+          </tag>
+        </docblock>
+        <argument line="369">
+          <name>$address</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="389" package="MVC\Controller\Mail">
+        <name>CheckAdresses</name>
+        <full_name>CheckAdresses</full_name>
+        <docblock line="383">
+          <description>Check validity of email addresses</description>
+          <long-description></long-description>
+          <tag line="383" name="param" description="-" type="array" variable="$aad">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="383" name="return" description="If invalid, output an error message and exit, this may -should- be customized" type="mixed">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="389">
+          <name>$aad</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="403" package="MVC\Controller\Mail">
+        <name>_build_attachement</name>
+        <full_name>_build_attachement</full_name>
+        <docblock line="399">
+          <description>Check and encode attach file</description>
+          <long-description></long-description>
+          <tag line="399" name="ignore" description=""/>
+        </docblock>
+      </method>
+    </class>
+  </file>
+  <file path="extensions\model.class.php" hash="21494b2b4e4885c93d836fcfa46e864d" package="Default">
+    <docblock line="2">
+      <description>Supernova Framework</description>
+      <long-description></long-description>
+    </docblock>
+    <class final="false" abstract="false" namespace="global" line="18" package="MVC\Model">
+      <extends>\SQLQuery</extends>
+      <name>Model</name>
+      <full_name>\Model</full_name>
+      <docblock line="5">
+        <description>Model handler</description>
+        <long-description>&lt;p&gt;Models perform business logic. Business logic, in this case,
+refers to items that are fundamental to the overall system design.
+For example, if a library application was constructed,
+the logic which ensured a library card owner only rented up to 5 books at a time,
+would be part of a model. Again, as part of the business logic,
+models also tend to control access to application storage, such as database(s),
+performing CRUD (creation, updating and deletion) tasks on the stored data.&lt;/p&gt;</long-description>
+        <tag line="5" name="package" description="MVC_Model"/>
+      </docblock>
+      <property final="false" static="false" visibility="protected" line="23" namespace="global" package="Default">
+        <name>$_model</name>
+        <default></default>
+        <docblock line="19">
+          <description>Model Name</description>
+          <long-description></long-description>
+          <tag line="19" name="var" description="" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="protected" line="29" namespace="global" package="Default">
+        <name>$_table</name>
+        <default></default>
+        <docblock line="25">
+          <description>Model table</description>
+          <long-description></long-description>
+          <tag line="25" name="var" description="" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="35" package="MVC\Model">
+        <name>__construct</name>
+        <full_name>__construct</full_name>
+        <docblock line="31">
+          <description>Construct</description>
+          <long-description></long-description>
+          <tag line="31" name="ignore" description=""/>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="46" package="MVC\Model">
+        <name>__get</name>
+        <full_name>__get</full_name>
+        <docblock line="41">
+          <description>Get models called from model</description>
+          <long-description></long-description>
+          <tag line="41" name="param" description="Model name" type="String" variable="$name">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="41" name="return" description="New Object model" type="object">
+            <type by_reference="false">object</type>
+          </tag>
+        </docblock>
+        <argument line="46">
+          <name>$name</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="56" package="MVC\Model">
+        <name>__call</name>
+        <full_name>__call</full_name>
+        <docblock line="50">
+          <description>Calls functions from models in models</description>
+          <long-description></long-description>
+          <tag line="50" name="param" description="Function name" type="String" variable="$func">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="50" name="param" description="Arguments" type="Mixed" variable="$args">
+            <type by_reference="false">Mixed</type>
+          </tag>
+          <tag line="50" name="return" description="Results" type="object">
+            <type by_reference="false">object</type>
+          </tag>
+        </docblock>
+        <argument line="56">
+          <name>$func</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="56">
+          <name>$args</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="65" package="MVC\Model">
+        <name>raise</name>
+        <full_name>raise</full_name>
+        <docblock line="60">
+          <description>Raise model name</description>
+          <long-description></long-description>
+          <tag line="60" name="param" description="Model Name" type="String" variable="$modelName">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="60" name="return" description="" type="object">
+            <type by_reference="false">object</type>
+          </tag>
+        </docblock>
+        <argument line="65">
+          <name>$modelName</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+    </class>
+  </file>
+  <file path="extensions\resize.class.php" hash="63752fe0321096b2144362da3e790341" package="Default">
+    <docblock line="2">
+      <description>Supernova Framework</description>
+      <long-description></long-description>
+    </docblock>
+    <class final="false" abstract="false" namespace="global" line="10" package="MVC\Model\Resize">
+      <extends/>
+      <name>Resize</name>
+      <full_name>\Resize</full_name>
+      <docblock line="5">
+        <description>Image Resize Handler</description>
+        <long-description></long-description>
+        <tag line="5" name="package" description="MVC_Model_Resize"/>
+      </docblock>
+      <property final="false" static="false" visibility="private" line="16" namespace="global" package="Default">
+        <name>$image</name>
+        <default></default>
+        <docblock line="12">
+          <description>Image itself</description>
+          <long-description></long-description>
+          <tag line="12" name="var" description="" type="object">
+            <type by_reference="false">object</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="private" line="22" namespace="global" package="Default">
+        <name>$width</name>
+        <default></default>
+        <docblock line="18">
+          <description>Image width</description>
+          <long-description></long-description>
+          <tag line="18" name="var" description="" type="Integer">
+            <type by_reference="false">Integer</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="private" line="28" namespace="global" package="Default">
+        <name>$height</name>
+        <default></default>
+        <docblock line="24">
+          <description>Image height</description>
+          <long-description></long-description>
+          <tag line="24" name="var" description="" type="Integer">
+            <type by_reference="false">Integer</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="private" line="34" namespace="global" package="Default">
+        <name>$basePath</name>
+        <default></default>
+        <docblock line="30">
+          <description>Path to save image</description>
+          <long-description></long-description>
+          <tag line="30" name="var" description="" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="private" line="40" namespace="global" package="Default">
+        <name>$extension</name>
+        <default></default>
+        <docblock line="36">
+          <description>Image type</description>
+          <long-description></long-description>
+          <tag line="36" name="var" description="" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="private" line="46" namespace="global" package="Default">
+        <name>$imageResized</name>
+        <default></default>
+        <docblock line="42">
+          <description>Image resized</description>
+          <long-description></long-description>
+          <tag line="42" name="var" description="" type="object">
+            <type by_reference="false">object</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="54" package="MVC\Model\Resize">
+        <name>createThumbs</name>
+        <full_name>createThumbs</full_name>
+        <docblock line="48">
+          <description>Create thumbnails for image</description>
+          <long-description></long-description>
+          <tag line="48" name="param" description="Kind of thumbnail images" type="array" variable="$args">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="48" name="param" description="original image" type="string" variable="$fileName">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="48" name="return" description="$ret Paths with the new thumbnails" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="54">
+          <name>$args</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="54">
+          <name>$fileName</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="global" line="102" package="MVC\Model\Resize">
+        <name>openImage</name>
+        <full_name>openImage</full_name>
+        <docblock line="96">
+          <description>Open file image</description>
+          <long-description></long-description>
+          <tag line="96" name="param" description="Filename" type="string" variable="$file">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="96" name="param" description="File type" type="string" variable="$type">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="96" name="return" description="" type="object">
+            <type by_reference="false">object</type>
+          </tag>
+        </docblock>
+        <argument line="102">
+          <name>$file</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="102">
+          <name>$type</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="134" package="MVC\Model\Resize">
+        <name>resizeImage</name>
+        <full_name>resizeImage</full_name>
+        <docblock line="128">
+          <description>Resize image</description>
+          <long-description></long-description>
+          <tag line="128" name="param" description="new width image" type="int" variable="$newWidth">
+            <type by_reference="false">int</type>
+          </tag>
+          <tag line="128" name="param" description="new height image" type="int" variable="$newHeight">
+            <type by_reference="false">int</type>
+          </tag>
+          <tag line="128" name="param" description="" type="string" variable="$option">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="134">
+          <name>$newWidth</name>
+          <default>-1</default>
+          <type/>
+        </argument>
+        <argument line="134">
+          <name>$newHeight</name>
+          <default>-1</default>
+          <type/>
+        </argument>
+        <argument line="134">
+          <name>$option</name>
+          <default>"auto"</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="global" line="183" package="MVC\Model\Resize">
+        <name>getDimensions</name>
+        <full_name>getDimensions</full_name>
+        <docblock line="176">
+          <description>Get image dimensions</description>
+          <long-description></long-description>
+          <tag line="176" name="param" description="" type="int" variable="$newWidth">
+            <type by_reference="false">int</type>
+          </tag>
+          <tag line="176" name="param" description="" type="int" variable="$newHeight">
+            <type by_reference="false">int</type>
+          </tag>
+          <tag line="176" name="param" description="" type="string" variable="$option">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="176" name="return" description="" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="183">
+          <name>$newWidth</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="183">
+          <name>$newHeight</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="183">
+          <name>$option</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="global" line="223" package="MVC\Model\Resize">
+        <name>getSizeByFixedHeight</name>
+        <full_name>getSizeByFixedHeight</full_name>
+        <docblock line="218">
+          <description>Get image size with fixed Height</description>
+          <long-description></long-description>
+          <tag line="218" name="param" description="" type="int" variable="$newHeight">
+            <type by_reference="false">int</type>
+          </tag>
+          <tag line="218" name="return" description="New width" type="int">
+            <type by_reference="false">int</type>
+          </tag>
+        </docblock>
+        <argument line="223">
+          <name>$newHeight</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="global" line="235" package="MVC\Model\Resize">
+        <name>getSizeByFixedWidth</name>
+        <full_name>getSizeByFixedWidth</full_name>
+        <docblock line="230">
+          <description>Get image size with fixed Width</description>
+          <long-description></long-description>
+          <tag line="230" name="param" description="" type="int" variable="$newWidth">
+            <type by_reference="false">int</type>
+          </tag>
+          <tag line="230" name="return" description="New height" type="int">
+            <type by_reference="false">int</type>
+          </tag>
+        </docblock>
+        <argument line="235">
+          <name>$newWidth</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="global" line="248" package="MVC\Model\Resize">
+        <name>getSizeByAuto</name>
+        <full_name>getSizeByAuto</full_name>
+        <docblock line="242">
+          <description>Get image size automatic</description>
+          <long-description></long-description>
+          <tag line="242" name="param" description="" type="int" variable="$newWidth">
+            <type by_reference="false">int</type>
+          </tag>
+          <tag line="242" name="param" description="" type="int" variable="$newHeight">
+            <type by_reference="false">int</type>
+          </tag>
+          <tag line="242" name="return" description="New width and new height" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="248">
+          <name>$newWidth</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="248">
+          <name>$newHeight</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="global" line="288" package="MVC\Model\Resize">
+        <name>getOptimalCrop</name>
+        <full_name>getOptimalCrop</full_name>
+        <docblock line="281">
+          <description>Get optimal Crop</description>
+          <long-description></long-description>
+          <tag line="281" name="param" description="" type="int" variable="$newWidth">
+            <type by_reference="false">int</type>
+          </tag>
+          <tag line="281" name="param" description="" type="int" variable="$newHeight">
+            <type by_reference="false">int</type>
+          </tag>
+          <tag line="281" name="return" description="" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="288">
+          <name>$newWidth</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="288">
+          <name>$newHeight</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="global" line="313" package="MVC\Model\Resize">
+        <name>crop</name>
+        <full_name>crop</full_name>
+        <docblock line="306">
+          <description>Crop function</description>
+          <long-description></long-description>
+          <tag line="306" name="param" description="" type="int" variable="$optimalWidth">
+            <type by_reference="false">int</type>
+          </tag>
+          <tag line="306" name="param" description="" type="int" variable="$optimalHeight">
+            <type by_reference="false">int</type>
+          </tag>
+          <tag line="306" name="param" description="" type="int" variable="$newWidth">
+            <type by_reference="false">int</type>
+          </tag>
+          <tag line="306" name="param" description="" type="int" variable="$newHeight">
+            <type by_reference="false">int</type>
+          </tag>
+        </docblock>
+        <argument line="313">
+          <name>$optimalWidth</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="313">
+          <name>$optimalHeight</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="313">
+          <name>$newWidth</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="313">
+          <name>$newHeight</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="337" package="MVC\Model\Resize">
+        <name>saveImage</name>
+        <full_name>saveImage</full_name>
+        <docblock line="331">
+          <description>Save image</description>
+          <long-description></long-description>
+          <tag line="331" name="param" description="Path to save image" type="string" variable="$savePath">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="331" name="param" description="Image quality percentage" type="string" variable="$imageQuality">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="331" name="return" description="Returns path to image" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="337">
+          <name>$savePath</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="337">
+          <name>$imageQuality</name>
+          <default>"100"</default>
+          <type/>
+        </argument>
+      </method>
+    </class>
+  </file>
+  <file path="extensions\security.class.php" hash="8af90d2491a59ff72e5542671361ef42" package="Default">
+    <docblock line="2">
+      <description>Supernova Framework</description>
+      <long-description></long-description>
+    </docblock>
+    <class final="false" abstract="false" namespace="global" line="11" package="Security">
+      <extends/>
+      <name>Security</name>
+      <full_name>\Security</full_name>
+      <docblock line="5">
+        <description>Security handler</description>
+        <long-description></long-description>
+        <tag line="5" name="package" description="Security"/>
+      </docblock>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="21" package="Security">
+        <name>_limpia_gpc</name>
+        <full_name>_limpia_gpc</full_name>
+        <docblock line="13">
+          <description>Clean all GPC</description>
+          <long-description></long-description>
+          <tag line="13" name="param" description="&amp;$target" type="array" variable="">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="13" name="param" description="" type="string" variable="$etiquetas">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="13" name="param" description="" type="int" variable="$limit">
+            <type by_reference="false">int</type>
+          </tag>
+          <tag line="13" name="return" description="" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="13" name="ignore" description=""/>
+        </docblock>
+        <argument line="21">
+          <name>$target</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="21">
+          <name>$etiquetas</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="21">
+          <name>$limit</name>
+          <default>3</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="38" package="Security">
+        <name>_cleanAllVars</name>
+        <full_name>_cleanAllVars</full_name>
+        <docblock line="34">
+          <description>Clean vars</description>
+          <long-description></long-description>
+          <tag line="34" name="ignore" description=""/>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="77" package="Security">
+        <name>_stripSlashesDeep</name>
+        <full_name>_stripSlashesDeep</full_name>
+        <docblock line="70">
+          <description>Check for Magic Quotes and remove them</description>
+          <long-description>&lt;p&gt;Uses {link removeMagicQuotes()} to do the magic&lt;/p&gt;</long-description>
+          <tag line="70" name="ignore" description=""/>
+        </docblock>
+        <argument line="77">
+          <name>$value</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="88" package="Security">
+        <name>_removeMagicQuotes</name>
+        <full_name>_removeMagicQuotes</full_name>
+        <docblock line="84">
+          <description>Remove magic quotes</description>
+          <long-description></long-description>
+          <tag line="84" name="ignore" description=""/>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="100" package="Security">
+        <name>_unregisterGlobals</name>
+        <full_name>_unregisterGlobals</full_name>
+        <docblock line="96">
+          <description>Check register globals and remove them</description>
+          <long-description></long-description>
+          <tag line="96" name="ignore" description=""/>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="121" package="Security">
+        <name>sanitize</name>
+        <full_name>sanitize</full_name>
+        <docblock line="113">
+          <description>Sanitize data</description>
+          <long-description>&lt;p&gt;Returns sanitized data&lt;/p&gt;</long-description>
+          <tag line="113" name="param" description="Unsanitized string" type="string" variable="$data">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="113" name="return" description="Sanitized string" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="121">
+          <name>$data</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+    </class>
+  </file>
+  <file path="extensions\session.class.php" hash="16108b513fe7faaa578f0ecaa495ace1" package="Default">
+    <docblock line="2">
+      <description>Supernova Framework</description>
+      <long-description></long-description>
+    </docblock>
+    <class final="false" abstract="false" namespace="global" line="12" package="MVC\Controller\Sessions">
+      <extends/>
+      <name>Session</name>
+      <full_name>\Session</full_name>
+      <docblock line="5">
+        <description>Session handler</description>
+        <long-description>&lt;p&gt;Session handler manage al session variables controller by the application&lt;/p&gt;</long-description>
+        <tag line="5" name="package" description="MVC_Controller_Sessions"/>
+      </docblock>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="19" package="MVC\Controller\Sessions">
+        <name>create</name>
+        <full_name>create</full_name>
+        <docblock line="13">
+          <description>Create session</description>
+          <long-description></long-description>
+          <tag line="13" name="param" description="Key for session" type="string" variable="$key">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="13" name="param" description="Value for session" type="string" variable="$value">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="19">
+          <name>$key</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="19">
+          <name>$value</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="27" package="MVC\Controller\Sessions">
+        <name>destroy</name>
+        <full_name>destroy</full_name>
+        <docblock line="23">
+          <description>Destroy session</description>
+          <long-description></long-description>
+          <tag line="23" name="param" description="Key value to destroy" type="string" variable="$key">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="27">
+          <name>$key</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="37" package="MVC\Controller\Sessions">
+        <name>read</name>
+        <full_name>read</full_name>
+        <docblock line="32">
+          <description>Read session</description>
+          <long-description></long-description>
+          <tag line="32" name="param" description="Key value to read" type="string" variable="$key">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="32" name="return" description="Value for key" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="37">
+          <name>$key</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+    </class>
+  </file>
+  <file path="extensions\s_q_l_query.class.php" hash="383818f2bf8968571fab5f0c5462002f" package="Default">
+    <docblock line="2">
+      <description>Supernova Framework</description>
+      <long-description></long-description>
+    </docblock>
+    <class final="false" abstract="false" namespace="global" line="12" package="MVC\Model\SQLQuery">
+      <extends/>
+      <name>SQLQuery</name>
+      <full_name>\SQLQuery</full_name>
+      <docblock line="5">
+        <description>SQL Querys Handler</description>
+        <long-description>&lt;p&gt;SQL Query contain all search functions for database querys and parsing&lt;/p&gt;</long-description>
+        <tag line="5" name="package" description="MVC_Model_SQLQuery"/>
+      </docblock>
+      <property final="false" static="false" visibility="protected" line="17" namespace="global" package="Default">
+        <name>$_dbHandle</name>
+        <default></default>
+        <docblock line="13">
+          <description>DB Handle</description>
+          <long-description></long-description>
+          <tag line="13" name="var" description="Manage active conection to database" type="object">
+            <type by_reference="false">object</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="protected" line="23" namespace="global" package="Default">
+        <name>$_model</name>
+        <default></default>
+        <docblock line="19">
+          <description>Model Name</description>
+          <long-description></long-description>
+          <tag line="19" name="var" description="" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="protected" line="29" namespace="global" package="Default">
+        <name>$_table</name>
+        <default></default>
+        <docblock line="25">
+          <description>Table name</description>
+          <long-description></long-description>
+          <tag line="25" name="var" description="" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="protected" line="35" namespace="global" package="Default">
+        <name>$_controller</name>
+        <default>array()</default>
+        <docblock line="31">
+          <description>Controller Vars</description>
+          <long-description></long-description>
+          <tag line="31" name="var" description="This contain vars from called controllers (nested ones not work)" type="Array">
+            <type by_reference="false">Array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="42" namespace="global" package="Default">
+        <name>$_totalPages</name>
+        <default></default>
+        <docblock line="38">
+          <description>Pagination Vars</description>
+          <long-description></long-description>
+          <tag line="38" name="var" description="For pagination purposes." type="object">
+            <type by_reference="false">object</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="48" namespace="global" package="Default">
+        <name>$_lastInsertedId</name>
+        <default></default>
+        <docblock line="44">
+          <description>Store last inserted ID from Model</description>
+          <long-description></long-description>
+          <tag line="44" name="var" description="" type="Int">
+            <type by_reference="false">Int</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="protected" line="54" namespace="global" package="Default">
+        <name>$_SQLDebug</name>
+        <default>array()</default>
+        <docblock line="50">
+          <description>Store all SQL querys</description>
+          <long-description></long-description>
+          <tag line="50" name="var" description="" type="Array">
+            <type by_reference="false">Array</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="64" package="MVC\Model\SQLQuery">
+        <name>connect</name>
+        <full_name>connect</full_name>
+        <docblock line="56">
+          <description>Connects to Database</description>
+          <long-description></long-description>
+          <tag line="56" name="param" description="Host address" type="string" variable="$address">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="56" name="param" description="Username" type="string" variable="$account">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="56" name="param" description="Password" type="string" variable="$pwd">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="56" name="param" description="Database name" type="string" variable="$name">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="56" name="return" description="" type="boolean">
+            <type by_reference="false">boolean</type>
+          </tag>
+        </docblock>
+        <argument line="64">
+          <name>$address</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="64">
+          <name>$account</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="64">
+          <name>$pwd</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="64">
+          <name>$name</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="97" package="MVC\Model\SQLQuery">
+        <name>DebugSQL</name>
+        <full_name>DebugSQL</full_name>
+        <docblock line="93">
+          <description>Returns SQL Querys on screen</description>
+          <long-description></long-description>
+          <tag line="93" name="ignore" description=""/>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="120" package="MVC\Model\SQLQuery">
+        <name>__call</name>
+        <full_name>__call</full_name>
+        <docblock line="115">
+          <description>BlackMagic Functions</description>
+          <long-description></long-description>
+          <tag line="115" name="param" description="Function name" type="string" variable="$func">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="115" name="param" description="Query conditions" type="array" variable="$args">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="120">
+          <name>$func</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="120">
+          <name>$args</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="134" package="MVC\Model\SQLQuery">
+        <name>__set</name>
+        <full_name>__set</full_name>
+        <docblock line="129">
+          <description>BlackMagic Setter</description>
+          <long-description></long-description>
+          <tag line="129" name="param" description="Key set from controller" type="string" variable="$var">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="129" name="param" description="Value set from controller" type="mixed" variable="$val">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="134">
+          <name>$var</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="134">
+          <name>$val</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="142" package="MVC\Model\SQLQuery">
+        <name>__get</name>
+        <full_name>__get</full_name>
+        <docblock line="138">
+          <description>BlackMagic Getter</description>
+          <long-description></long-description>
+          <tag line="138" name="param" description="Values set from controller" type="mixed" variable="$var">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="142">
+          <name>$var</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="151" package="MVC\Model\SQLQuery">
+        <name>findcount</name>
+        <full_name>findcount</full_name>
+        <docblock line="146">
+          <description>Count elements from result</description>
+          <long-description></long-description>
+          <tag line="146" name="param" description="Conditions" type="array" variable="$args">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="146" name="return" description="$ar Return count from database" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="151">
+          <name>$args</name>
+          <default>null</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="163" package="MVC\Model\SQLQuery">
+        <name>findBy</name>
+        <full_name>findBy</full_name>
+        <docblock line="156">
+          <description>Find result by one simple argument</description>
+          <long-description></long-description>
+          <tag line="156" name="param" description="Field key" type="string" variable="$pk">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="156" name="param" description="Field value" type="string" variable="$arg">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="156" name="return" description="$aux Return results from database" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="163">
+          <name>$pk</name>
+          <default>null</default>
+          <type/>
+        </argument>
+        <argument line="163">
+          <name>$arg</name>
+          <default>null</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="177" package="MVC\Model\SQLQuery">
+        <name>findAllBy</name>
+        <full_name>findAllBy</full_name>
+        <docblock line="170">
+          <description>Find All results by one simple argument</description>
+          <long-description></long-description>
+          <tag line="170" name="param" description="Field key" type="string" variable="$pk">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="170" name="param" description="Field value" type="string" variable="$arg">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="170" name="return" description="$ar Return results from database" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="177">
+          <name>$pk</name>
+          <default>null</default>
+          <type/>
+        </argument>
+        <argument line="177">
+          <name>$arg</name>
+          <default>null</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="191" package="MVC\Model\SQLQuery">
+        <name>findfirst</name>
+        <full_name>findfirst</full_name>
+        <docblock line="183">
+          <description>Find First</description>
+          <long-description>&lt;p&gt;Get the first element from the results&lt;/p&gt;</long-description>
+          <tag line="183" name="param" description="Conditions from controller" type="array" variable="$args">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="183" name="return" description="$ar Return results from database" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="191">
+          <name>$args</name>
+          <default>null</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="212" package="MVC\Model\SQLQuery">
+        <name>findlist</name>
+        <full_name>findlist</full_name>
+        <docblock line="204">
+          <description>Find List</description>
+          <long-description>&lt;p&gt;Get a list of values from the database&lt;/p&gt;</long-description>
+          <tag line="204" name="param" description="Conditions from controller" type="array" variable="$args">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="204" name="return" description="$ar Return list with primaryKey =&gt; displayName" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="212">
+          <name>$args</name>
+          <default>null</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="256" package="MVC\Model\SQLQuery">
+        <name>findsearch</name>
+        <full_name>findsearch</full_name>
+        <docblock line="248">
+          <description>Search results</description>
+          <long-description></long-description>
+          <tag line="248" name="param" description="Field name" type="string" variable="$column">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="248" name="param" description="Value to search" type="string" variable="$needle">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="248" name="param" description="Extra conditions" type="array" variable="$args">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="248" name="return" description="$ar Results from the database" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="256">
+          <name>$column</name>
+          <default>null</default>
+          <type/>
+        </argument>
+        <argument line="256">
+          <name>$needle</name>
+          <default>null</default>
+          <type/>
+        </argument>
+        <argument line="256">
+          <name>$args</name>
+          <default>array()</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="288" package="MVC\Model\SQLQuery">
+        <name>findall</name>
+        <full_name>findall</full_name>
+        <docblock line="280">
+          <description>Find All</description>
+          <long-description>&lt;p&gt;Get all values from the database, an his parents and sons&lt;/p&gt;</long-description>
+          <tag line="280" name="param" description="Conditions from controller" type="array" variable="$args">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="280" name="return" description="$ar Return results from database" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="288">
+          <name>$args</name>
+          <default>null</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="310" package="MVC\Model\SQLQuery">
+        <name>findtree</name>
+        <full_name>findtree</full_name>
+        <docblock line="302">
+          <description>Find Tree</description>
+          <long-description>&lt;p&gt;Get a tree of values from the database&lt;/p&gt;</long-description>
+          <tag line="302" name="param" description="Conditions from controller" type="array" variable="$args">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="302" name="return" description="$ar Return list with primaryKey =&gt; displayName" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="310">
+          <name>$args</name>
+          <default>null</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="335" package="MVC\Model\SQLQuery">
+        <name>flattenArray</name>
+        <full_name>flattenArray</full_name>
+        <docblock line="326">
+          <description>Flatten Array</description>
+          <long-description>&lt;p&gt;Turns a Multi-dimensional array into a uni-dimensional array&lt;/p&gt;</long-description>
+          <tag line="326" name="param" description="to flatten" type="array" variable="$array">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="326" name="param" description="tree level for recursivity" type="int" variable="$treeLevel">
+            <type by_reference="false">int</type>
+          </tag>
+          <tag line="326" name="return" description="$out&#9;&#9;flattened array" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="335">
+          <name>$array</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="335">
+          <name>$treeLevel</name>
+          <default>0</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="361" package="MVC\Model\SQLQuery">
+        <name>getQuery</name>
+        <full_name>getQuery</full_name>
+        <docblock line="351">
+          <description>Get Query</description>
+          <long-description>&lt;p&gt;Make a SELECT with the especified parameters&lt;/p&gt;</long-description>
+          <tag line="351" name="param" description="Model name" type="string" variable="$modelName">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="351" name="param" description="Conditions from controller" type="array" variable="$args">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="351" name="param" description="Actual level recursivity" type="int" variable="$recursive">
+            <type by_reference="false">int</type>
+          </tag>
+          <tag line="351" name="return" description="$ar &#9;&#9;Return results from database" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="361">
+          <name>$modelName</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="361">
+          <name>$args</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="361">
+          <name>$recursive</name>
+          <default>1</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="513" package="MVC\Model\SQLQuery">
+        <name>parseId</name>
+        <full_name>parseId</full_name>
+        <docblock line="504">
+          <description>Parse ID</description>
+          <long-description>&lt;p&gt;Parse value from human readable model name to database column format&lt;/p&gt;</long-description>
+          <tag line="504" name="param" description="Human readable model name" type="String" variable="$val">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="504" name="param" description="Model name" type="String" variable="$model">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="504" name="return" description="Database oracle column format" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+        <argument line="513">
+          <name>$val</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="513">
+          <name>$model</name>
+          <default>null</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="538" package="MVC\Model\SQLQuery">
+        <name>unparseId</name>
+        <full_name>unparseId</full_name>
+        <docblock line="531">
+          <description>Unparse ID</description>
+          <long-description></long-description>
+          <tag line="531" name="param" description="String or array in oracle database column format" type="mixed" variable="$val">
+            <type by_reference="false">mixed</type>
+          </tag>
+          <tag line="531" name="param" description="Model name" type="String" variable="$modelName">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="531" name="return" description="String or array in human readable column result" type="object">
+            <type by_reference="false">object</type>
+          </tag>
+        </docblock>
+        <argument line="538">
+          <name>$val</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="538">
+          <name>$modelName</name>
+          <default>null</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="586" package="MVC\Model\SQLQuery">
+        <name>getPrefix</name>
+        <full_name>getPrefix</full_name>
+        <docblock line="581">
+          <description>Get prefix from model</description>
+          <long-description></long-description>
+          <tag line="581" name="param" description="Model name" type="String" variable="$modelName">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="581" name="return" description="Prefix string" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+        <argument line="586">
+          <name>$modelName</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="602" package="MVC\Model\SQLQuery">
+        <name>parseConditions</name>
+        <full_name>parseConditions</full_name>
+        <docblock line="593">
+          <description>Parse Conditions</description>
+          <long-description>&lt;p&gt;Conditions to format database query&lt;/p&gt;</long-description>
+          <tag line="593" name="param" description="Array with conditions" type="array" variable="$conditions">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="593" name="param" description="Model name" type="string" variable="$model">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="593" name="return" description="Parsed database query" type="object">
+            <type by_reference="false">object</type>
+          </tag>
+        </docblock>
+        <argument line="602">
+          <name>$conditions</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="602">
+          <name>$model</name>
+          <default>null</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="656" package="MVC\Model\SQLQuery">
+        <name>custom</name>
+        <full_name>custom</full_name>
+        <docblock line="650">
+          <description>Custom Query</description>
+          <long-description></long-description>
+          <tag line="650" name="param" description="SQL Database custom query" type="string" variable="$query">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="650" name="return" description="$ar SQL Results" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="656">
+          <name>$query</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="688" package="MVC\Model\SQLQuery">
+        <name>delete</name>
+        <full_name>delete</full_name>
+        <docblock line="680">
+          <description>Delete from Database</description>
+          <long-description></long-description>
+          <tag line="680" name="param" description="ID from database" type="int" variable="$id">
+            <type by_reference="false">int</type>
+          </tag>
+          <tag line="680" name="param" description="Model name" type="string" variable="$modelName">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="680" name="param" description="Model name with Hasmany or HasTooMany" type="String" variable="$modelName2">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="680" name="return" description="" type="\type">
+            <type by_reference="false">\type</type>
+          </tag>
+        </docblock>
+        <argument line="688">
+          <name>$id</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="688">
+          <name>$modelName</name>
+          <default>null</default>
+          <type/>
+        </argument>
+        <argument line="688">
+          <name>$modelName2</name>
+          <default>null</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="721" package="MVC\Model\SQLQuery">
+        <name>save</name>
+        <full_name>save</full_name>
+        <docblock line="715">
+          <description>Save to Database</description>
+          <long-description></long-description>
+          <tag line="715" name="param" description="Formated data from controlller" type="array" variable="$data">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="715" name="return" description="" type="boolean">
+            <type by_reference="false">boolean</type>
+          </tag>
+        </docblock>
+        <argument line="721">
+          <name>$data</name>
+          <default>null</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="899" package="MVC\Model\SQLQuery">
+        <name>lastId</name>
+        <full_name>lastId</full_name>
+        <docblock line="895">
+          <description>Get last inserted ID</description>
+          <long-description></long-description>
+          <tag line="895" name="return" description="" type="int">
+            <type by_reference="false">int</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="912" package="MVC\Model\SQLQuery">
+        <name>totalPages</name>
+        <full_name>totalPages</full_name>
+        <docblock line="903">
+          <description>Get total pages for Pagination</description>
+          <long-description>&lt;p&gt;The items number per page, get it from model
+Ex: $this-&gt;Model-&gt;pageItems = 20;&lt;/p&gt;</long-description>
+          <tag line="903" name="param" description="actual database query" type="string" variable="$query">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="903" name="return" description="$totalPages" type="int">
+            <type by_reference="false">int</type>
+          </tag>
+        </docblock>
+        <argument line="912">
+          <name>$query</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="931" package="MVC\Model\SQLQuery">
+        <name>checkField</name>
+        <full_name>checkField</full_name>
+        <docblock line="924">
+          <description>Check if field exist in database</description>
+          <long-description></long-description>
+          <tag line="924" name="param" description="Field name" type="string" variable="$field">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="924" name="param" description="Table name" type="string" variable="$table">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="924" name="return" description="" type="boolean">
+            <type by_reference="false">boolean</type>
+          </tag>
+        </docblock>
+        <argument line="931">
+          <name>$field</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="931">
+          <name>$table</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="950" package="MVC\Model\SQLQuery">
+        <name>getTables</name>
+        <full_name>getTables</full_name>
+        <docblock line="946">
+          <description>Get tables from database</description>
+          <long-description></long-description>
+          <tag line="946" name="return" description="Returns array with tables or false in error" type="mixed">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="967" package="MVC\Model\SQLQuery">
+        <name>getFields</name>
+        <full_name>getFields</full_name>
+        <docblock line="962">
+          <description>Get fields from table</description>
+          <long-description></long-description>
+          <tag line="962" name="param" description="Table name" type="string" variable="$table">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="962" name="return" description="$fields Fields from table" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="967">
+          <name>$table</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+    </class>
+  </file>
+  <file path="extensions\time.class.php" hash="4e333533d83cb5851fca80c8320443d5" package="Default">
+    <docblock line="2">
+      <description>Supernova Framework</description>
+      <long-description></long-description>
+    </docblock>
+    <class final="false" abstract="false" namespace="global" line="10" package="MVC\View\Time">
+      <extends/>
+      <name>Time</name>
+      <full_name>\Time</full_name>
+      <docblock line="5">
+        <description>Time parsers</description>
+        <long-description></long-description>
+        <tag line="5" name="package" description="MVC_View_Time"/>
+      </docblock>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="17" package="MVC\View\Time">
+        <name>nice</name>
+        <full_name>nice</full_name>
+        <docblock line="12">
+          <description>Format SQL to "nice" format</description>
+          <long-description></long-description>
+          <tag line="12" name="param" description="SQL Date" type="String" variable="$date">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="12" name="return" description="Nice format" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+        <argument line="17">
+          <name>$date</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="37" package="MVC\View\Time">
+        <name>dateToSql</name>
+        <full_name>dateToSql</full_name>
+        <docblock line="32">
+          <description>Parse date to SQL format</description>
+          <long-description></long-description>
+          <tag line="32" name="param" description="Date string" type="String" variable="$date">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="32" name="return" description="SQL formated date" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+        <argument line="37">
+          <name>$date</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="53" package="MVC\View\Time">
+        <name>sqlToDate</name>
+        <full_name>sqlToDate</full_name>
+        <docblock line="48">
+          <description>Parse SQL date to other date format</description>
+          <long-description></long-description>
+          <tag line="48" name="param" description="SQL Date" type="String" variable="$date">
+            <type by_reference="false">String</type>
+          </tag>
+          <tag line="48" name="return" description="parsed Date" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+        <argument line="53">
+          <name>$date</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="64" package="MVC\View\Time">
+        <name>timestampToSQL</name>
+        <full_name>timestampToSQL</full_name>
+        <docblock line="59">
+          <description>Parse timeStamp to SQL format</description>
+          <long-description></long-description>
+          <tag line="59" name="param" description="TimeStamp" type="Int" variable="$timeStamp">
+            <type by_reference="false">Int</type>
+          </tag>
+          <tag line="59" name="return" description="SQL Format date" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+        <argument line="64">
+          <name>$timeStamp</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="global" line="78" package="MVC\View\Time">
+        <name>timestampToDate</name>
+        <full_name>timestampToDate</full_name>
+        <docblock line="73">
+          <description>Parse timeStamp to other date format</description>
+          <long-description></long-description>
+          <tag line="73" name="param" description="TimeStamp" type="int" variable="$timeStamp">
+            <type by_reference="false">int</type>
+          </tag>
+          <tag line="73" name="return" description="Date format" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+        <argument line="78">
+          <name>$timeStamp</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+    </class>
+  </file>
+  <file path="extensions\twitter.class.php" hash="6310739a84bc573e0014234651cb77d3" package="Default">
+    <docblock line="2">
+      <description>Supernova Framework</description>
+      <long-description></long-description>
+    </docblock>
+    <class final="false" abstract="false" namespace="global" line="12" package="MVC\Controller\Twitter">
+      <extends/>
+      <name>Twitter</name>
+      <full_name>\Twitter</full_name>
+      <docblock line="5">
+        <description>Twitter handler</description>
+        <long-description></long-description>
+        <tag line="5" name="package" description="MVC_Controller_Twitter"/>
+      </docblock>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="19" package="MVC\Controller\Twitter">
+        <name>raise</name>
+        <full_name>raise</full_name>
+        <docblock line="13">
+          <description>Get twitter timeline from username</description>
+          <long-description></long-description>
+          <tag line="13" name="param" description="Username in twitter" type="string" variable="$username">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="13" name="return" description="$rss Array with twitter data or false on error" type="mixed">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="19">
+          <name>$username</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+    </class>
+  </file>
+  <file path="extensions\validator.class.php" hash="0f8603d1fc8b03e7503d61c0f8bf98c8" package="Default">
+    <docblock line="2">
+      <description>Supernova Framework</description>
+      <long-description></long-description>
+    </docblock>
+    <class final="false" abstract="false" namespace="global" line="12" package="MVC\Model\Validator">
+      <extends/>
+      <name>Validator</name>
+      <full_name>\Validator</full_name>
+      <docblock line="5">
+        <description>Validator class</description>
+        <long-description>&lt;p&gt;This class validates the criteria defined in the model.&lt;/p&gt;</long-description>
+        <tag line="5" name="package" description="MVC_Model_Validator"/>
+      </docblock>
+      <property final="false" static="false" visibility="public" line="17" namespace="global" package="Default">
+        <name>$errors</name>
+        <default>array()</default>
+        <docblock line="13">
+          <description>Contains validation errors</description>
+          <long-description></long-description>
+          <tag line="13" name="ignore" description=""/>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="private" line="23" namespace="global" package="Default">
+        <name>$_model</name>
+        <default></default>
+        <docblock line="19">
+          <description>Model name</description>
+          <long-description></long-description>
+          <tag line="19" name="var" description="" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="private" line="29" namespace="global" package="Default">
+        <name>$_pk</name>
+        <default></default>
+        <docblock line="25">
+          <description>Primary key name</description>
+          <long-description></long-description>
+          <tag line="25" name="var" description="" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="private" line="35" namespace="global" package="Default">
+        <name>$_id</name>
+        <default></default>
+        <docblock line="31">
+          <description>ID name</description>
+          <long-description></long-description>
+          <tag line="31" name="var" description="" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="private" line="41" namespace="global" package="Default">
+        <name>$_modelData</name>
+        <default></default>
+        <docblock line="37">
+          <description>Model data</description>
+          <long-description></long-description>
+          <tag line="37" name="var" description="" type="Mixed">
+            <type by_reference="false">Mixed</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="private" line="47" namespace="global" package="Default">
+        <name>$_key</name>
+        <default></default>
+        <docblock line="43">
+          <description>Key name</description>
+          <long-description></long-description>
+          <tag line="43" name="var" description="" type="String">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="55" package="MVC\Model\Validator">
+        <name>validate</name>
+        <full_name>validate</full_name>
+        <docblock line="49">
+          <description>Validates defined criteria</description>
+          <long-description></long-description>
+          <tag line="49" name="param" description="Array containing the validation criteria" type="array" variable="$valArr">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="49" name="param" description="Array with data to validate" type="array" variable="$data">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="49" name="param" description="Model to validate" type="string" variable="$modelName">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="55">
+          <name>$valArr</name>
+          <default>array()</default>
+          <type/>
+        </argument>
+        <argument line="55">
+          <name>$data</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="55">
+          <name>$modelName</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="89" package="MVC\Model\Validator">
+        <name>notempty</name>
+        <full_name>notempty</full_name>
+        <docblock line="84">
+          <description>Validates not empty fields</description>
+          <long-description></long-description>
+          <tag line="84" name="param" description="String to validate" type="string" variable="$var">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="84" name="return" description="$ret&#9;Error" type="mixed">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="89">
+          <name>$var</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="98" package="MVC\Model\Validator">
+        <name>numeric</name>
+        <full_name>numeric</full_name>
+        <docblock line="93">
+          <description>Validates numeric fields</description>
+          <long-description></long-description>
+          <tag line="93" name="param" description="String to validate" type="string" variable="$var">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="93" name="return" description="$ret&#9;Error" type="mixed">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="98">
+          <name>$var</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="108" package="MVC\Model\Validator">
+        <name>length</name>
+        <full_name>length</full_name>
+        <docblock line="102">
+          <description>Validates length for string</description>
+          <long-description></long-description>
+          <tag line="102" name="param" description="String" type="string" variable="$var">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="102" name="param" description="Option array with min and max values" type="array" variable="$options">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="102" name="return" description="Error" type="mixed">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="108">
+          <name>$var</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="108">
+          <name>$options</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="130" package="MVC\Model\Validator">
+        <name>email</name>
+        <full_name>email</full_name>
+        <docblock line="125">
+          <description>Validates email fields</description>
+          <long-description></long-description>
+          <tag line="125" name="param" description="String to validate" type="string" variable="$var">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="125" name="return" description="$ret&#9;Error" type="mixed">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="130">
+          <name>$var</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="140" package="MVC\Model\Validator">
+        <name>file</name>
+        <full_name>file</full_name>
+        <docblock line="134">
+          <description>Validates file extensions</description>
+          <long-description></long-description>
+          <tag line="134" name="param" description="File name" type="string" variable="$var">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="134" name="param" description="Array with file types" type="array" variable="$types">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="134" name="return" description="Error" type="mixed">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="140">
+          <name>$var</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="140">
+          <name>$types</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="157" package="MVC\Model\Validator">
+        <name>alphanumeric</name>
+        <full_name>alphanumeric</full_name>
+        <docblock line="152">
+          <description>Validates alphanumeric fields</description>
+          <long-description></long-description>
+          <tag line="152" name="param" description="string to validate" type="array" variable="$var">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="152" name="return" description="$ret&#9;Error" type="mixed">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="157">
+          <name>$var</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="166" package="MVC\Model\Validator">
+        <name>url</name>
+        <full_name>url</full_name>
+        <docblock line="161">
+          <description>Validates url fields</description>
+          <long-description></long-description>
+          <tag line="161" name="param" description="string to validate" type="array" variable="$var">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="161" name="return" description="$ret&#9;Error" type="mixed">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="166">
+          <name>$var</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="175" package="MVC\Model\Validator">
+        <name>dv</name>
+        <full_name>dv</full_name>
+        <docblock line="171">
+          <description>Validates Verifier Digit for Chilean rut</description>
+          <long-description></long-description>
+          <tag line="171" name="ignore" description=""/>
+        </docblock>
+        <argument line="175">
+          <name>$r</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="185" package="MVC\Model\Validator">
+        <name>rut</name>
+        <full_name>rut</full_name>
+        <docblock line="180">
+          <description>Validates chilean rut fields</description>
+          <long-description></long-description>
+          <tag line="180" name="param" description="string to validate" type="array" variable="$var">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="180" name="return" description="$ret&#9;Error" type="mixed">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="185">
+          <name>$var</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="205" package="MVC\Model\Validator">
+        <name>unique</name>
+        <full_name>unique</full_name>
+        <docblock line="200">
+          <description>Validates Unique</description>
+          <long-description></long-description>
+          <tag line="200" name="param" description="Value to evaluate" type="mixed" variable="$var">
+            <type by_reference="false">mixed</type>
+          </tag>
+          <tag line="200" name="return" description="$ret&#9;Error" type="mixed">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="205">
+          <name>$var</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+    </class>
+  </file>
+  <file path="extensions\view.class.php" hash="145999b6d1ccfac3892b9ed3c550f820" package="Default">
+    <docblock line="2">
+      <description>Supernova Framework</description>
+      <long-description></long-description>
+    </docblock>
+    <include line="147" type="Include" package="Default">
+      <name/>
+    </include>
+    <include line="207" type="Include" package="Default">
+      <name/>
+    </include>
+    <include line="216" type="Include" package="Default">
+      <name/>
+    </include>
+    <include line="218" type="Include" package="Default">
+      <name/>
+    </include>
+    <include line="220" type="Include" package="Default">
+      <name/>
+    </include>
+    <class final="false" abstract="false" namespace="global" line="15" package="MVC\View">
+      <extends/>
+      <name>View</name>
+      <full_name>\View</full_name>
+      <docblock line="5">
+        <description>View handler</description>
+        <long-description>&lt;p&gt;Views are entirely for the presentation part of your application.
+It contains no brains, no logic, no intelligence to the extent permissible
+by the programming language used. A view is merely the appearance
+of your application and nothing else.&lt;/p&gt;</long-description>
+        <tag line="5" name="package" description="MVC_View"/>
+      </docblock>
+      <property final="false" static="false" visibility="protected" line="20" namespace="global" package="Default">
+        <name>$variables</name>
+        <default>array()</default>
+        <docblock line="16">
+          <description>Variables from controller</description>
+          <long-description></long-description>
+          <tag line="16" name="var" description="" type="Array">
+            <type by_reference="false">Array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="protected" line="26" namespace="global" package="Default">
+        <name>$_controller</name>
+        <default></default>
+        <docblock line="22">
+          <description>Controller name</description>
+          <long-description></long-description>
+          <tag line="22" name="var" description="" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="protected" line="32" namespace="global" package="Default">
+        <name>$_action</name>
+        <default></default>
+        <docblock line="28">
+          <description>Action name</description>
+          <long-description></long-description>
+          <tag line="28" name="var" description="" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="protected" line="38" namespace="global" package="Default">
+        <name>$_url</name>
+        <default></default>
+        <docblock line="34">
+          <description>Url</description>
+          <long-description></long-description>
+          <tag line="34" name="var" description="" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="44" namespace="global" package="Default">
+        <name>$_redirect</name>
+        <default></default>
+        <docblock line="40">
+          <description>Redirect Url</description>
+          <long-description></long-description>
+          <tag line="40" name="var" description="" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="50" namespace="global" package="Default">
+        <name>$controller</name>
+        <default></default>
+        <docblock line="46">
+          <description>public Controller name</description>
+          <long-description></long-description>
+          <tag line="46" name="var" description="" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="56" namespace="global" package="Default">
+        <name>$action</name>
+        <default></default>
+        <docblock line="52">
+          <description>public Action name</description>
+          <long-description></long-description>
+          <tag line="52" name="var" description="" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="62" namespace="global" package="Default">
+        <name>$_layout</name>
+        <default></default>
+        <docblock line="58">
+          <description>Layout to show in view</description>
+          <long-description></long-description>
+          <tag line="58" name="var" description="" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="68" namespace="global" package="Default">
+        <name>$_message</name>
+        <default></default>
+        <docblock line="64">
+          <description>Message to show in view</description>
+          <long-description></long-description>
+          <tag line="64" name="var" description="" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="74" namespace="global" package="Default">
+        <name>$html</name>
+        <default></default>
+        <docblock line="70">
+          <description>Html elements</description>
+          <long-description></long-description>
+          <tag line="70" name="var" description="" type="object">
+            <type by_reference="false">object</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="80" namespace="global" package="Default">
+        <name>$errors</name>
+        <default></default>
+        <docblock line="76">
+          <description>Validation errors</description>
+          <long-description></long-description>
+          <tag line="76" name="var" description="" type="string">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="public" line="86" namespace="global" package="Default">
+        <name>$data</name>
+        <default></default>
+        <docblock line="82">
+          <description>Data</description>
+          <long-description></long-description>
+          <tag line="82" name="var" description="" type="mixed">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="95" package="MVC\View">
+        <name>__construct</name>
+        <full_name>__construct</full_name>
+        <docblock line="88">
+          <description>Construct</description>
+          <long-description></long-description>
+          <tag line="88" name="ignore" description=""/>
+          <tag line="88" name="param" description="Controller name" type="string" variable="$controller">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="88" name="param" description="Action name" type="string" variable="$action">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="88" name="param" description="Url" type="string" variable="$url">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="95">
+          <name>$controller</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="95">
+          <name>$action</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="95">
+          <name>$url</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="109" package="MVC\View">
+        <name>set</name>
+        <full_name>set</full_name>
+        <docblock line="103">
+          <description>Set internaly variables to the View</description>
+          <long-description></long-description>
+          <tag line="103" name="ignore" description=""/>
+          <tag line="103" name="param" description="Key name" type="string" variable="$name">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="103" name="param" description="Values" type="mixed" variable="$value">
+            <type by_reference="false">mixed</type>
+          </tag>
+        </docblock>
+        <argument line="109">
+          <name>$name</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="109">
+          <name>$value</name>
+          <default>null</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="117" package="MVC\View">
+        <name>layout</name>
+        <full_name>layout</full_name>
+        <docblock line="113">
+          <description>Layout name</description>
+          <long-description></long-description>
+          <tag line="113" name="ignore" description=""/>
+        </docblock>
+        <argument line="117">
+          <name>$value</name>
+          <default></default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="140" package="MVC\View">
+        <name>element</name>
+        <full_name>element</full_name>
+        <docblock line="134">
+          <description>Calling elements to html</description>
+          <long-description></long-description>
+          <tag line="134" name="param" description="Snipet" type="string" variable="$snipet">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="134" name="param" description="Values for element" type="array" variable="$params">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="140">
+          <name>$snipet</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="140">
+          <name>$params</name>
+          <default>array()</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="156" package="MVC\View">
+        <name>setMessage</name>
+        <full_name>setMessage</full_name>
+        <docblock line="151">
+          <description>Set message in template</description>
+          <long-description></long-description>
+          <tag line="151" name="param" description="Message string" type="string" variable="$msg">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="151" name="param" description="Key name to save in Session variable" type="string" variable="$key">
+            <type by_reference="false">string</type>
+          </tag>
+        </docblock>
+        <argument line="156">
+          <name>$msg</name>
+          <default></default>
+          <type/>
+        </argument>
+        <argument line="156">
+          <name>$key</name>
+          <default>'message'</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="166" package="MVC\View">
+        <name>getMessage</name>
+        <full_name>getMessage</full_name>
+        <docblock line="162">
+          <description>Get message for template</description>
+          <long-description></long-description>
+          <tag line="162" name="param" description="Type" type="String" variable="$key">
+            <type by_reference="false">String</type>
+          </tag>
+        </docblock>
+        <argument line="166">
+          <name>$key</name>
+          <default>'message'</default>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="global" line="183" package="MVC\View">
+        <name>render</name>
+        <full_name>render</full_name>
+        <docblock line="179">
+          <description>Display template</description>
+          <long-description></long-description>
+          <tag line="179" name="ignore" description=""/>
+        </docblock>
+      </method>
+    </class>
+  </file>
+  <package name="Default" full_name="Default"/>
+  <package name="Inflector" full_name="Inflector"/>
+  <package name="MVC" full_name="MVC">
+    <package name="Controller" full_name="MVC\Controller">
+      <package name="Auth" full_name="MVC\Controller\Auth">
+        <package name="Bcrypt" full_name="MVC\Controller\Auth\Bcrypt"/>
+      </package>
+      <package name="Mail" full_name="MVC\Controller\Mail"/>
+      <package name="Sessions" full_name="MVC\Controller\Sessions"/>
+      <package name="Twitter" full_name="MVC\Controller\Twitter"/>
+    </package>
+    <package name="Model" full_name="MVC\Model">
+      <package name="Behavior" full_name="MVC\Model\Behavior"/>
+      <package name="Resize" full_name="MVC\Model\Resize"/>
+      <package name="SQLQuery" full_name="MVC\Model\SQLQuery"/>
+      <package name="Validator" full_name="MVC\Model\Validator"/>
+    </package>
+    <package name="View" full_name="MVC\View">
+      <package name="Arrays" full_name="MVC\View\Arrays"/>
+      <package name="Html" full_name="MVC\View\Html"/>
+      <package name="Time" full_name="MVC\View\Time"/>
+    </package>
+  </package>
+  <package name="Security" full_name="Security"/>
+  <namespace name="global" full_name="global"/>
+  <marker count="0">todo</marker>
+  <marker count="0">fixme</marker>
+  <deprecated count="0"/>
+</project>
