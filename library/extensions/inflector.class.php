@@ -253,4 +253,12 @@ class Inflector {
 		// Output: C4kxS1ksqtw
 	}
 
+	/**
+	 * Get Model name from Controller name
+	 * @param 	String 	$str 	Controller name
+	 * @return  String  Model name
+	 */
+	public static function getModelFromController($controllerName){
+		return ucfirst(Inflector::singularize($controllerName));
+	}
 }
