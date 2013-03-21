@@ -14,7 +14,8 @@
 	 * Config File
 	 * @var String
 	 */
-	$_configFile = ROOT . DS . "config/config.ini";
+	$_configPath = ROOT . DS . "config/";
+	$_configFiles = array('config','database');
 
 	$_debug = array();
 
@@ -22,25 +23,26 @@
 	 * Check if config file is set
 	 * @ignore
 	 */
-	if (file_exists($_configFile)){
-		$_configuration = parse_ini_file($_configFile, true);
-		$_namesconfig = array("Database","Config","Others");
-		foreach ($_namesconfig as $_name){
-			if (array_key_exists($_name , $_configuration)){
-				foreach ($_configuration[$_name] as $_k => $_v){
-					if (!empty($_v) || $_v == 0){
-						/**
-						 * Call all config vars
-						 * @ignore
-						 */
-						define($_k,$_v);
+	foreach ($_configFiles as $eachFile){
+		if (file_exists($_configPath.$eachFile.".ini")){
+			$_namesconfig = array("Database","Config","Others");
+			foreach ($_namesconfig as $_name){
+				if (array_key_exists($_name , $_configuration)){
+					foreach ($_configuration[$_name] as $_k => $_v){
+						if (!empty($_v) || $_v == 0){
+							/**
+							 * Call all config vars
+							 * @ignore
+							 */
+							define($_k,$_v);
+						}
 					}
 				}
 			}
+		}else{
+			warning("Config file ".$eachFile.".ini is missing");
+			die();	
 		}
-	}else{
-		warning("Config file is missing");
-		die();
 	}
 
 	/**
