@@ -342,6 +342,75 @@ class SQLQuery {
 	}
 	
 	/**
+	* Field parser
+	*/
+	function fieldParser($args){
+		$arr = array();
+		if (isset($args['fields']) and !empty($args['fields'])){
+			if ($args['fields'] != array('COUNT(*)')){
+				foreach ($args['fields'] as $fields){
+					$arr[] = $this->parseID($fields);
+				}
+				return explode(',',$arr);
+			}else{
+				return 'COUNT(*)';
+			}
+		}else{
+			return '*';
+		}
+	}
+
+	/** 
+	* Get query for related models
+	* @ignore
+	*/
+	function getQueryMore($model, $arrayQuery, $recursive){
+		if (class_exists($model)){
+			$modelVars = get_class_vars($model);
+			$key = $model.DBS.$modelVars['primaryKey'];
+			$value = $arrayQuery[$key]; //$ar[$modelName][$counter][$key];
+			$args = array('conditions' => array($key => $value));
+			$tmp = $this->getQuery($model, $args, $recursive + 1);
+			if (isset($tmp[$model]) && !empty($tmp[$model])){
+				return $tmp[$model];
+			}
+		}
+		return null;
+	}
+
+	/**
+	* Get query for has too many models
+	* @ignore
+	*/
+	function getQueryHasTooMany($HTMModel,$models){
+		$tmp = array();
+		foreach ($models as $eachTMM){
+			if ($eachTMM!=$modelName){
+				$getIDS = null;
+				$table = Inflector::tableName($HTMModel);
+				$prefixTMM = $this->getPrefix($eachTMM);
+				$modelTMM = get_class_vars($eachTMM);
+				$tableTMM = Inflector::tableName($eachTMM);
+				$actualTMM = $prefixTMM.$modelTMM['primaryKey'];
+				$queryMany = 'SELECT * FROM `'.strtoupper($table).'` '.($this->parseConditions($manyArgs_TOOMANY,$eachTMM));
+				$this->_SQLDebug['Find HasTooMany '.$eachTMM][]=$queryMany;
+				$resultMany = mysql_query($queryMany, $this->_dbHandle) or warning(mysql_error());
+				while ($rowMany = mysql_fetch_array($resultMany,MYSQL_ASSOC)){
+					$getIDS[] = $rowMany;
+				}
+				if (!empty($getIDS) && is_array($getIDS)){
+					foreach ($getIDS as $n => $eachSet){
+						if (key_exists($actualTMM,$eachSet)){
+							$tmp[$n]=$eachSet[$actualTMM];
+						}
+					}
+				}
+			}
+		}
+		return $tmp;
+	}
+
+	/**
 	* Get Query
 	* 
 	* Make a SELECT with the especified parameters
@@ -352,132 +421,73 @@ class SQLQuery {
 	* @return array $ar 		Return results from database
 	*/
 	function getQuery($modelName, $args, $recursive = 1){
+		$ar = array();
+
 		/* Unbind models on the fly */
 		if (isset($this->_controller['unModel']) && in_array($modelName,$this->_controller['unModel'])){ return; }
-		$ar = array();
 	
 		/* Fields parser */
-		if (isset($args['fields']) and !empty($args['fields'])){
-			if ($args['fields'] != array('COUNT(*)')){
-				foreach ($args['fields'] as $fields){
-					$in = $this->parseID($fields).',';
-				}
-				$in = substr($in,0,-1);
-			}else{
-				$in = 'COUNT(*)';
-			}
-		}else{
-			$in = '*';
-		}
+		$in = $this->fieldParser($args);
 	
 		/* Recursive level settings */
 		$recursive_level = (isset($this->_controller['recursive']) && !empty($this->_controller['recursive']) ) ? $this->_controller['recursive'] : 1 ;
+		
 		$model = get_class_vars($modelName);
 		$modelFK = $modelName.DBS.$model['primaryKey'];
 		$table = Inflector::tableName($modelName);
 		$query = 'SELECT '.strtoupper($in).' FROM `'.strtoupper($table).'` '.($this->parseConditions($args,$modelName));
 		$this->_SQLDebug['Find '.$modelName][]=$query;
 		$result = mysql_query($query, $this->_dbHandle) or warning(mysql_error());
-		$x = 0;
+		$counter = 0;
 		while ($row = mysql_fetch_array($result,MYSQL_ASSOC)){
-			$ar[$modelName][$x]=$this->unparseId($row,$modelName);
+			$ar[$modelName][$counter]=$this->unparseId($row,$modelName);
 
 			/* Image behavior */
 			if(is_array($model['thumbs'])){
 				foreach($model['thumbs'] as $imageField => $thumbOptions){
-					$imageData = $ar[$modelName][$x][$imageField];
+					$imageData = $ar[$modelName][$counter][$imageField];
 					if (!empty($imageData)){
-						$ar[$modelName][$x][$imageField] = array();
-						$ar[$modelName][$x][$imageField]['full'] = $imageData;
+						$ar[$modelName][$counter][$imageField] = array();
+						$ar[$modelName][$counter][$imageField]['full'] = $imageData;
 						foreach($thumbOptions as $thumbPrefix => $thumbData){
 							$thumbArr = explode('/',$imageData);
 							$thumbArr[count($thumbArr)-1] = $thumbPrefix."/".$thumbPrefix.".".$thumbArr[count($thumbArr)-1];
 							$thumbURL = implode('/',$thumbArr);
-							$ar[$modelName][$x][$imageField][$thumbPrefix] = $thumbURL;
+							$ar[$modelName][$counter][$imageField][$thumbPrefix] = $thumbURL;
 						}
 					}
 				}
 			}
 			
 			/* Related hasMany */
-			if ($recursive < $recursive_level){
-				$newRecursive = $recursive + 1;
-				if (isset($model['hasMany']) && !empty($model['hasMany'])){
-					foreach ($model['hasMany'] as $belongsModel){
-						if (class_exists($belongsModel)){
-							$newRecursive = $recursive + 1;
-							$bmd = get_class_vars($belongsModel);
-							$belongKey = $belongsModel.DBS.$bmd['primaryKey'];
-							$belongValue = $ar[$modelName][$x][$belongKey];
-							$belongArgs = array('conditions' => array($belongKey => $belongValue));
-							$mewRec = $this->getQuery($belongsModel, $belongArgs, $newRecursive);
-							if (isset($mewRec[$belongsModel]) && !empty($mewRec[$belongsModel])){
-								$ar[$modelName][$x][$belongsModel]=$mewRec[$belongsModel];
-							}else{
-								unset ($ar[$modelName][$belongsModel]);
-							}
-						}
-					}
+			if (isset($model['hasMany']) && !empty($model['hasMany'])){
+				foreach ($model['hasMany'] as $hasManyModel){
+					$arrayQuery = $ar[$modelName][$counter];
+					$ar[$modelName][$counter][$hasManyModel] = $this->getQueryMore($hasManyModel,$arrayQuery, $recursive);
 				}
 			}
 			
-			/* Related hasTooMany */
+			/* Check recursivity */
 			if ($recursive < $recursive_level){
-				if (isset($model['hasTooMany']) && !empty($model['hasTooMany']) && $modelName!=$model['hasTooMany']){
-					$lastModelID_TOOMANY = $ar[$modelName][$x][$model['primaryKey']];
-					$manyArgs_TOOMANY = array('conditions' => array($modelFK => $lastModelID_TOOMANY));
-					foreach ($model['hasTooMany'] as $HTMModel => $models){
-						foreach ($models as $eachTMM){
-							if ($eachTMM!=$modelName){
-								$getIDS = null;
-								$table = Inflector::tableName($HTMModel);
-								$prefixTMM = $this->getPrefix($eachTMM);
-								$modelTMM = get_class_vars($eachTMM);
-								$tableTMM = Inflector::tableName($eachTMM);
-								$actualTMM = $prefixTMM.$modelTMM['primaryKey'];
-								$queryMany = 'SELECT * FROM `'.strtoupper($table).'` '.($this->parseConditions($manyArgs_TOOMANY,$eachTMM));
-								$this->_SQLDebug['Find HasTooMany '.$eachTMM][]=$queryMany;
-								$resultMany = mysql_query($queryMany, $this->_dbHandle) or warning(mysql_error());
-								while ($rowMany = mysql_fetch_array($resultMany,MYSQL_ASSOC)){
-									$getIDS[] = $rowMany;
-								}
-								if (!empty($getIDS) && is_array($getIDS)){
-									foreach ($getIDS as $n => $eachSet){
-										if (key_exists($actualTMM,$eachSet)){
-											$ar[$modelName][$x][$HTMModel][$n]=$eachSet[$actualTMM];
-										}
-									}
-								}
-							}
-						}
+				/* Related BelongsTo */
+				if (isset($model['belongsTo']) && !empty($model['belongsTo'])){
+					foreach ($model['belongsTo'] as $belongsToModel){
+						$arrayQuery = $ar[$modelName][$counter];
+						$ar[$modelName][$counter][$belongsToModel] = $this->getQueryMore($belongsToModel,$arrayQuery, $recursive);
 					}
 				}
-				
-				/* Related belongsTo */
-				if ($recursive < $recursive_level){
-					if (isset($model['belongsTo']) && !empty($model['belongsTo'])){
-						foreach ($model['belongsTo'] as $hasManyModel){
-							if (class_exists($hasManyModel)){
-								$newRecursive = $recursive + 1;
-								$bmd = get_class_vars($hasManyModel);
-								$hasKey = $hasManyModel.DBS.$bmd['primaryKey'];
-								$hasValue = $ar[$modelName][$x][$hasKey];
-								if (!empty($hasValue)){
-									$hasArgs = array('conditions' => array($hasKey => $hasValue));
-									$mewRec = $this->getQuery($hasManyModel, $hasArgs, $newRecursive);
-									if (isset($mewRec[$hasManyModel]) && !empty($mewRec[$hasManyModel])){
-										$ar[$modelName][$x][$hasManyModel] = $mewRec[$hasManyModel];
-									}else{
-										unset ($ar[$hasManyModel]);
-									}
-								}
-							}
-						}
+
+				/* Related hasTooMany */
+				if (isset($model['hasTooMany']) && !empty($model['hasTooMany']) && $modelName!=$model['hasTooMany']){
+					$lastModelID_TOOMANY = $ar[$modelName][$counter][$model['primaryKey']];
+					$manyArgs_TOOMANY = array('conditions' => array($modelFK => $lastModelID_TOOMANY));
+					foreach ($model['hasTooMany'] as $HTMModel => $models){
+						$ar[$modelName][$counter][$HTMModel] = $this->getQueryHasTooMany($HTMModel,$models);
 					}
 				}	
 			}
-			/* counter */
-			$x++;
+			
+			$counter++;
 		}
 		
 		/* Pagination */
