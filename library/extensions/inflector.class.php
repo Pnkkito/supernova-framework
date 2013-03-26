@@ -10,15 +10,14 @@
 class Inflector {
 	
 	/**
-	 * Get Base URL
-	 *
-	 * Get the relative URL where the application is be located in your server
+	 * Get Query from URL
 	 *
 	 * @return string
 	 */
-	public static function getBaseUrl(){
+	public static function getQueryUrl(){
 		$url = $_SERVER['QUERY_STRING'];
-		$url = str_replace('url=','',$url);
+		$pos = strrpos($url, "url=");
+		$url = ($pos === true) ? str_replace('url=','',$url) : '';
 		return $url;
 	}
 
@@ -260,5 +259,13 @@ class Inflector {
 	 */
 	public static function getModelFromController($controllerName){
 		return ucfirst(Inflector::singularize($controllerName));
+	}
+
+	public static function getControllerFromModel($modelName){
+		$modelName[0] = strtolower($modelName[0]);
+		$func = create_function('$c', 'return "_" . strtolower($c[1]);');
+		$strName = preg_replace_callback('/([A-Z])/', $func, $modelName);
+		$name = strtolower($strName);
+		return $name;
 	}
 }
