@@ -10,14 +10,42 @@
  */
 	session_start();
 
+	echo "<pre>";
+print_r($_SERVER);
+print_r(ROOT);
+echo "</pre>";
+
 	/**
 	 * Config File
 	 * @var String
 	 */
 	$_configPath = ROOT . DS . "config/";
 	$_configFiles = array('config','database');
-
 	$_debug = array();
+
+	/**
+	 * Check if Site URL variable is set
+	 * @ignore
+	 */
+	if (!defined('SITE_URL')){
+		/**
+		 * Site URL
+		 * @var String
+		 */
+		define("SITE_URL", "http://".$_SERVER['SERVER_NAME'].(substr($_SERVER['SERVER_NAME'],-1) != "/") ? "/" : "");
+	}
+
+	/**
+	 * Check if DEVELOPMENT_ENVIRONMENT variable is set
+	 * @ignore
+	 */
+	if (!defined('DEVELOPMENT_ENVIRONMENT')){
+		/**
+		 * DEVELOPMENT_ENVIRONMENT
+		 * @var Boolean
+		 */
+		define('DEVELOPMENT_ENVIRONMENT', true);
+	}
 
 	/**
 	 * Check if config file is set
@@ -25,6 +53,7 @@
 	 */
 	foreach ($_configFiles as $eachFile){
 		if (file_exists($_configPath.$eachFile.".ini")){
+			$_configuration = parse_ini_file($_configPath.$eachFile.".ini");
 			$_namesconfig = array("Database","Config","Others");
 			foreach ($_namesconfig as $_name){
 				if (array_key_exists($_name , $_configuration)){
@@ -43,18 +72,6 @@
 			warning("Config file ".$eachFile.".ini is missing");
 			die();	
 		}
-	}
-
-	/**
-	 * Check if Site URL variable is set
-	 * @ignore
-	 */
-	if (!defined('SITE_URL')){
-		/**
-		 * Site URL
-		 * @var String
-		 */
-		define("SITE_URL", (substr($_SERVER['SERVER_NAME'],-1) != "/") ? "http://".$_SERVER['SERVER_NAME']."/" : "http://".$_SERVER['SERVER_NAME']);
 	}
 
 	/**
@@ -78,15 +95,12 @@
 	 * @ignore
 	 */
 	function callHook() {
-		// if(empty($_SERVER['CONTENT_TYPE'])){
-		 	$type = "application/x-www-form-urlencoded";
-			$_SERVER['CONTENT_TYPE'] = $type;
-		// }
+		$_SERVER['CONTENT_TYPE'] = "application/x-www-form-urlencoded";
 		Security::_removeMagicQuotes();
 		Security::_unregisterGlobals();
 		Security::_cleanAllVars();
 		global $url;
-		$url = Inflector::getBaseUrl();
+		$url = Inflector::getQueryUrl();
 		$urlArray = array();
 		$urlArray = explode("/",$url);
 
@@ -133,11 +147,12 @@
 		$root_path = ROOT . DS;
 		$app_path=$root_path.'application' . DS;
 		$library_path=$root_path.'library' . DS . 'extensions' . DS;
-		$str = $className;
-		$str[0] = strtolower($str[0]);
-		$func = create_function('$c', 'return "_" . strtolower($c[1]);');
-		$strName = preg_replace_callback('/([A-Z])/', $func, $str);
-		$name = strtolower($strName);
+		// $str = $className;
+		$name = Inflector::getControllerFromModel($className);
+		// $str[0] = strtolower($str[0]);
+		// $func = create_function('$c', 'return "_" . strtolower($c[1]);');
+		// $strName = preg_replace_callback('/([A-Z])/', $func, $str);
+		// $name = strtolower($strName);
 		$file = $library_path.$name.'.class.php';
 		$controllerFile = $app_path. 'controllers' . DS . $name . '.php';
 		$modelFile = $app_path. 'models' . DS . $name . '.php';
@@ -163,9 +178,9 @@
 	 * Print style on screen for debug
 	 * @ignore
 	 */
-	function style(){
-		// Sorry mom :(
-		$style="<style>
+	function style(){ // Sorry mom :(
+		$style = <<<EOL
+		<style>
 			.debug{
 				position: relative;
 				padding: 15px;
@@ -195,8 +210,9 @@
 					color-stop(1, rgb(227,222,157))
 				);
 			}
-			</style>
-		    ";
+		</style>
+EOL;
+
 		return $style;
 	}
 
@@ -221,6 +237,7 @@
 			}else{
 				$object = "View";
 			}
+			// OLD STYLE
 			// echo style();
 			// echo "<pre class='debug'><strong>DEBUG:</strong> In <strong>$object</strong> -> Line <strong>$line</strong>\n(file <strong>$file</strong>)";
 			// echo "<pre class='debug' style='font-size: 80%'>";
@@ -315,7 +332,7 @@
 	 * @ignore
 	 */
 	function warning($str){
-		if (DEVELOPMENT_ENVIRONMENT){
+		if (DEVELOPMENT_ENVIRONMENT == true){
 			ob_start();
 			echo style();
 			echo "<pre class='debug' style='background: #FEE !important; font-size: 12px;'>";
@@ -386,4 +403,3 @@
 
 	callHook();
 
-?>
