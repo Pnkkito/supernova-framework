@@ -10,11 +10,6 @@
  */
 	session_start();
 
-	echo "<pre>";
-print_r($_SERVER);
-print_r(ROOT);
-echo "</pre>";
-
 	/**
 	 * Config File
 	 * @var String
