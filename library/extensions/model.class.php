@@ -33,9 +33,10 @@ class Model extends SQLQuery {
 	 * @ignore
 	 */
 	function __construct(){
-		$this->connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
-		$this->_model = get_class($this);
-		$this->_table = Inflector::tableName($this->_model);
+		if ($this->connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME)){
+			$this->_model = get_class($this);
+			$this->_table = Inflector::tableName($this->_model);
+		}
 	}
 	
 	/**

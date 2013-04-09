@@ -62,20 +62,17 @@ class SQLQuery {
 	 * @return	boolean			
 	 */
 	function connect($address, $account, $pwd, $name) {
-		$this->_dbHandle = mysql_connect($address, $account, $pwd) or warning("Can't connect to the database");
+		$this->_dbHandle = mysql_connect($address, $account, $pwd);
 		if ($this->_dbHandle != 0) {
 			if (mysql_select_db($name, $this->_dbHandle)) {
-				return 1;
+				return true;
+			}else{
+				warning('Database name incorrect, please check your database.ini file');
 			}
-			else {
-				warning('Database name incorrect, check the configuration file');
-				return 0;
-			}
+		}else{
+			warning('Database connection problems, please check your database.ini file');
 		}
-		else {
-			warning('Connection problems to the Database, check the configuration file');
-			return 0;
-		}
+		return false;
 	}
  
 	/**
