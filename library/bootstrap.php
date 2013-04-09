@@ -10,12 +10,6 @@
  */
 	session_start();
 
-	/**
-	 * Config File
-	 * @var String
-	 */
-	$_configPath = ROOT . DS . "config/";
-	$_configFiles = array('config','database');
 	$_debug = array();
 
 	/**
@@ -46,13 +40,19 @@
 	 * Check if config file is set
 	 * @ignore
 	 */
-	foreach ($_configFiles as $eachFile){
-		if (file_exists($_configPath.$eachFile.".ini")){
-			$_configuration = parse_ini_file($_configPath.$eachFile.".ini");
-			$_namesconfig = array("Database","Config","Others");
-			foreach ($_namesconfig as $_name){
-				if (array_key_exists($_name , $_configuration)){
-					foreach ($_configuration[$_name] as $_k => $_v){
+	function parseConfig(){
+		/**
+		 * Config File
+		 * @var String
+		 */
+		$_configPath = ROOT . DS . "config" . DS;
+		$_configFiles = array('config','database');
+		foreach ($_configFiles as $eachFile){
+			$filename = $_configPath.$eachFile.".ini";
+			if (file_exists($filename)){
+				$_configuration = parse_ini_file($filename, true);
+				foreach ($_configuration as $eachConfig => $values){
+					foreach ($values as $_k => $_v){
 						if (!empty($_v) || $_v == 0){
 							/**
 							 * Call all config vars
@@ -61,11 +61,11 @@
 							define($_k,$_v);
 						}
 					}
-				}
+				} 	
+			}else{
+				warning("Config file ".$eachFile.".ini is missing");
+				die();	
 			}
-		}else{
-			warning("Config file ".$eachFile.".ini is missing");
-			die();	
 		}
 	}
 
@@ -101,7 +101,7 @@
 
 		$routes = explode(";",ROUTES);
 		$routeSearch = array_search($urlArray[0],$routes);
-		
+
 		if($routeSearch !== false){
 			$controller = empty($urlArray[1]) ? DEFAULT_CONTROLLER : $urlArray[1];
 			array_shift($urlArray);
@@ -142,12 +142,10 @@
 		$root_path = ROOT . DS;
 		$app_path=$root_path.'application' . DS;
 		$library_path=$root_path.'library' . DS . 'extensions' . DS;
-		// $str = $className;
-		$name = Inflector::getControllerFromModel($className);
-		// $str[0] = strtolower($str[0]);
-		// $func = create_function('$c', 'return "_" . strtolower($c[1]);');
-		// $strName = preg_replace_callback('/([A-Z])/', $func, $str);
-		// $name = strtolower($strName);
+		$className[0] = strtolower($className[0]);
+		$func = create_function('$c', 'return "_" . strtolower($c[1]);');
+		$strName = preg_replace_callback('/([A-Z])/', $func, $className);
+		$name = strtolower($strName);
 		$file = $library_path.$name.'.class.php';
 		$controllerFile = $app_path. 'controllers' . DS . $name . '.php';
 		$modelFile = $app_path. 'models' . DS . $name . '.php';
@@ -168,48 +166,6 @@
 	 * @ignore
 	 */
 	spl_autoload_register('supernova_autoloader');
-
-	/**
-	 * Print style on screen for debug
-	 * @ignore
-	 */
-	function style(){ // Sorry mom :(
-		$style = <<<EOL
-		<style>
-			.debug{
-				position: relative;
-				padding: 15px;
-				margin: 15px;
-				border: 1px solid black;
-				color: black;
-				font-size: 14px;
-				font-family: monospace;
-				overflow: auto;
-				
-				text-align: left;
-				line-height: 14px;
-				border-radius: 10px;
-				moz-border-radiuz: 10px;
-				
-				background-image: linear-gradient(bottom, rgb(251,255,199) 90%, rgb(227,222,157) 100%);
-				background-image: -o-linear-gradient(bottom, rgb(251,255,199) 90%, rgb(227,222,157) 100%);
-				background-image: -moz-linear-gradient(bottom, rgb(251,255,199) 90%, rgb(227,222,157) 100%);
-				background-image: -webkit-linear-gradient(bottom, rgb(251,255,199) 90%, rgb(227,222,157) 100%);
-				background-image: -ms-linear-gradient(bottom, rgb(251,255,199) 90%, rgb(227,222,157) 100%);
-				
-				background-image: -webkit-gradient(
-					linear,
-					left bottom,
-					left top,
-					color-stop(0.9, rgb(251,255,199)),
-					color-stop(1, rgb(227,222,157))
-				);
-			}
-		</style>
-EOL;
-
-		return $style;
-	}
 
 	/**
 	 * Debug
@@ -233,58 +189,32 @@ EOL;
 				$object = "View";
 			}
 			// OLD STYLE
-			// echo style();
-			// echo "<pre class='debug'><strong>DEBUG:</strong> In <strong>$object</strong> -> Line <strong>$line</strong>\n(file <strong>$file</strong>)";
-			// echo "<pre class='debug' style='font-size: 80%'>";
-			// print_r($str);
-			// echo "</pre></pre>";
-			$GLOBALS['_debug'][$object][$file][$line] = print_r($str,true); 
+			ob_start();
+			echo "<div class='alert' style='margin: 0;'>";
+			echo "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
+			echo "<h4>Debug</h4>";
+			echo "<p>In <strong>$object</strong> -> Line <strong>$line</strong><br/>(file <strong>$file</strong>)</p>";
+			echo "<pre>";
+			print_r($str);
+			echo "</pre></div>";
+			ob_flush();
 		}
 	}
 
-	register_shutdown_function('debugAll');
-
-	function debugAll(){
-		if (!empty($GLOBALS['_debug'])){
-			echo '<div class="navbar navbar-inverse navbar-fixed-bottom">';
-				echo '<div class="navbar-inner">';
-					echo '<a class="brand" href="#">&nbsp;&nbsp;&nbsp;Debug</a>';
-					echo '<script>$(".brand").click(function(){
-						$(".fakecontainer.active").slideUp().removeClass("active");
-						$(".nav a.active").removeClass("active");
-					});</script>';
-					echo '<ul class="nav">';
-					foreach ($GLOBALS['_debug'] as $object => $debugfile){
-						foreach ($debugfile as $file => $lines){
-							foreach ($lines as $line => $debugstr){
-								echo '<li><a href="#" rel="'.$object.$line.'" class="btn btn-inverse">'.$object.' line:'.$line.'</a></li>';
-								echo "<script>
-									$('.nav a[rel=\"$object$line\"]').click(function(){
-										$('.fakecontainer.active').slideUp().removeClass('active');
-										$('.nav a.active').removeClass('active');
-										$('div[rel=\"$object$line\"]').slideToggle();
-										$('div[rel=\"$object$line\"]').toggleClass('active');
-										$(this).toggleClass('active');
-									});
-								</script>";
-							}
-						}
-					}
-					echo '</ul>';
-				echo '</div>';
-				foreach ($GLOBALS['_debug'] as $object => $debugfile){
-					foreach ($debugfile as $file => $lines){
-						foreach ($lines as $line => $debugstr){
-							echo "<div class='fakecontainer' rel='".$object.$line."'>";
-								echo "<p style='color: white;'>FILE: $file --- LINE: $line</p>";
-								echo "<div class='well well-small' style='height: 200px; overflow: auto;'><pre style='font-size: 80%'>";
-								print_r($debugstr);
-								echo "</pre></div>";
-							echo "</div>";
-						}
-					}
-				}
-			echo '</div>';
+	/**
+	 * Warning box
+	 * @ignore
+	 */
+	function warning($str){
+		if (DEVELOPMENT_ENVIRONMENT == true){
+			ob_start();
+			echo "<div class='alert alert-error' style='margin: 0;'>";
+			echo "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
+			echo "<h4>Warning</h4>";
+			echo "<p>";
+			print_r($str);
+			echo "</p></div>";
+			ob_flush();
 		}
 	}
 
@@ -319,21 +249,6 @@ EOL;
 				$cabeceras = "Content-type: text/html\r\n";
 				mail($email,$asunto,$message,$cabeceras);
 			}
-		}
-	}
-
-	/**
-	 * Warning box
-	 * @ignore
-	 */
-	function warning($str){
-		if (DEVELOPMENT_ENVIRONMENT == true){
-			ob_start();
-			echo style();
-			echo "<pre class='debug' style='background: #FEE !important; font-size: 12px;'>";
-			print_r($str);
-			echo "</pre>";
-			ob_flush();
 		}
 	}
 
@@ -381,12 +296,13 @@ EOL;
 		$err .= "</error>\n\n";
 		
 		if (($numerr != E_NOTICE) && (trim($menserr) != "mysql_connect():")){
-			echo style();
-			echo "<pre class='debug'>";
-			echo "<strong>$tipoerror[$numerr]</strong> :: <strong>$menserr</strong>\nArchivo: <strong>$nombrearchivo</strong> -> Linea <strong>$numlinea</strong>\n";
-			echo "</pre>";
+			echo "<div class='alert' style='margin: 0;'>";
+			echo "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
+			echo "<h4>$tipoerror[$numerr]</h4>";
+			echo "<p><strong>$menserr</strong><br/>Archivo: <strong>$nombrearchivo</strong> -> Linea <strong>$numlinea</strong></p>";
+			echo "</div>";
 			// guardar al registro de errores, y enviarme un e-mail si hay un error crítico de usuario
-			error_log($err, 3, ROOT . DS . "logs" .DS . "errors.xml");
+			@error_log($err, 3, ROOT . DS . "logs" .DS . "errors.xml");
 		}
 		
 		if (defined(DEVELOPMENT_EMAIL)){
@@ -396,5 +312,6 @@ EOL;
 		}
 	}
 
+	parseConfig();
 	callHook();
 
