@@ -121,7 +121,7 @@ class Html {
 							$extrasParsed.=$k."='".$v."'";
 						}
 					}
-					$data = "<input type='submit' value='$name' $extrasParsed />";
+					$data = "<div><input type='submit' class='btn btn-large' value='$name' $extrasParsed /></div>";
 					break;
 			case 'end':	$data = "</form>";
 					$this->_formController = null;
@@ -140,7 +140,7 @@ class Html {
 	*/
 	function link($text,$path, $extras = array()) {
 		$path = (is_array($path)) ? Inflector::array_to_path($path) : $path;
-		$path = ( strpos($path,'http://') !== false) ? $path : '/'.Inflector::getBasePath().$path;
+		// $path = ( strpos($path,'http://') !== false) ? $path : SITE_URL.Inflector::getBasePath().$path;
 		$ext = '';
 		$confirmMessage = null;
 		if(!empty($extras)){
@@ -220,7 +220,7 @@ class Html {
 
 		
 		
-		$data ="<div class='grid_16' style='clear:both; float:left;'>";
+		$data ="<div>";
 		$ext='';
 		
 		$errorClass = '';
@@ -314,7 +314,7 @@ class Html {
 							$value[$k] = $this->data[$model][$n];
 						}
 						$idStr[] = "#".str_replace('.', '', $n);
-						$data .="<div class='grid_16' style='clear:both; float:left;'>";
+						$data .="<div>";
 						$data .= "<label for='$n'>".$title[$k]."</label>";
 						$data .= "<input type='datetime' name='data[".$modelArr[$k]."][".$nameArr[$k]."]' value='".$value[$k]."' id='".str_replace('.', '', $n)."' $ext/>";
 						if($this->errors[$n]){
@@ -516,7 +516,7 @@ class Html {
 		$fielded = ($options['fields']) ? true : false;
 		$type = ($options['type']) ? $options['type'] : false;
 		$actions = ($options['actions']) ? $options['actions'] : false;
-		$class = ($option['class']) ? $options['class'] : 'listTable';  
+		$class = ($option['class']) ? $options['class'] : 'table';  
 		if (!empty($data)){
 			$modelName = array_keys($data);
 			$modelName = $modelName[0];
@@ -645,8 +645,9 @@ class Html {
 					if ($actions){
 						$out.="<td>";
 						if (!is_array($actions)){
-							$out.=$this->link('Edit', array('controller' => $controller, 'action' => 'edit', $route => true, $level[$modelFK]));
-							$out.=$this->link('Delete', array('controller' => $controller, 'action' => 'delete', $route => true, $level[$modelFK]));	
+							$out.=$this->link('<i class="icon-edit"></i> Edit', array('controller' => $controller, 'action' => 'edit', $route => true, $level[$modelFK]),array('class' => 'btn btn-mini'));
+							$out.="&nbsp;";
+							$out.=$this->link('<i class="icon-remove"></i> Delete', array('controller' => $controller, 'action' => 'delete', $route => true, $level[$modelFK]),array('class' => 'btn btn-mini'));	
 						}else{
 							foreach ($actions as $name => $action){
 								$out.=$this->link($name, array('controller' => $controller, 'action' => $action, $route => true, $level[$modelFK]));
