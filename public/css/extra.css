@@ -2,7 +2,7 @@
   font-family: 'Ubuntu Condensed';
   font-style: normal;
   font-weight: 400;
-  src: local('Ubuntu Condensed'), local('UbuntuCondensed-Regular'), url(../img/DBCt-NXN57MTAFjitYxdrFzqCfRpIA3W6ypxnPISCPA.woff) format('woff');
+  src: local('Ubuntu Condensed'), local('UbuntuCondensed-Regular'), url(../img/fonts/ubuntu-condensed.woff) format('woff');
 }
 
 .header{
@@ -43,6 +43,12 @@ body{
 	background-repeat: repeat-y;
 	font-family: 'Ubuntu Condensed', sans-serif;
 	/*letter-spacing: 1px;*/
+}
+
+input, select{
+	font-family: 'Ubuntu Condensed', sans-serif;
+	padding: 10px;
+	height: 46px;
 }
 
 .fullcontent{
