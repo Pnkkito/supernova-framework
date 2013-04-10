@@ -62,12 +62,6 @@ class View {
 	public $_layout;
 	
 	/**
-	 * Message to show in view
-	 * @var string
-	 */
-	public $_message;
-	
-	/**
 	 * Html elements
 	 * @var object
 	 */
@@ -147,9 +141,6 @@ class View {
 		$file = ROOT . DS . 'application' . DS . 'views' . DS . 'elements' . DS .  $snipet.'.php';
 		if(file_exists($file)){
 			extract($params);
-			// foreach ($params as $name => $eachparams){
-			// 	$$name = $eachparams;
-			// }
 			include($file);
 		}
 	}
@@ -161,8 +152,7 @@ class View {
 	 */
 	function setMessage($msg, $key = 'message'){
 		$Session = new Session;
-		$this->_message = $msg;
-		$Session->create($key, $this->_message);
+		$Session->create($key, $msg);
 	}
 	
 	/**
@@ -186,17 +176,29 @@ class View {
 	 * Display template
 	 * @ignore
 	 */
-	function render(){
+	function render($view = null, $type = "view", $filename = null){
+		$this->arrays = new Arrays;
+		$this->html = new Html;
+
+		if ($type == "file"){
+			$viewFile = ROOT . DS . 'application' . DS . 'views' . DS . $this->_controller . DS . ((is_null($view)) ? $this->_action : $view) . '.php';
+			if(file_exists($viewFile)){
+				extract($this->variables);
+				ob_start();
+				include($viewFile);
+				$content = ob_get_contents();
+				ob_end_clean();
+				file_put_contents($filename, $content);
+			}
+			return;
+		}
+
 		if (!empty($this->_redirect)){
 			if(empty($this->errors)){
-				ob_flush();
 				header('Location:'.$this->_redirect);
 			}
 		}
 
-		$this->arrays = new Arrays;
-
-		$this->html = new Html;
 		$this->html->controller = $this->controller;
 		$this->html->errors = $this->errors;
 		$this->html->data= $this->data;
@@ -204,14 +206,13 @@ class View {
 		$this->html->params = $this->params;
 		extract($this->variables);
 		
-		ob_flush();
 		if(ini_get("zlib.output_compression") == 'On'){
 			ob_start("ob_gzhandler");
 		}else{
 			ob_start();	
 		}
-		if(file_exists(ROOT . DS . 'application' . DS . 'views' . DS . $this->_controller . DS . $this->_action . '.php')){
-			include(ROOT . DS . 'application' . DS . 'views' . DS . $this->_controller . DS . $this->_action . '.php');
+		if(file_exists(ROOT . DS . 'application' . DS . 'views' . DS . $this->_controller . DS . ((is_null($view)) ? $this->_action : $view) . '.php')){
+			include(ROOT . DS . 'application' . DS . 'views' . DS . $this->_controller . DS . ((is_null($view)) ? $this->_action : $view) . '.php');
 		} else {
 			warning ("View <strong>".$this->_action."</strong> does not exist for controller <strong>".$this->_controller."</strong>");
 			die();
