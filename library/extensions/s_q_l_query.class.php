@@ -53,26 +53,28 @@ class SQLQuery {
 	 */
 	protected $_SQLDebug = array();
 
+	function __construct(){
+		$this->connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
+	}
+
 	/**
 	 * Connects to Database
 	 * @param	string	$address	Host address
-	 * @param	string	$account	Username
-	 * @param	string	$pwd		Password
-	 * @param	string	$name		Database name
+	 * @param	string	$username	Username
+	 * @param	string	$password	Password
+	 * @param	string	$database	Database name
 	 * @return	boolean			
 	 */
-	function connect($address, $account, $pwd, $name) {
-		$this->_dbHandle = mysql_connect($address, $account, $pwd);
-		if ($this->_dbHandle != 0) {
-			if (mysql_select_db($name, $this->_dbHandle)) {
-				return true;
-			}else{
-				warning('Database name incorrect, please check your database.ini file');
-			}
-		}else{
-			warning('Database connection problems, please check your database.ini file');
+	function connect($address, $username, $password, $database) {
+		try {
+			$dbn = DB_DRIVER.":host=".$address.";dbname=".$database;
+			$this->_dbHandle = new PDO($dbn , $username, $password);
+			$this->_dbHandle->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE,PDO::FETCH_ASSOC);
+		} catch (PDOException $e) {
+		    warning('Connection failed: ' . $e->getMessage());
+		    return false;
 		}
-		return false;
+		return true;
 	}
  
 	/**
@@ -180,12 +182,9 @@ class SQLQuery {
 	function findfirst($args = null){
 		$args['limit'] = 1;
 		$query = 'SELECT * FROM '.$this->_table.' '.$this->parseConditions($args);
-		$result = mysql_query($query, $this->_dbHandle);
 		$ar = array();
-		if ($result){
-			while ($row = mysql_fetch_array($result,MYSQL_ASSOC)){
-				$ar[$this->_model]=$this->unparseId($row);
-			}
+		foreach ($this->_dbHandle->query($query) as $row){
+			$ar[$this->_model]=$this->unparseId($row);
 		}
 		return $ar;
 	}
@@ -218,16 +217,12 @@ class SQLQuery {
 		
 		$query = 'SELECT '.$in.' FROM '.$this->_table.' '.$this->parseConditions($args);
 		$this->_SQLDebug['Find list '.$modelName][]=$query;
-		$result = mysql_query($query, $this->_dbHandle);
 		$ar = array();
-		if (!empty($result)){
-			while ($row = mysql_fetch_array($result,MYSQL_ASSOC)){
-				if (isset($args['fields']) and !empty($args['fields'])){
-					$ar[$row[$this->parseId($args['fields'][1])]] = $row[$this->parseId($args['fields'][0])];
-				}else{
-					$ar[$row[$pk]] = $row[$df];	
-				}
-				
+		foreach ($this->_dbHandle->query($query) as $row){
+			if (isset($args['fields']) and !empty($args['fields'])){
+				$ar[$row[$this->parseId($args['fields'][1])]] = $row[$this->parseId($args['fields'][0])];
+			}else{
+				$ar[$row[$pk]] = $row[$df];	
 			}
 		}
 		return $ar;
@@ -248,13 +243,10 @@ class SQLQuery {
 			$orderStr = ($order)?'ORDER BY '.Security::sanitize($order).' DESC':'';
 			$limitStr =($limit!=0)?" LIMIT 0, ".$limit:'';
 			$query = 'SELECT * FROM '.$this->_table.' WHERE '.$this->parseId($column).' LIKE \'%'.Security::sanitize($needle).'%\' '.$orderStr.$limitStr;
-			$result = mysql_query($query, $this->_dbHandle);
 			$ar = array();
-			if (!empty($result)){
-				while ($row = mysql_fetch_array($result,MYSQL_ASSOC)){
-					$ar[$this->_model][]=$this->unparseId($row);
-				}	
-			}
+			foreach ($this->_dbHandle->query($query) as $row){
+				$ar[$this->_model][]=$this->unparseId($row);
+			}	
 			/* Pagination */
 			$totalPages = $this->totalPages($query);
 			if ($totalPages > 1){
@@ -383,7 +375,6 @@ class SQLQuery {
 		$tmp = array();
 		foreach ($models as $eachTMM){
 			if ($eachTMM!=$modelName){
-				$getIDS = null;
 				$table = Inflector::tableName($HTMModel);
 				$prefixTMM = $this->getPrefix($eachTMM);
 				$modelTMM = get_class_vars($eachTMM);
@@ -391,12 +382,8 @@ class SQLQuery {
 				$actualTMM = $prefixTMM.$modelTMM['primaryKey'];
 				$queryMany = 'SELECT * FROM `'.strtoupper($table).'` '.($this->parseConditions($manyArgs_TOOMANY,$eachTMM));
 				$this->_SQLDebug['Find HasTooMany '.$eachTMM][]=$queryMany;
-				$resultMany = mysql_query($queryMany, $this->_dbHandle) or warning(mysql_error());
-				while ($rowMany = mysql_fetch_array($resultMany,MYSQL_ASSOC)){
-					$getIDS[] = $rowMany;
-				}
-				if (!empty($getIDS) && is_array($getIDS)){
-					foreach ($getIDS as $n => $eachSet){
+				foreach ($this->_dbHandle->query($queryMany) as $row){
+					foreach ($row as $n => $eachSet){
 						if (key_exists($actualTMM,$eachSet)){
 							$tmp[$n]=$eachSet[$actualTMM];
 						}
@@ -434,11 +421,9 @@ class SQLQuery {
 		$table = Inflector::tableName($modelName);
 		$query = 'SELECT '.strtoupper($in).' FROM `'.strtoupper($table).'` '.($this->parseConditions($args,$modelName));
 		$this->_SQLDebug['Find '.$modelName][]=$query;
-		$result = mysql_query($query, $this->_dbHandle) or warning(mysql_error());
 		$counter = 0;
-		while ($row = mysql_fetch_array($result,MYSQL_ASSOC)){
+		foreach ($this->_dbHandle->query($query) as $row){
 			$ar[$modelName][$counter]=$this->unparseId($row,$modelName);
-
 			/* Image behavior */
 			if(is_array($model['thumbs'])){
 				foreach($model['thumbs'] as $imageField => $thumbOptions){
@@ -652,16 +637,9 @@ class SQLQuery {
 	*/
 	function custom($query){
 		Security::sanitize($query);
-		$result = mysql_query($query, $this->_dbHandle);
-		$errors = mysql_error();
-		if ($errors){
-			warning ($errors);
-		}
 		$ar = array();
-		if (!empty($result)){
-			while ($row = mysql_fetch_array($result,MYSQL_ASSOC)){
-				$ar[]=$row;
-			}
+		foreach ($this->_dbHandle->query($query) as $row){
+			$ar[]=$row;
 		}
 		return $ar;
 	}
@@ -697,13 +675,11 @@ class SQLQuery {
 			}
 			$query = 'DELETE FROM '.$table.' WHERE `'.$idKey.'`=\''.Security::sanitize($id).'\'';
 			$this->_SQLDebug['Delete'][]=$query;
-			$this->DebugSQL();
-			$result = mysql_query($query, $this->_dbHandle) or warning(mysql_error());
-
-			if ($result == 0) {
-				return false;
+			$this->_dbHandle->exec($query);
+			$errors = $this->_dbHandle->errorInfo();
+			if ($errors[1] == 0){
+				return true;
 			}
-			return true;
 		}
 		return false;
 	}
@@ -820,8 +796,12 @@ class SQLQuery {
 							$query = $this->insertQuery($data,$eachModel);
 							if ($query){
 								$this->_SQLDebug['Save Insert'][]=$query;
-								$result = mysql_query($query, $this->_dbHandle) or warning(mysql_error());
-								$this->_lastInsertedId[$eachModel] = $results_ids[$eachModel][] = mysql_insert_id($this->_dbHandle);
+								$this->_dbHandle->exec($query);
+								$errors = $this->_dbHandle->errorInfo();
+								if ($errors[1] != 0){
+									return false;
+								}
+								$this->_lastInsertedId[$eachModel] = $results_ids[$eachModel][] = $this->_dbHandle->lastInsertId();
 							}
 						}
 					}else{
@@ -830,7 +810,11 @@ class SQLQuery {
 							$query = $this->updateQuery($data,$eachModel,$id);
 							if ($query){
 								$this->_SQLDebug['Save Update'][]=$query;
-								$result = mysql_query($query, $this->_dbHandle) or warning(mysql_error());
+								$this->_dbHandle->exec($query);
+								$errors = $this->_dbHandle->errorInfo();
+								if ($errors[1] != 0){
+									return false;
+								}
 								$results_ids[$eachModel][] = $id;
 							}
 						}
@@ -869,7 +853,11 @@ class SQLQuery {
 											$uv2 = $eachPrimaryValue.", ".$each_id;
 											$query = 'INSERT INTO '.$table.' ('.$uc2.') VALUES ('.$uv2.')';
 											$this->_SQLDebug['Save Insert HasTooMany'][]=$query;
-											$result = mysql_query($query, $this->_dbHandle) or warning(mysql_error());	
+											$this->_dbHandle->exec($query);
+											$errors = $this->_dbHandle->errorInfo();
+											if ($errors[1] != 0){
+												return false;
+											}	
 										}
 									}
 								}
@@ -879,10 +867,6 @@ class SQLQuery {
 				}
 			}
 		}else{
-			warning ("No data");
-		}
-
-		if ($result == 0){
 			return false;
 		}
 		return true;
@@ -909,8 +893,7 @@ class SQLQuery {
 		if (key_exists('pageItems', $this->_controller)){
 			if ($query){
 				$realQuery = explode('LIMIT', $query);
-				$result = mysql_query($realQuery[0], $this->_dbHandle);
-				$count = mysql_num_rows($result);
+				$count = $this->_dbHandle->exec($realQuery[0]);
 				$totalPages = ceil($count/$this->_controller['pageItems']);
 				return $totalPages;
 			}
@@ -924,7 +907,7 @@ class SQLQuery {
 	 * @param string $table Table name
 	 * @return boolean
 	 */
-	public static function checkField($field,$table){
+	function checkField($field,$table){
 		$query = "SHOW columns from `".$table."` where field='".$field."'";
 		$result = mysql_query($query);
 		if ($result){
@@ -943,16 +926,13 @@ class SQLQuery {
 	 * Get tables from database
 	 * @return mixed 	Returns array with tables or false in error
 	 */
-	public static function getTables(){
-		$result = mysql_query('SHOW TABLES FROM '.DB_NAME);
-		if ($result){
-			while ($row = mysql_fetch_row($result)) {
-				$tables[strtoupper($row[0])]=Inflector::under_to_camel(Inflector::singularize(strtolower(substr($row[0],5))));
-			}
-			return $tables;
-		}else{
-			return false;
+	function getTables(){
+		$query = 'SHOW TABLES FROM '.DB_NAME;
+		$tables = array();
+		foreach ($this->_dbHandle->query($query) as $row){
+			$tables[$row['Tables_in_'.DB_NAME]]=Inflector::under_to_camel(Inflector::singularize(strtolower(substr($row['Tables_in_'.DB_NAME],5))));
 		}
+		return $tables;
 	}
 
 	/**
@@ -960,9 +940,10 @@ class SQLQuery {
 	 * @param string $table Table name
 	 * @return array $fields Fields from table
 	 */
-	public static function getFields($table){
-		$result = mysql_query('SHOW FIELDS FROM '.$table);
-		while ($row = mysql_fetch_array($result)) { 
+	function getFields($table){
+		$query = 'SHOW FIELDS FROM '.$table;
+		$fields = array();
+		foreach ($this->_dbHandle->query($query) as $row){
 			$fields[$row['Field']] = $row['Type'];
 		}
 		return $fields;
