@@ -36,6 +36,8 @@ class Model extends SQLQuery {
 		if ($this->connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME)){
 			$this->_model = get_class($this);
 			$this->_table = Inflector::tableName($this->_model);
+		}else{
+			warning('Database connection problems, please check your database.ini file');
 		}
 	}
 	
