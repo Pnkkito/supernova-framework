@@ -17,7 +17,7 @@ class Inflector {
 	public static function getQueryUrl(){
 		$url = $_SERVER['QUERY_STRING'];
 		$pos = strrpos($url, "url=");
-		$url = ($pos === true) ? str_replace('url=','',$url) : '';
+		$url = ($pos !== false) ? str_replace('url=','',$url) : '';
 		return $url;
 	}
 
@@ -136,22 +136,23 @@ class Inflector {
 				}
 			}	
 		}
-		
+
 		if (is_array($path)){
 			$x=0;
 			foreach ($path as $k => $v){
-				if ((string)$k != $route){
+				if ((string)$k != (string)$route){
 					switch ((string)$k){
 						case 'language' : $newpath[0] = $v; break;
 						case 'plugin': $newpath[2] = $v; break;
 						case 'controller': $newpath[3] = $v; break;
 						case 'action': $newpath[4] = $v; break;
-						default: $newpath[5+$x]= $v ; break;
+						case 'params' : break;
+						default: $newpath[$x+5]= $v ; break;
 					}
 				}
 				$x++;
 			}
-			if (!empty($route)){ $newpath[1] = $route; }
+			if (!empty($route) || $route != false){ $newpath[1] = $route; }
 
 			ksort($newpath);
 			$newpath2 = "";
@@ -162,7 +163,7 @@ class Inflector {
 		}else{
 			$path = str_replace(' ','-',$path);	
 		}
-		return (SITE_URL.Inflector::getBasePath().$path);
+		return SITE_URL.Inflector::getBasePath().$path;
 	}
 
 	/**
