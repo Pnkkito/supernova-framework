@@ -98,7 +98,7 @@
 		$url = Inflector::getQueryUrl();
 		$urlArray = array();
 		$urlArray = explode("/",$url);
-
+		
 		$routes = explode(";",ROUTES);
 		$routeSearch = array_search($urlArray[0],$routes);
 
@@ -178,7 +178,6 @@
 	function debug($str){
 		if (DEVELOPMENT_ENVIRONMENT){
 			$trace = debug_backtrace();
-			// warning(print_r($trace,true));
 			$file = $trace[0]['file'];
 			$file = str_replace($_SERVER['DOCUMENT_ROOT'],'',$file);
 			$line   = $trace[0]['line'];
@@ -188,7 +187,6 @@
 			}else{
 				$object = "View";
 			}
-			// OLD STYLE
 			ob_start();
 			echo "<div class='alert' style='margin: 0;'>";
 			echo "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
@@ -198,6 +196,7 @@
 			print_r($str);
 			echo "</pre></div>";
 			ob_flush();
+			ob_end_clean();
 		}
 	}
 
@@ -215,6 +214,7 @@
 			print_r($str);
 			echo "</p></div>";
 			ob_flush();
+			ob_end_clean();
 		}
 	}
 
