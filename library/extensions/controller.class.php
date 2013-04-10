@@ -164,26 +164,20 @@ class Controller {
 		
 		/* Check for parameters in the url
 		*  Return them into the model for sql purposes */
-		$params = explode('/',$parse_id);
-		foreach ($params as $check2){
-			$check3 = explode(':',$check2);
-			if (in_array($check3[0],array('page','asort','dsort'))){
-				$this->$model->$check3[0] = $check3[1];
+		$params = $_SERVER['QUERY_STRING'];
+		$params = explode('/',$params);
+		
+		foreach ($params as $eachParam){
+			$check = explode(':',$eachParam);
+			if (in_array($check[0],array('page','asort','dsort'))){
+				$this->$model->$check[0] = $check[1];
 			}
 		}
 
-		/* _GET params */
-		if (!empty($_GET)){
-			foreach ($_GET as $key => $value){
-				$this->get[$key] = $value;
-			}
-		}
-		unset ($_GET);
-		
 		$this->_template = new View($controller,$action,$parse_id);
 		$this->_template->errors = $this->errors;
 		$this->_template->data = $this->data;
-		$this->_template->params = $params;
+		// $this->_template->params = $params;
 	}
 	
 	/**
@@ -215,15 +209,28 @@ class Controller {
 	function layout($layout){
 		$this->_template->_layout = $layout;
 	}
+
+	/**
+	 * Call render if need it
+	 * @param 	String 	$view 	View name
+	 * @param 	String 	$type 	Type of view (null and "file" are the options)
+	 * @param 	String 	$file 	If type "file" is choosen, this is the destination file to save the output
+	 */
+	function render($view = null, $type = null, $file = null){
+		$this->_template->render($view,$type,$file);
+	}
 	
 	/**
 	 * Set message to the template
 	 * @param	String	$msg	Message
 	 * @param	String	$class	Class name
 	 */
-	function setMessage($msg, $class = 'notice'){
-		$msg = "<div class='$class'>".$msg."</div>";
-		$this->_template->setMessage($msg);
+	function setMessage($message, $class = 'notice'){
+		$output = "<div class='alert alert-$class'>";
+		$output.= "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
+		$output.= $message;
+		$output.= "</div>";
+		$this->_template->setMessage($output);
 	}
 	
 	/**
@@ -234,8 +241,7 @@ class Controller {
 		if (is_array($url)){
 			$url = Inflector::array_to_path($url);
 		}
-		// $this->_template->_redirect = $url;
-		ob_flush();
+		$this->_template->_redirect = $url;
 		header('Location:'.$url);
 	}
 	
