@@ -22,28 +22,19 @@
 				</table>
 			</div>
 			<div class="header-right">
-				<?=$this->html->link('<i class="icon-off icon-white"></i> Log-out',array('controller' => 'users', 'action' => 'logout', 'management' => true), array('class' => 'btn btn-inverse'));?>
+				<?=$this->html->link('<i class="icon-off icon-white"></i> Log-out','#', array('class' => 'btn btn-inverse'));?>
 			</div>
 		</div>
 		
 		<div class="fullcontent">
  			<div class="sidebar">
 				<ul class="nav nav-list nav-tabs nav-stacked sidebar-size">
-					<li><?=$this->html->link('<i class="icon-align-justify"></i> Instalation',array('controller' => 'pages', 'action' => 'install', 'management' => true,'admin'));?></li>
+					<?php echo $this->element('sidebar');?>
 				</ul>
 			</div>
 			<div class="content">
-					<?php $_message = $this->getMessage();
-					if ($_message){
-					?>
-					<!--  start message-green -->
-					<div class="alert">
-						<button type="button" class="close" data-dismiss="alert">&times;</button>
-						<?=$_message; ?>
-					</div>
-					<!--  end message-green -->
-					<?php } ?>
-					<?= $content_for_layout; ?>  
+					<?php echo $this->getMessage(); ?>
+					<?php echo $content_for_layout; ?>  
 			</div>
 		</div>
   </body>
