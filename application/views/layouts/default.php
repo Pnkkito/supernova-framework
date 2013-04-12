@@ -7,9 +7,11 @@
 		<?=$this->html->includeCss("extra");?>
 		<?=$this->html->includeJs('jquery-1.8.3.min');?>
 		<?=$this->html->includeJs("bootstrap");?>
+		<?=$this->html->scripts['head'];?>
 		<!-- <link href='http://fonts.googleapis.com/css?family=Ubuntu+Condensed' rel='stylesheet' type='text/css'> -->
 	</head>
 	<body>
+		<?=$this->html->scripts['start'];?>
 		<div class="header">
 			<div class="header-left">
 				<table>
@@ -39,5 +41,6 @@
 		</div>
   </body>
 </html>
+<?=$this->html->scripts['end'];?>
 
 

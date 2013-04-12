@@ -39,6 +39,12 @@ class Html {
 	public $data;
 
 	/**
+	 * Scripts for views
+	 * @var Array
+	 */
+	public $scripts;
+
+	/**
 	 * Translate class
 	 * @var object	
 	 */
@@ -718,6 +724,13 @@ class Html {
 		$checkboxed = (array_key_exists('type', $values) && $values['type']=='checkbox') ? true : false;
 		
 		if (array_key_exists('options', $values) && !empty($values['options'])){
+			if (array_key_exists('empty', $values) && !empty($values['empty'])){
+				if (is_bool($values['empty'])){
+					$options.="<option values=''> --- </options>";
+				}else{
+					$options.="<option values=''> ".$values['empty']." </options>";
+				}
+			}
 			foreach ($values['options'] as $k => $v){
 				if (!$checkboxed){
 					if (is_array($selected)){
@@ -779,12 +792,25 @@ class Html {
 	}
 
 	/**
-	 * Include JavaScript in html
+	 * Include JavaScript file in html
 	 * @param	String	$fileName	Filename without extension
 	 */
 	function includeJs($fileName) {
 		$data = '<script src="'.SITE_URL.Inflector::getBasePath().'js/'.$fileName.'.js"></script>';
 		return $data;
+	}
+
+	/**
+	 * Include JavaScript in html
+	 * @param 	String 	$script 	Script
+	 * @param 	String 	$position 	Where to include the script (start,end,head)
+	 */
+	function includeScript($script, $position = "end"){
+		$script = "<script>".$script."</script>";
+		$positions = array('head','start','end');
+		foreach ($positions as $eachPosition){
+			$this->scripts[$eachPosition] = ($position == $eachPosition) ? $script : '';
+		}
 	}
 
 	/**
