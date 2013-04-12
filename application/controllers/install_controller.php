@@ -1,5 +1,5 @@
 <?php
-class pagesController extends AppController {
+class installController extends AppController {
 	
 	// function authExample(){
 	// 	$this->Auth = new Auth();
@@ -7,8 +7,8 @@ class pagesController extends AppController {
 	// 	$verify = $this->Auth->passwordVerify('holamundo','hola mundo');
 	// }
 
-	function install(){
-		$this->layout("management");
+	function blackhole(){
+		$this->layout("default");
 		$conection = new SQLQuery;
 		$tables = $conection->getTables();
 
@@ -23,7 +23,7 @@ class pagesController extends AppController {
 			$fields = $conection->getFields($table);
 			$fieldsUnparsed = Inflector::unparseFields($fields,$modelName);
 			$this->set(compact('modelName','index','defaultPK','defaultDisplayField','table','prefix','fields','fieldsUnparsed'));
-			
+
 			//Build Model file
 			$dirName = ROOT.'/application/models/';
 			$fileName = strtolower($modelName).".php";
@@ -54,4 +54,16 @@ class pagesController extends AppController {
 		$this->set(compact('tables'));
 	}
 	
+	function ajaxRequest(){
+		$this->layout('ajax');
+		if ($this->data){ // format in ajax request -> { data : { action:actionName, key:var, key2:var2, etc... } }
+			switch ($this->data['action']){
+				case 'getRelations':
+					//New functions always should go inside the model class
+					$relations = $this->Page->searchForRelations($this->data['table']);
+				break;
+			}
+		}
+	}
+
 }
