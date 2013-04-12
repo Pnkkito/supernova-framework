@@ -71,8 +71,7 @@ class SQLQuery {
 			$this->_dbHandle = new PDO($dbn , $username, $password);
 			$this->_dbHandle->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE,PDO::FETCH_ASSOC);
 		} catch (PDOException $e) {
-		    warning('Connection failed: ' . $e->getMessage());
-		    return false;
+		    die('Connection failed: ' . $e->getMessage());
 		}
 		return true;
 	}
@@ -103,6 +102,19 @@ class SQLQuery {
 		}
 	}
 
+	function getScopes($args){
+		if (array_key_exists('scopes', $args)){
+			if (is_array($args['scopes'])){
+				foreach ($args['scopes'] as $eachScopeName){
+					$instance = new $_model;
+					$args['conditions'][] = $_model->scope($eachScopeName);
+				}
+				unset ($args['scopes']);
+				return $args;
+			}
+		}
+	}
+
 	/**
 	 * BlackMagic Functions
 	 * @param	string	$func	Function name
@@ -110,10 +122,12 @@ class SQLQuery {
 	 */
 	public function __call($func, $args){
 		switch (count($args)){
-			case '1' : return $this->{$func.$args[0]}(); break;
-			case '2' : return $this->{$func.$args[0]}($args[1]); break;
-			case '3' : return $this->{$func}($args[0],$args[1]); break;
-			default  : return $this->{'find'.$func}($args[0],$args[1],$args[2]); break;
+			case '1' : 	return $this->{$func.$args[0]}(); break;
+			case '2' :	$args[1] = $this->getScopes($args[1]);
+						return $this->{$func.$args[0]}($args[1]);
+						break;
+			case '3' : 	return $this->{$func}($args[0],$args[1]);break;
+			default  : 	return $this->{'find'.$func}($args[0],$args[1],$args[2]); break;
 		}
 	}
     
