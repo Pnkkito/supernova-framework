@@ -7,7 +7,7 @@ foreach ($fieldsUnparsed as $eachfield => $typefield){
 	if (!empty($eachfield)){
 		if ($eachfield != $defaultPK){
 			switch ($typefield){
-				case 'text': $returnedType = 'textbox'; break;
+				case 'text': $returnedType = 'textarea'; break;
 				default: $returnedType = 'text'; break;
 			}
 			$addOutputFile.='echo $this->html->input("'.$eachfield.'","'.Inflector::under_to_camel(strtolower($eachfield)).'", array("type" => "'.$returnedType.'"));';

@@ -9,7 +9,7 @@ foreach ($fieldsUnparsed as $eachfield => $typefield){
 			$editOutputFile.='echo $this->html->input("'.$defaultPK.'","",array("type" => "hidden","value" => $'.strtolower($modelName).'["'.$modelName.'"]["'.$defaultPK.'"]));';
 		}else{
 			switch ($typefield){
-				case 'text': $returnedType = 'textbox'; break;
+				case 'text': $returnedType = 'textarea'; break;
 				default: $returnedType = 'text'; break;
 			}
 			$editOutputFile.='echo $this->html->input("'.$eachfield.'","'.Inflector::under_to_camel(strtolower($eachfield)).'", array("type" => "'.$returnedType.'", "value" => $'.strtolower($modelName).'["'.$modelName.'"]["'.$eachfield.'"]));';
