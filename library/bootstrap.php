@@ -129,7 +129,7 @@
 				    call_user_func_array(array($dispatch,$action),$queryString);
 				}
 			}else{
-			    warning("Controller </strong>".$controllerName."</strong> does not exist");
+				die("Controller </strong>".$controllerName."</strong> does not exist");
 			}
 		}
 	}
@@ -295,7 +295,7 @@
 		}
 		$err .= "</error>\n\n";
 		
-		if (($numerr != E_NOTICE) && (trim($menserr) != "mysql_connect():")){
+		if (($numerr != E_NOTICE) && (strpos($menserr, "PDO::__construct():") === false)){
 			echo "<div class='alert' style='margin: 0;'>";
 			echo "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
 			echo "<h4>$tipoerror[$numerr]</h4>";
