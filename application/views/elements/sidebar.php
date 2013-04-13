@@ -1,4 +1,2 @@
-<li><?=$this->html->link('<i class="icon-align-justify"></i> Instalation',array('controller' => 'pages', 'action' => 'install'));?></li>
-
-<!-- Posteo -->
-<li><?=$this->html->link("<i class='icon-align-justify'></i> Posteo",array("controller" => "posteos", "action" => "index"));?></li>
+<li><?=$this->html->link('<i class="icon-align-justify"></i> Database config',array('controller' => 'install', 'action' => 'index'));?></li>
+<li><?=$this->html->link('<i class="icon-align-justify"></i> Supernova Blackhole',array('controller' => 'install', 'action' => 'blackhole'));?></li>
