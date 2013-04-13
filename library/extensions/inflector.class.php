@@ -112,11 +112,11 @@ class Inflector {
 	}
 
 	/**
-	 * Transform Array to String Path
+	 * Generate relative url path from array (DEPRECATED)
 	 * @param	array	$path	Parse array to form correct path
 	 * @return	string		Parsed path
 	 */
-	public static function array_to_path($path){
+	public static function generateUrl($path){
 		//Find any route
 		$routings = explode(';',ROUTES);
 		$route = false;
@@ -155,15 +155,21 @@ class Inflector {
 			if (!empty($route) || $route != false){ $newpath[1] = $route; }
 
 			ksort($newpath);
-			$newpath2 = "";
-			foreach ($newpath as $k => $v){
-				$newpath2.= $v.'/';
-			}
-			$path = $newpath2;
+			$path = implode('/',$newpath);
 		}else{
 			$path = str_replace(' ','-',$path);	
 		}
+
 		return SITE_URL.Inflector::getBasePath().$path;
+	}
+
+	/**
+	 * Transform Array to String Path (DEPRECATED)
+	 * @param	array	$path	Parse array to form correct path
+	 * @return	string		Parsed path
+	 */
+	public static function array_to_path($path){
+		return Inflector::generateUrl($path);
 	}
 
 	/**
