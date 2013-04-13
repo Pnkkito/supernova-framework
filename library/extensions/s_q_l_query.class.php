@@ -53,9 +53,9 @@ class SQLQuery {
 	 */
 	protected $_SQLDebug = array();
 
-	function __construct(){
-		$this->connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
-	}
+	// function __construct(){
+		// $this->connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
+	// }
 
 	/**
 	 * Connects to Database
@@ -65,13 +65,21 @@ class SQLQuery {
 	 * @param	string	$database	Database name
 	 * @return	boolean			
 	 */
-	function connect($address, $username, $password, $database) {
+	function connect($address = DB_HOST, $username = DB_USER, $password = DB_PASS, $database = DB_NAME, $dbdriver = DB_DRIVER) {
 		try {
-			$dbn = DB_DRIVER.":host=".$address.";dbname=".$database;
+			$dbn = $dbdriver.":host=".$address.";dbname=".$database;
 			$this->_dbHandle = new PDO($dbn , $username, $password);
+			$this->_dbHandle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$this->_dbHandle->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE,PDO::FETCH_ASSOC);
 		} catch (PDOException $e) {
-		    die('Connection failed: ' . $e->getMessage());
+			switch ($e->getCode()){
+				case '0' : warning('Conection failed :: Check your conection parameters'); break;
+				case '2002': warning('Conection failed :: Database <strong>Host</strong> incorrect'); break;
+				case '1044': warning('Conection failed :: Database <strong>Username</strong> incorrect'); break;
+				case '1045': warning('Conection failed :: Database <strong>Password</strong> incorrect'); break;
+				case '1049': warning('Conection failed :: Database <strong>Name</strong> incorrect'); break;
+			}
+			return false;
 		}
 		return true;
 	}
@@ -943,8 +951,10 @@ class SQLQuery {
 	function getTables(){
 		$query = 'SHOW TABLES FROM '.DB_NAME;
 		$tables = array();
-		foreach ($this->_dbHandle->query($query) as $row){
-			$tables[$row['Tables_in_'.DB_NAME]]=Inflector::under_to_camel(Inflector::singularize(strtolower(substr($row['Tables_in_'.DB_NAME],5))));
+		if (!empty($this->_dbHandle)){
+			foreach ($this->_dbHandle->query($query) as $row){
+				$tables[$row['Tables_in_'.DB_NAME]]=Inflector::under_to_camel(Inflector::singularize(strtolower(substr($row['Tables_in_'.DB_NAME],5))));
+			}
 		}
 		return $tables;
 	}
@@ -955,10 +965,14 @@ class SQLQuery {
 	 * @return array $fields Fields from table
 	 */
 	function getFields($table){
-		$query = 'SHOW FIELDS FROM '.$table;
 		$fields = array();
-		foreach ($this->_dbHandle->query($query) as $row){
-			$fields[$row['Field']] = $row['Type'];
+		if (!empty($table)){
+			$query = 'SHOW FIELDS FROM '.$table;
+			if (!empty($this->_dbHandle)){
+				foreach ($this->_dbHandle->query($query) as $row){
+					$fields[$row['Field']] = $row['Type'];
+				}
+			}
 		}
 		return $fields;
 	}
