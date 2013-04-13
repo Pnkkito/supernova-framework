@@ -5,6 +5,25 @@
   src: local('Ubuntu Condensed'), local('UbuntuCondensed-Regular'), url(../img/fonts/ubuntu-condensed.woff) format('woff');
 }
 
+ul.chzn-choices{
+	height: 28px !important;
+	margin-top: 20px;
+	padding: 3px;
+	position: relative;
+	top: 6px;
+	border-radius: 5px;
+}
+
+ul.chzn-choices input{
+	width: 1px !important;
+	height: 26px !important;
+}
+
+.chzn-search input{
+	width: 331px !important;
+	height: 24px !important;
+}
+
 .header{
 	background: url('../img/header.jpg');
 	float: left;
@@ -38,6 +57,14 @@ th{
 	color: #EEE;
 }
 
+.table {
+	border: 1px solid #ddd;
+}
+
+.table tr:nth-child(odd){
+	background-color: #f7f7f7;
+}
+
 body{
 	background: url('../img/sidebar.jpg');
 	background-repeat: repeat-y;
@@ -45,10 +72,46 @@ body{
 	/*letter-spacing: 1px;*/
 }
 
-input, select{
+input[type="text"]{
 	font-family: 'Ubuntu Condensed', sans-serif;
-	padding: 10px;
-	height: 46px;
+	padding: 0px 10px 0px 10px !important;
+	width: 340px;
+	height: 42px;
+}
+
+textarea{
+	font-family: 'Ubuntu Condensed', sans-serif;
+	padding: 10px 10px 10px 10px !important;
+	width: 340px !important;
+	min-height: 100px;
+}
+
+select{
+	font-family: 'Ubuntu Condensed', sans-serif;
+	padding: 13px !important;
+	height: 47px !important;
+	width: 363px !important;
+}
+
+input[type="submit"]{
+ 	font-family: 'Ubuntu Condensed', sans-serif;
+ 	width: 100% !important;
+ }
+
+label{
+	display: inline-block;
+	margin-bottom: 5px;
+	width: 230px;
+	border-bottom: 1px dotted #ccc;
+}
+
+form{
+	margin: 0 0 20px;
+	padding: 20px;
+	border: 1px dotted #ccc;
+	border-radius: 10px;
+	background: #fafafa;
+	width: 595px;
 }
 
 .fullcontent{

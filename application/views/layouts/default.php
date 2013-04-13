@@ -5,7 +5,9 @@
 		<!-- Bootstrap -->
 		<?=$this->html->includeCss("bootstrap");?>
 		<?=$this->html->includeCss("extra");?>
+		<?=$this->html->includeCss("chosen");?>
 		<?=$this->html->includeJs('jquery-1.8.3.min');?>
+		<?=$this->html->includeJs('chosen.jquery.min');?>
 		<?=$this->html->includeJs("bootstrap");?>
 		<?=$this->html->scripts['head'];?>
 		<!-- <link href='http://fonts.googleapis.com/css?family=Ubuntu+Condensed' rel='stylesheet' type='text/css'> -->
