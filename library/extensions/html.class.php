@@ -202,7 +202,7 @@ class Html {
 	 * @param	Array	$items	Extra items for input
 	 * @return	object		Input element
 	 */
-	function input($name, $title = '', $items = array('type' => 'textbox')){
+	function input($name, $title = '', $items = array('type' => 'text')){
 		if(!is_array($name)){
 			$explodeName = explode(".",$name);
 			if (count($explodeName)>1){
@@ -277,7 +277,7 @@ class Html {
 		extract($items);
 		
 		if(empty($type)){
-			$type="textbox";
+			$type="text";
 		}
 		
 		$check = ($type == 'checkbox') ? '[]' : '';
