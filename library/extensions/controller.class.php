@@ -199,7 +199,7 @@ class Controller {
 	 * @ignore
 	 */
 	function __destruct() {
-		$this->_template->render();
+	 	$this->_template->render();
 	}
 	
 	/**
