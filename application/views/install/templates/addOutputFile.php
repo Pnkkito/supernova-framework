@@ -13,7 +13,7 @@ foreach ($fieldsUnparsed as $eachfield => $typefield){
 			$addOutputFile.='echo $this->html->input("'.$eachfield.'","'.Inflector::under_to_camel(strtolower($eachfield)).'", array("type" => "'.$returnedType.'"));';
 		}
 	}
-	$addOutputFile.="\n";
+	$editOutputFile.="\n";
 }
 
 $addOutputFile.='echo $this->html->form("submit","Add new '.Inflector::singularize($modelName).'");

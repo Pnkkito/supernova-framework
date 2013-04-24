@@ -141,17 +141,22 @@
 	function supernova_autoloader($className){
 		$root_path = ROOT . DS;
 		$app_path=$root_path.'application' . DS;
-		$library_path=$root_path.'library' . DS . 'extensions' . DS;
+		$library_path=$root_path.'library' . DS;
+		$core_path='core' . DS;
+		$extensions_path='extensions' . DS;
 		$className[0] = strtolower($className[0]);
 		$func = create_function('$c', 'return "_" . strtolower($c[1]);');
 		$strName = preg_replace_callback('/([A-Z])/', $func, $className);
 		$name = strtolower($strName);
-		$file = $library_path.$name.'.class.php';
+		$corefile = $library_path.$core_path.$name.'.class.php';
+		$extensionfile = $library_path.$extensions_path.$name.'.class.php';
 		$controllerFile = $app_path. 'controllers' . DS . $name . '.php';
 		$modelFile = $app_path. 'models' . DS . $name . '.php';
 		$appFile = $app_path.'app'.'.controller.php';
-		if (file_exists($file)){
-			require_once($file);
+		if (file_exists($corefile)){
+			require_once($corefile);
+		}else if (file_exists($extensionfile)){
+			require_once($extensionfile);
 		}else if (file_exists($controllerFile)){
 			require_once($controllerFile);
 		}else if (file_exists($modelFile)){

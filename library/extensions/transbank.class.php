@@ -5,7 +5,7 @@ class Transbank{
 	// Chequea tu .htaccess para evitar que la redireccion vaya a cgi-bin con la siguiente linea
 	// RewriteCond %{REQUEST_URI} !^/cgi-bin/ [NC]
 
-	function transaction($tbkPost = '',$ordenCompra = ''){
+	function transaction($tbkPost = '',$ordenCompra = '', $modelName = 'Pago', $mountName= 'TBK_MONTO'){
 		$cgiPath = realpath($_SERVER["DOCUMENT_ROOT"])."/cgi-bin/";
 		$logPath = $cgiPath."log/";
 		
@@ -30,10 +30,10 @@ class Transbank{
 							// Comprobacion de Monto
 							// $trs_monto = substr($this->tbkPost['TBK_MONTO'],0,-2).".00"; // KCC 5.1
 							$trs_monto = substr($tbkPost['TBK_MONTO'],0,-2); // KCC 6.0
-							if ($ordenCompra['Pago']['TBK_MONTO'] == $trs_monto){
+							if ($ordenCompra[$Pago][$mountName] == $trs_monto){
 								return true;
 							}else{
-								throw new Exception("Comprobacion de Montos RECHAZADA => ".$ordenCompra['Pago']['TBK_MONTO']." == ".$trs_monto, 1);
+								throw new Exception("Comprobacion de Montos RECHAZADA => ".$ordenCompra[$Pago][$mountName]." == ".$trs_monto, 1);
 							}
 						}else{
 							throw new Exception("Comprobacion Orden de Compra RECHAZADA",1);
