@@ -932,14 +932,9 @@ class SQLQuery {
 	 */
 	function checkField($field,$table){
 		$query = "SHOW columns from `".$table."` where field='".$field."'";
-		$result = mysql_query($query);
-		if ($result){
-			while ($row = mysql_fetch_row($result)) {
-				if (empty($row)){
-					return false;
-				}else{
-					return true;
-				}
+		if (!empty($this->_dbHandle)){
+			foreach ($this->_dbHandle->query($query) as $row){
+				return (empty($row)) ? false : true;
 			}
 		}
 		return false;
