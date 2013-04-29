@@ -124,7 +124,8 @@ class Security {
 			if(get_magic_quotes_gpc()){
 				$data = stripslashes($data);
 			}
-			$data = mysql_real_escape_string($data);
+			// Deprecated : PDO scapes automaticly
+			// $data = mysql_real_escape_string($data);
 		}else{
 			foreach ($data as $key => $dat){
 				$data[$key] = Security::sanitize($dat);
