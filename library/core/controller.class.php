@@ -51,11 +51,7 @@ class Controller {
 	 * @ignore
 	 */
 	function __get($class){
-		if (class_exists($class)){
-			return new $class;
-		}else{
-			trigger_error("Model '</strong>".$class."</strong>' does not exist", E_USER_ERROR);
-		}
+		return (class_exists($class)) ? new $class : trigger_error("Model or Extension '</strong>".$class."</strong>' does not exist", E_USER_ERROR);
 	}
 
 	/**

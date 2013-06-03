@@ -13,7 +13,7 @@ class installController extends AppController {
 
 	//Blackhole2
 	function blackhole2(){
-		$user = $this->Blah->find('all');
+		$user = $this->Install->find('all');
 	}
 	
 	//Configure database first

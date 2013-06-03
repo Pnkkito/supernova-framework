@@ -35,7 +35,7 @@
 	define('LIBRARY_PATH', ROOT . DS . 'library' . DS);
 	define('CORE_PATH', LIBRARY_PATH . DS . 'core' . DS);
 	define('EXTENSIONS_PATH', LIBRARY_PATH . DS . 'extensions' . DS);
-	
+
 	/**
 	 * Check if config file is set
 	 * @ignore
@@ -84,6 +84,8 @@
 	foreach ($db_vars as $each_db_vars){
 		if(!defined('DB_'.$each_db_vars)){ define('DB_'.$each_db_vars,''); }
 	}
+	define('DBS','_');
+	define('DBPREFIX','');
 	unset($db_vars);
 
 	/**
@@ -100,8 +102,6 @@
 		if (ENVIRONMENT == "dev") {
 			showError(array('type' => $type, 'message' => $message, 'file' => $file, 'line' => $line, 'str' => $str));
 	    }
-	    include (ERRORS_PATH . '500.php');
-		die();
 	}
 
 	/**
@@ -112,6 +112,8 @@
 	    $error = error_get_last();
 	    if (!empty($error)){
 	    	showError($error);
+	    	include (ERRORS_PATH . '500.php');
+			die();
 	    }
 	}
 
@@ -275,9 +277,9 @@
 		echo "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
 		echo "<h4>".$errorType[$error['type']]."</h4>";
 		echo "<h5>".$error['message']."</h5>";
-		if (strpos($error['file'], "library/bootstrap.php") === false){
+		// if (strpos($error['file'], "library/") === false){
 			echo "<p>In <strong>".$error['file']."</strong> -> Line <strong>".$error['line']."</strong><br/></p>";
-		}
+		// }
 		echo "</div>";
 	}
 

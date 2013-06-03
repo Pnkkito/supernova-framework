@@ -178,9 +178,13 @@ class Inflector {
 	* @return string $str Inflected text
 	**/
 	public static function camel_to_under($str){
-		$str[0] = strtolower($str[0]);
-		$func = create_function('$c', 'return "_" . strtolower($c[1]);');
-		return preg_replace_callback('/([A-Z])/', $func, $str);
+		if (is_string($str) && !empty($str)){
+			$str[0] = strtolower($str[0]);
+			$func = create_function('$c', 'return "_" . strtolower($c[1]);');
+			return preg_replace_callback('/([A-Z])/', $func, (string)$str);
+		}else{
+			return $str;
+		}
 	}
 	
 	/**
@@ -189,11 +193,15 @@ class Inflector {
 	* @return array $aux2 Inflected array
 	**/
 	public static function camel_to_array($str){
-		$str[0] = strtolower($str[0]);
-		$func = create_function('$c', 'return "/" . strtolower($c[1]);');
-		$aux = preg_replace_callback('/([A-Z])/', $func, $str);
-		$aux2 = explode('/',$aux);
-		return $aux2;
+		if (is_string($str) && !empty($str)){
+			$str[0] = strtolower($str[0]);
+			$func = create_function('$c', 'return "/" . strtolower($c[1]);');
+			$aux = preg_replace_callback('/([A-Z])/', $func, $str);
+			$aux2 = explode('/',$aux);
+			return $aux2;
+		}else{
+			return $str;
+		}
 	}
 	
 	/**

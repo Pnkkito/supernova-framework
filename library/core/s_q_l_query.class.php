@@ -115,7 +115,11 @@ class SQLQuery {
 			if (is_array($args['scopes'])){
 				foreach ($args['scopes'] as $eachScopeName){
 					$instance = new $_model;
-					$args['conditions'][] = $_model->scope($eachScopeName);
+					if ($_model->scope($eachScopeName)){
+						$args['conditions'][] = $_model->scope($eachScopeName);
+					}else{
+						trigger_error("Scope '</strong>".$eachScopeName."</strong>' not found in Model </strong>".$_model."</strong>", E_USER_ERROR);
+					}
 				}
 				unset ($args['scopes']);
 				return $args;
@@ -129,13 +133,17 @@ class SQLQuery {
 	 * @param	array	$args	Query conditions
 	 */
 	public function __call($func, $args){
+		$functionName = $func;
 		switch (count($args)){
-			case '1' : 	return $this->{$func.$args[0]}(); break;
+			case '1' : 	$functionName = $this->{$func.$args[0]}(); break;
 			case '2' :	$args[1] = $this->getScopes($args[1]);
-						return $this->{$func.$args[0]}($args[1]);
+						$functionName = $this->{$func.$args[0]}($args[1]);
 						break;
-			case '3' : 	return $this->{$func}($args[0],$args[1]);break;
-			default  : 	return $this->{'find'.$func}($args[0],$args[1],$args[2]); break;
+			case '3' : 	$functionName = $this->{$func}($args[0],$args[1]);break;
+			case '4' : 	$functionName = $this->{'find'.$func}($args[0],$args[1],$args[2]); break;
+		}
+		if (is_string($functionName) && !empty($functionName)){
+			return (function_exists($functionName)) ? $functionName : trigger_error("Function '</strong>".$functionName."</strong>' does not exist", E_USER_ERROR);	
 		}
 	}
     
@@ -445,54 +453,58 @@ class SQLQuery {
 		$query = 'SELECT '.strtoupper($in).' FROM `'.strtoupper($table).'` '.($this->parseConditions($args,$modelName));
 		$this->_SQLDebug['Find '.$modelName][]=$query;
 		$counter = 0;
-		foreach ($this->_dbHandle->query($query) as $row){
-			$ar[$modelName][$counter]=$this->unparseId($row,$modelName);
-			/* Image behavior */
-			if(is_array($model['thumbs'])){
-				foreach($model['thumbs'] as $imageField => $thumbOptions){
-					$imageData = $ar[$modelName][$counter][$imageField];
-					if (!empty($imageData)){
-						$ar[$modelName][$counter][$imageField] = array();
-						$ar[$modelName][$counter][$imageField]['full'] = $imageData;
-						foreach($thumbOptions as $thumbPrefix => $thumbData){
-							$thumbArr = explode('/',$imageData);
-							$thumbArr[count($thumbArr)-1] = $thumbPrefix."/".$thumbPrefix.".".$thumbArr[count($thumbArr)-1];
-							$thumbURL = implode('/',$thumbArr);
-							$ar[$modelName][$counter][$imageField][$thumbPrefix] = $thumbURL;
+		if (!empty($this->_dbHandle)){
+			foreach ($this->_dbHandle->query($query) as $row){
+				$ar[$modelName][$counter]=$this->unparseId($row,$modelName);
+				/* Image behavior */
+				if(is_array($model['thumbs'])){
+					foreach($model['thumbs'] as $imageField => $thumbOptions){
+						$imageData = $ar[$modelName][$counter][$imageField];
+						if (!empty($imageData)){
+							$ar[$modelName][$counter][$imageField] = array();
+							$ar[$modelName][$counter][$imageField]['full'] = $imageData;
+							foreach($thumbOptions as $thumbPrefix => $thumbData){
+								$thumbArr = explode('/',$imageData);
+								$thumbArr[count($thumbArr)-1] = $thumbPrefix."/".$thumbPrefix.".".$thumbArr[count($thumbArr)-1];
+								$thumbURL = implode('/',$thumbArr);
+								$ar[$modelName][$counter][$imageField][$thumbPrefix] = $thumbURL;
+							}
 						}
 					}
 				}
-			}
-			
-			/* Related hasMany */
-			if (isset($model['hasMany']) && !empty($model['hasMany'])){
-				foreach ($model['hasMany'] as $hasManyModel){
-					$arrayQuery = $ar[$modelName][$counter];
-					$ar[$modelName][$counter][$hasManyModel] = $this->getQueryMore($hasManyModel,$arrayQuery, $recursive);
-				}
-			}
-			
-			/* Check recursivity */
-			if ($recursive < $recursive_level){
-				/* Related BelongsTo */
-				if (isset($model['belongsTo']) && !empty($model['belongsTo'])){
-					foreach ($model['belongsTo'] as $belongsToModel){
+				
+				/* Related hasMany */
+				if (isset($model['hasMany']) && !empty($model['hasMany'])){
+					foreach ($model['hasMany'] as $hasManyModel){
 						$arrayQuery = $ar[$modelName][$counter];
-						$ar[$modelName][$counter][$belongsToModel] = $this->getQueryMore($belongsToModel,$arrayQuery, $recursive);
+						$ar[$modelName][$counter][$hasManyModel] = $this->getQueryMore($hasManyModel,$arrayQuery, $recursive);
 					}
 				}
-
-				/* Related hasTooMany */
-				if (isset($model['hasTooMany']) && !empty($model['hasTooMany']) && $modelName!=$model['hasTooMany']){
-					$lastModelID_TOOMANY = $ar[$modelName][$counter][$model['primaryKey']];
-					$manyArgs_TOOMANY = array('conditions' => array($modelFK => $lastModelID_TOOMANY));
-					foreach ($model['hasTooMany'] as $HTMModel => $models){
-						$ar[$modelName][$counter][$HTMModel] = $this->getQueryHasTooMany($HTMModel,$models);
+				
+				/* Check recursivity */
+				if ($recursive < $recursive_level){
+					/* Related BelongsTo */
+					if (isset($model['belongsTo']) && !empty($model['belongsTo'])){
+						foreach ($model['belongsTo'] as $belongsToModel){
+							$arrayQuery = $ar[$modelName][$counter];
+							$ar[$modelName][$counter][$belongsToModel] = $this->getQueryMore($belongsToModel,$arrayQuery, $recursive);
+						}
 					}
-				}	
+
+					/* Related hasTooMany */
+					if (isset($model['hasTooMany']) && !empty($model['hasTooMany']) && $modelName!=$model['hasTooMany']){
+						$lastModelID_TOOMANY = $ar[$modelName][$counter][$model['primaryKey']];
+						$manyArgs_TOOMANY = array('conditions' => array($modelFK => $lastModelID_TOOMANY));
+						foreach ($model['hasTooMany'] as $HTMModel => $models){
+							$ar[$modelName][$counter][$HTMModel] = $this->getQueryHasTooMany($HTMModel,$models);
+						}
+					}	
+				}
+				
+				$counter++;
 			}
-			
-			$counter++;
+		}else{
+			trigger_error("No database connection detected", E_USER_ERROR);
 		}
 		
 		/* Pagination */
