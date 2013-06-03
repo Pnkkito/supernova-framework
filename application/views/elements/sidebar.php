@@ -1,2 +1,2 @@
-<li><?=$this->html->link('<i class="icon-align-justify"></i> Database config',array('controller' => 'install', 'action' => 'index'));?></li>
-<li><?=$this->html->link('<i class="icon-align-justify"></i> Supernova Blackhole',array('controller' => 'install', 'action' => 'blackhole'));?></li>
+<li><?=$this->html->link('Database config',array('controller' => 'install', 'action' => 'index'), array('icon' => 'justify'));?></li>
+<li><?=$this->html->link('Supernova Blackhole',array('controller' => 'install', 'action' => 'blackhole'), array('icon' => 'justify'));?></li>
