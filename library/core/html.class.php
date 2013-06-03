@@ -121,8 +121,8 @@ class Html {
 			case 'submit':	if (!$name){
 						$name = 'Submit';
 					}
+					$extrasParsed = '';
 					if (!empty($extras)){
-						$extrasParsed = '';
 						foreach ($extras as $k => $v){
 							$extrasParsed.=$k."='".$v."'";
 						}
@@ -150,6 +150,10 @@ class Html {
 		$ext = '';
 		$confirmMessage = null;
 		if(!empty($extras)){
+			if (isset($extras['icon'])){
+				$text = "<i class='icon-align-".$extras['icon']."'></i><div>".$text."</div>";
+				unset($extras['icon']);
+			}
 			if (isset($extras['prompt']) && !empty($extras['prompt'])){
 				$confirmMessage = $extras['prompt'];
 				unset ($extras['prompt']);
@@ -161,6 +165,7 @@ class Html {
 			}
 			
 		}
+
 		if ($confirmMessage) {
 			$data = '<a href="'.$path.'" '.$ext.' onclick="javascript:return confirm(\''.$confirmMessage.'\')">'.utf8_decode($text).'</a>';
 		} else {
@@ -177,16 +182,17 @@ class Html {
 	* @return string $data image element
 	*/
 	function image($image, $args = null){
+		$ea = "";
 		if (is_array($args)){
-			$ea = "";
 			foreach ($args as $k => $v){
 				if ($k!='url'){
 					$ea.= " $k='$v'";
 				}
 			}
 		}
+		$data = "";
 		if (isset($args['url'])){
-			$data = '<a href="'.Inflector::array_to_path($args['url']).'">';
+			$data.= '<a href="'.Inflector::array_to_path($args['url']).'">';
 			$data.= '<img src="'.SITE_URL.Inflector::getBasePath().'img/'.$image.'" '.$ea.'/>';
 			$data.= '</a>';
 		}else{
