@@ -25,7 +25,7 @@ class Controller {
 	/**
 	 * @ignore 
 	 */
-	protected $data, $get;
+	protected $data, $get, $errors;
 	/**
 	 * @ignore
 	 */
@@ -53,13 +53,15 @@ class Controller {
 	function __get($class){
 		if (class_exists($class)){
 			return new $class;
+		}else{
+			trigger_error("Model '</strong>".$class."</strong>' does not exist", E_USER_ERROR);
 		}
 	}
 
 	/**
 	 * @ignore
 	 */
-	function __construct($model, $controller, $action, $url, $admin) {
+	function __construct($model, $controller, $action, $url) {
 		//For public actions
 		$this->controller = $controller;
 		$this->action = $action;
@@ -81,7 +83,6 @@ class Controller {
 		$this->_action = $action;
 		$this->_model = $model;
 		$this->_url = $url;
-		$this->_admin = $admin;
 
 		$this->$model = new $model; //Call the modtemplate->_elname
 
@@ -248,15 +249,6 @@ class Controller {
 		}
 		$this->_template->_redirect = $url;
 		header('Location:'.$url);
-	}
-	
-	/**
-	 * Check if layout is Ajax or not
-	 *
-	 * @return boolean
-	 */
-	function isAjax(){
-		return $this->_ajax;
 	}
 	
 }
