@@ -177,8 +177,8 @@ class View {
 	 * @ignore
 	 */
 	function render($view = null, $type = "view", $filename = null){
-		$this->arrays = new Arrays;
-		$this->html = new Html;
+		$this->arrays = new Arrays; // Static array caller
+		$this->html = new Html; // HTML helper
 
 		if ($type == "file"){
 			$viewFile = ROOT . DS . 'application' . DS . 'views' . DS . $this->_controller . DS . ((is_null($view)) ? $this->_action : $view) . '.php';
@@ -193,39 +193,47 @@ class View {
 			return;
 		}
 
+		// Check for redirection
 		if (!empty($this->_redirect)){
 			if(empty($this->errors)){
 				header('Location:'.$this->_redirect);
 			}
 		}
 
-		$this->html->controller = $this->controller;
-		$this->html->errors = $this->errors;
-		$this->html->data= $this->data;
-		$this->html->action = $this->action;
-		$this->html->params = $this->params;
+		//Extract global vars to html helper
+		$htmlvars = array('controller','errors','data','action','params');
+		foreach ($htmlvars as $eachvar){
+			$this->html->{$eachvar} = $this->{$eachvar};	
+		}
+		
+		//Extract controller vars to view
 		extract($this->variables);
 		
-		if(ini_get("zlib.output_compression") == 'On'){
-			ob_start("ob_gzhandler");
-		}else{
-			ob_start();	
-		}
-		if(file_exists(ROOT . DS . 'application' . DS . 'views' . DS . $this->_controller . DS . ((is_null($view)) ? $this->_action : $view) . '.php')){
-			include(ROOT . DS . 'application' . DS . 'views' . DS . $this->_controller . DS . ((is_null($view)) ? $this->_action : $view) . '.php');
+		ob_start( (ini_get("zlib.output_compression") == 'On') ? "ob_gzhandler" : null );
+		
+		//Search for view layout
+		if(file_exists(VIEW_PATH . $this->_controller . DS . ((is_null($view)) ? $this->_action : $view) . '.php')){
+			include(VIEW_PATH . $this->_controller . DS . ((is_null($view)) ? $this->_action : $view) . '.php');
 		} else {
-			warning ("View <strong>".$this->_action."</strong> does not exist for controller <strong>".$this->_controller."</strong>");
+			if (ENVIRONMENT == 'dev'){
+				warning ("View '<strong>".$this->_action."</strong>' does not exist for controller '<strong>".$this->_controller."</strong>'");
+			}
+			include (ERRORS_PATH . '404.php');
 			die();
 		}
 		$content_for_layout = ob_get_contents();
 		ob_end_clean();
 		
-		if (file_exists(ROOT . DS . 'application' . DS . 'views' . DS . "layouts" . DS . $this->_layout . '.php')) {
-			include(ROOT . DS . 'application' . DS . 'views' . DS . "layouts" . DS . $this->_layout . '.php');
-		} elseif (file_exists(ROOT . DS . 'application' . DS . 'views' . DS . "layouts" . DS . 'default.php')) {
-			include(ROOT . DS . 'application' . DS . 'views' . DS . "layouts" . DS . 'default.php');
+		if (file_exists(LAYOUT_PATH . $this->_layout . '.php')) {
+			include(LAYOUT_PATH . $this->_layout . '.php');
+		} elseif (file_exists(LAYOUT_PATH . 'default.php')) {
+			include(LAYOUT_PATH . 'default.php');
 		} else {
-			include (ROOT . DS . 'application' . DS . 'views' . DS . '404.php');
-		}	
+			if (ENVIRONMENT == 'dev'){
+				warning ("the layout does not exist, please check your /views/layout folder");
+			}
+			include (ERRORS_PATH . '404.php');
+			die();
+		}
 	}
 }
