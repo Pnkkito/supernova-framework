@@ -25,17 +25,17 @@
 	}
 
 	/**
-	 * Check if DEVELOPMENT_ENVIRONMENT variable is set
+	 * Define Paths
 	 * @ignore
 	 */
-	if (!defined('DEVELOPMENT_ENVIRONMENT')){
-		/**
-		 * DEVELOPMENT_ENVIRONMENT
-		 * @var Boolean
-		 */
-		define('DEVELOPMENT_ENVIRONMENT', true);
-	}
-
+	define('VIEW_PATH', ROOT . DS . 'application' . DS . 'views' . DS);
+	define('LAYOUT_PATH', VIEW_PATH . 'layouts' . DS);
+	define('ERRORS_PATH', VIEW_PATH . 'errors' . DS);
+	define('APP_PATH', ROOT . DS .'application' . DS);
+	define('LIBRARY_PATH', ROOT . DS . 'library' . DS);
+	define('CORE_PATH', LIBRARY_PATH . DS . 'core' . DS);
+	define('EXTENSIONS_PATH', LIBRARY_PATH . DS . 'extensions' . DS);
+	
 	/**
 	 * Check if config file is set
 	 * @ignore
@@ -64,25 +64,55 @@
 				} 	
 			}else{
 				warning("Config file ".$eachFile.".ini is missing");
-				die();	
+				include ($errors_path . '500.php');
+				die();
 			}
 		}
 	}
 
 	/**
-	 * Check if Environment variable is set
+	 * PHP INI Environment variables
+	 */
+	ini_set('display_errors','Off');
+	ini_set('error_reporting', 0);
+	ini_set('log_errors', 'Off');
+
+	/**
+	 * Define DB Variables just in case not setted in database.json
+	 */
+	$db_vars=array('NAME','PASS','HOST','USER','DRIVER');
+	foreach ($db_vars as $each_db_vars){
+		if(!defined('DB_'.$each_db_vars)){ define('DB_'.$each_db_vars,''); }
+	}
+	unset($db_vars);
+
+	/**
+	 * Set error handler
+	 */
+	set_error_handler("errorHandler");
+	register_shutdown_function('shutdownFunction');
+	
+	/**
+	 * Error Handler
 	 * @ignore
 	 */
-	if (DEVELOPMENT_ENVIRONMENT == true) {
-		ini_set('display_errors','on');
-		ini_set('error_reporting', E_ALL ^ E_NOTICE);
-		ini_set('log_errors', 'On');
-		ini_set('error_log', ROOT.DS.'logs'.DS.'fatal_error.log');
-		set_error_handler("errorHandler");
-	} else {
-		ini_set('display_errors','Off');
-		ini_set('error_reporting', 0);
-		ini_set('log_errors', 'Off');
+	function errorHandler($type, $message, $file, $line, $str){
+		if (ENVIRONMENT == "dev") {
+			showError(array('type' => $type, 'message' => $message, 'file' => $file, 'line' => $line, 'str' => $str));
+	    }
+	    include (ERRORS_PATH . '500.php');
+		die();
+	}
+
+	/**
+	 * Shutdown Handler
+	 * @ignore
+	 */
+	function shutDownFunction() {
+	    $error = error_get_last();
+	    if (!empty($error)){
+	    	showError($error);
+	    }
 	}
 
 	/**
@@ -121,17 +151,31 @@
 			$controller .= 'Controller';
 			$controller[0] = strtolower($controller[0]);
 			if (class_exists($controller)){
-				$dispatch = new $controller($model,$controllerName,$action,$url,$admin);
+				$dispatch = new $controller($model,$controllerName,$action,$url);
 				if ((int)method_exists($controller, $action)) {
 				    if(method_exists($controller, 'beforeParse')){
-					$dispatch->beforeParse();	
+						$dispatch->beforeParse();	
 				    }
 				    call_user_func_array(array($dispatch,$action),$queryString);
+				    if(method_exists($controller, 'afterParse')){
+						$dispatch->afterParse();	
+				    }
 				}
 			}else{
-				die("Controller </strong>".$controllerName."</strong> does not exist");
+				if (ENVIRONMENT == 'dev'){
+					trigger_error("Controller '</strong>".$controllerName."</strong>' does not exist", E_USER_ERROR);
+				}
+				die();
 			}
 		}
+	}
+
+	function convertName($className){
+		$className[0] = strtolower($className[0]);
+		$func = create_function('$c', 'return "_" . strtolower($c[1]);');
+		$strName = preg_replace_callback('/([A-Z])/', $func, $className);
+		$name = strtolower($strName);
+		return $name;
 	}
 
 	/**
@@ -139,20 +183,12 @@
 	 * @ignore
 	 */
 	function supernova_autoloader($className){
-		$root_path = ROOT . DS;
-		$app_path=$root_path.'application' . DS;
-		$library_path=$root_path.'library' . DS;
-		$core_path='core' . DS;
-		$extensions_path='extensions' . DS;
-		$className[0] = strtolower($className[0]);
-		$func = create_function('$c', 'return "_" . strtolower($c[1]);');
-		$strName = preg_replace_callback('/([A-Z])/', $func, $className);
-		$name = strtolower($strName);
-		$corefile = $library_path.$core_path.$name.'.class.php';
-		$extensionfile = $library_path.$extensions_path.$name.'.class.php';
-		$controllerFile = $app_path. 'controllers' . DS . $name . '.php';
-		$modelFile = $app_path. 'models' . DS . $name . '.php';
-		$appFile = $app_path.'app'.'.controller.php';
+		$name = convertName($className);
+		$corefile = CORE_PATH.$name.'.class.php';
+		$extensionfile = EXTENSIONS_PATH.$name.'.class.php';
+		$controllerFile = APP_PATH. 'controllers' . DS . $name . '.php';
+		$modelFile = APP_PATH. 'models' . DS . $name . '.php';
+		$appFile = APP_PATH.'app.controller.php';
 		if (file_exists($corefile)){
 			require_once($corefile);
 		}else if (file_exists($extensionfile)){
@@ -167,7 +203,7 @@
 	}
 
 	/**
-	 * Autoload classes
+	 * Autoload register function
 	 * @ignore
 	 */
 	spl_autoload_register('supernova_autoloader');
@@ -181,7 +217,7 @@
 	 * @param	mixed	$str	Mixed var
 	 */
 	function debug($str){
-		if (DEVELOPMENT_ENVIRONMENT){
+		if (ENVIRONMENT == "dev"){
 			$trace = debug_backtrace();
 			$file = $trace[0]['file'];
 			$file = str_replace($_SERVER['DOCUMENT_ROOT'],'',$file);
@@ -192,7 +228,6 @@
 			}else{
 				$object = "View";
 			}
-			ob_start();
 			echo "<div class='alert' style='margin: 0;'>";
 			echo "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
 			echo "<h4>Debug</h4>";
@@ -200,8 +235,6 @@
 			echo "<pre>";
 			print_r($str);
 			echo "</pre></div>";
-			ob_flush();
-			ob_end_clean();
 		}
 	}
 
@@ -210,66 +243,18 @@
 	 * @ignore
 	 */
 	function warning($str){
-		if (DEVELOPMENT_ENVIRONMENT == true){
-			ob_start();
+		if (ENVIRONMENT == "dev"){
 			echo "<div class='alert alert-error' style='margin: 0;'>";
 			echo "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
 			echo "<h4>Warning</h4>";
 			echo "<p>";
 			print_r($str);
 			echo "</p></div>";
-			ob_flush();
-			ob_end_clean();
 		}
 	}
 
-	/**
-	 * Mail Debug
-	 *
-	 * Returns the line and place where debug is called
-	 * and prints their values and send them to Development_Email
-	 * 
-	 * @param	mixed	$mixed	Mixed var
-	 */
-	function maildebug($mixed){
-		if (DEVELOPMENT_ENVIRONMENT){
-			if (defined(DEVELOPMENT_EMAIL)){
-				$trace = debug_backtrace();
-				$file = $trace[0]['file'];
-				$file = str_replace($_SERVER['DOCUMENT_ROOT'],'',$file);
-				$line   = $trace[0]['line'];
-				if (isset($trace[1]['object'])){
-					$object = $trace[1]['object'];
-					if (is_object($object)) { $object = get_class($object); }
-				}else{
-					$object = "View";
-				}
-				$header = "<html><head><title>Mail Debug</title></head><body>";
-				$body = "<pre class='debug'><strong>DEBUG:</strong> In <strong>$object</strong> -> Line <strong>$line</strong>\n(file <strong>$file</strong>)";
-				$body.= "<pre>".print_r($mixed,true)."</pre>";
-				$footer = "</body></html>";
-				$message = $header.$body.$footer;
-				$email = DEVELOPMENT_EMAIL;
-				$asunto = 'Mail Debug';
-				$cabeceras = "Content-type: text/html\r\n";
-				mail($email,$asunto,$message,$cabeceras);
-			}
-		}
-	}
-
-	/**
-	 * Error Handler
-	 * @ignore
-	 */
-	function errorHandler($numerr, $menserr, $nombrearchivo, $numlinea, $vars){
-		// marca de tiempo para la entrada del error
-		$fh = date("Y-m-d H:i:s (T)");
-	    
-		// definir una matriz asociativa de cadena de error
-		// en realidad las únicas entradas que deberíamos
-		// considerar son E_WARNING, E_NOTICE, E_USER_ERROR,
-		// E_USER_WARNING y E_USER_NOTICE
-		$tipoerror = array (
+	function showError($error){
+		$errorType = array (
 			E_ERROR              => 'Error',
 			E_WARNING            => 'Warning',
 			E_PARSE              => 'Parsing Error',
@@ -284,39 +269,17 @@
 			E_STRICT             => 'Runtime Notice',
 			E_RECOVERABLE_ERROR  => 'Catchable Fatal Error'
 		);
-		
-		// conjunto de errores por el cuál se guardará un seguimiento de una variable
-		$errores_usuario = array(E_USER_ERROR, E_USER_WARNING, E_USER_NOTICE);
-		
-		$err = "<error datetime=\"$fh\">\n";
-		$err .= "\t<errornum>" . $numerr . "</errornum>\n";
-		$err .= "\t<type>" . $tipoerror[$numerr] . "</type>\n";
-		$err .= "\t<msg>" . $menserr . "</msg>\n";
-		$err .= "\t<scriptname>" . $nombrearchivo . "</scriptname>\n";
-		$err .= "\t<scriptlinenum>" . $numlinea . "</scriptlinenum>\n";
-	    
-		if (in_array($numerr, $errores_usuario)) {
-			$err .= "\t<vartrace>" . wddx_serialize_value($vars, "Variables") . "</vartrace>\n";
+
+		$errorcolor = (in_array($error['type'],array(E_ERROR,E_CORE_ERROR,E_USER_ERROR))) ? "alert-error" : "";
+		echo "<div class='alert ".$errorcolor."' style='margin: 0;'>";
+		echo "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
+		echo "<h4>".$errorType[$error['type']]."</h4>";
+		echo "<h5>".$error['message']."</h5>";
+		if (strpos($error['file'], "library/bootstrap.php") === false){
+			echo "<p>In <strong>".$error['file']."</strong> -> Line <strong>".$error['line']."</strong><br/></p>";
 		}
-		$err .= "</error>\n\n";
-		
-		if (($numerr != E_NOTICE) && (strpos($menserr, "PDO::__construct():") === false)){
-			echo "<div class='alert' style='margin: 0;'>";
-			echo "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
-			echo "<h4>$tipoerror[$numerr]</h4>";
-			echo "<p><strong>$menserr</strong><br/>Archivo: <strong>$nombrearchivo</strong> -> Linea <strong>$numlinea</strong></p>";
-			echo "</div>";
-			// guardar al registro de errores, y enviarme un e-mail si hay un error crítico de usuario
-			@error_log($err, 3, ROOT . DS . "logs" .DS . "errors.xml");
-		}
-		
-		if (defined(DEVELOPMENT_EMAIL)){
-			if ($numerr == E_ERROR || $numerr == E_USER_ERROR) {
-				mail(DEVELOPMENT_EMAIL, "Critical Error", $err);
-			}
-		}
+		echo "</div>";
 	}
 
 	parseConfig();
 	callHook();
-
