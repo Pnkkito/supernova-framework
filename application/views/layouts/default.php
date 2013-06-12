@@ -1,112 +1,84 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Arkangelkruel</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <!-- Bootstrap -->
-    <?=$this->html->includeCss("bootstrap/css/bootstrap");?>
-    <?=$this->html->includeCss("bootstrap/css/bootstrap-responsive");?>
-    <?=$this->html->includeCss("extras");?>
-    <link href='http://fonts.googleapis.com/css?family=Ubuntu:300' rel='stylesheet' type='text/css'>
-  </head>
-   <body>
+<head>
+	<meta charset="utf-8" />
+	<title><?=SITE_NAME;?></title>
 
-    <!-- <div class="visible-phone navbar navbar-inverse navbar-fixed-bottom posfix">
-      <div class="navbar-inner">
-        <div class="container">
-          <button type="button" class="btn btn-navbar btn-left" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="brand" href="#">Contacto</a>
-          <div class="nav-collapse collapse">
-            <ul class="nav">
-              <li class="active"><a href="#">Home</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                  <li><a href="#">Action</a></li>
-                  <li><a href="#">Another action</a></li>
-                  <li><a href="#">Something else here</a></li>
-                  <li class="divider"></li>
-                  <li class="nav-header">Nav header</li>
-                  <li><a href="#">Separated link</a></li>
-                  <li><a href="#">One more separated link</a></li>
-                </ul>
-              </li>
-            </ul>
-            <form class="navbar-form pull-right">
-              <input name="contacttitletext" class="span2" type="text" placeholder="Email de contacto">
-              <textarea name="contactbodytext" class="span2"></textarea>
-              <input class="span2" type="password" placeholder="Password">
-              <button type="submit" class="btn">Enviar mensaje</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div> -->
-    
-    <div class="container">
+	<!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
 
-      <!-- Main hero unit for a primary marketing message or call to action -->
-      <div class="hero-unit visible-desktop visible-tablet">
-        <h1 class="title">ArkangelKruel</h1>
-        <p>Código y otras hiervas</p>
-        <!-- <p><a href="#" class="btn btn-primary btn-large">Learn more &raquo;</a></p> -->
-      </div>
-      <div class="visible-phone boxphone">
-        <?=$this->html->image('arkangel_logo.png');?>
-        <h2>ArkangelKruel</h2>
-        <p>Código y otras hiervas</p>
-      </div>
-<h2 class="titles">Articulos</h2>
-      <div class="content">
-          <?php echo $this->getMessage(); ?>
-          <?php echo $content_for_layout; ?>  
-      </div>
-<h2 class="titles">Acerca de</h2>
-      <!-- Example row of columns -->
-      <div class="row">
-        <div class="span4">
-          <a class="btn block" href="http://www.linkedin.com/profile/view?id=107023243">
-            <span class="social-background social-linkedin">&nbsp;</span>
-            <h4 class="subtitle">Currículum</h4>
-          </a>
-          <p>Productor de aplicaciones informáticas, gestor de bases de datos, desarrolladas directamente con PHP y frameworks como CakePHP, Yii, entre otros. Particularmente interesado en el diseño de bases de datos cliente/servidor y relacionales usando servidor MySQL. Interés constantes en proyectos migratorios, además de en su estrecha interacción con las productoras de bases de datos. </p>
-        </div>
-        <div class="span4">
-          <a class="btn block" href="http://www.facebook.com/SupernovaFramework">
-            <span class="social-background social-facebook">&nbsp;</span>
-            <h4 class="subtitle">Supernova</h4>
-          </a>
-          <p>Supernova es un Framework MVC PHP liviano que puede manejar tanto projectos pequeños como otros de gran tamaño. Basado en VanillaPHP y CakePHP, nuestro proposito es generar grandes trabajos en pocas lineas de codigo y poca memoria.</p>
-       </div>
-        <div class="span4">
-          <a class="btn block" href="https://twitter.com/ArkangelKruel">
-            <span class="social-background social-twitter">&nbsp;</span>
-            <h4 class="subtitle">Otros</h4>
-          </a>
-          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-        </div>
-      </div>
+	<!-- StyleSheets -->
+	<?=$this->html->includeCss("bootstrap");?>
+	<?=$this->html->includeCss("style");?>
+	<?=$this->html->includeCss("chosen");?>
 
-      <hr>
+	<!-- JavaScripts -->
+	<?=$this->html->includeJs("jquery-1.8.3.min");?>
+	<?=$this->html->includeJs("bootstrap");?>
+	<?=$this->html->includeJs("chosen.jquery.min");?>
+	<?=$this->html->includeJs("layout_actions");?>
 
-      <footer>
-        <p style="color: white;">Página hecha con <?=$this->html->image('snf_logo_t.png',array('style'=>'height:50px'));?></p>
-      </footer>
+	<!-- This are the javascripts executed in head -->
+	<?=$this->html->scripts['head'];?>
 
-    </div> <!-- /container -->
+</head>
+<body>
+	<!-- This are the javascripts executed in head -->
+	<?=$this->html->scripts['start'];?>
 
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="jquery-1.9.1.min.js"></script>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
+	<div id="wrapper">
 
-  </body>
+		<header id="header">
+			<!-- Header Left : Logo and Site name -->
+			<div class="header-left">
+				<!-- Header Logo --><?=$this->html->image('snf_logo_t.png');?>
+				<!-- Site name --><h2><?=SITE_NAME;?></h2>
+			</div>
+
+			<!-- Header Right : Action buttons -->
+			<div class="header-right">
+
+				<!-- Logout example button ( Uncomment to use it ) -->
+				<!-- 
+					<?=$this->html->link('<i class="icon-off icon-white"></i> Log-out','#', array('class' => 'btn btn-inverse'));?>
+				-->
+
+			</div>
+		</header><!-- #header-->
+
+		<section id="middle">
+
+			<div id="container">
+				<div id="content">
+
+					<!-- Flash Message ( Read controller docs to know how to use it ) -->
+					<?php echo $this->getMessage(); ?>
+
+					<!-- Content for Layout -->
+					<?php echo $content_for_layout; ?>
+
+				</div><!-- #content-->
+			</div><!-- #container-->
+
+			<aside id="sideLeft">
+				<ul class="nav nav-list nav-tabs nav-stacked sidebar-size">
+
+					<!-- Elements contains layout parts, you can find them in /application/view/elements -->
+					<?php echo $this->element('sidebar');?>
+
+				</ul>
+			</aside><!-- #sideLeft -->
+
+		</section><!-- #middle-->
+
+	</div><!-- #wrapper -->
+
+	<footer id="footer">
+		<strong>&copy; Supernova Framework 2013</strong>
+	</footer><!-- #footer -->
+
+</body>
 </html>
+<!-- This are the javascripts executed in head -->
+<?=$this->html->scripts['end'];?>
