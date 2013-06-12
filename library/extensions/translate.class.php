@@ -5,7 +5,7 @@ class Translate {
 	private $lang 		= array();
 	
 	public function __construct(){
-        if($_SESSION['lang']){
+        if(isset($_SESSION['lang']) && !empty($_SESSION['lang'])){
             $this->language = $_SESSION['lang'];
         } else {
             $this->language = '';
