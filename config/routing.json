@@ -1,0 +1,33 @@
+{
+	"defaultRoute"		: null,
+	"defaultController" : "posts",
+	"defaultAction"		: "index",
+
+	// List of additional routes
+	"routes" : [ "admin" ],
+
+	// Shortcuts helps to get some url with alias (fantasy urls)
+	"shortcuts" : {
+
+		// "alias" : {
+		// 		"url" : "/fantasyurl",
+		// 		"param" : {
+		// 			"route" : 		"admin",
+		// 			"controller" :	"posts",
+		// 			"action" : 		"otheraction",
+		// 		}
+		// }
+
+		// 
+
+		"homepage" : {
+			"url" : "/",
+			"param" : {
+				"route" :		null,
+				"controller" : 	"posts",
+				"action" :		"index"
+			}
+		},
+
+	}
+}

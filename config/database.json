@@ -1,0 +1,18 @@
+{
+	"dev" : {
+		"driver" : "mysql",
+		"host" : "localhost",
+		"database" : "",
+		"username" : "",
+		"password" : "",
+		"prefix" : "SN"
+	},
+	"pro" : {
+		"driver" : "mysql",
+		"host" : "localhost",
+		"database" : "",
+		"username" : "",
+		"password" : "",
+		"prefix" : "SN"
+	}
+}

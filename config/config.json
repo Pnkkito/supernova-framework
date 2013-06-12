@@ -1,0 +1,24 @@
+{
+
+	// Where are we? (Server Name)
+	// "SITE_URL" : "http://www.arkangelkruel.com",
+	// "SITE_NAME" : "ArkangelKruel",
+
+	// Encrypt Seed (Keep it secret, keep it safe)
+	"RANDOM_SEED" : "IMTHEGREATCORNHOLIO",
+
+	// Contact email site
+	"CONTACT_EMAIL" : "admin@supernova",
+
+	// Application Constants
+	"ENVIRONMENT" : "dev", // or "pro"
+	
+	// Application Language (en,es)
+	"LANGUAGE" : "en",
+	
+	// Optional application constants
+	// "WEBROOT" : "public",
+	// "DATEFORMAT" : "d/m/Y H:i:s",
+	
+
+}
