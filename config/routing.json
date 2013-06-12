@@ -1,6 +1,6 @@
 {
 	"defaultRoute"		: null,
-	"defaultController" : "posts",
+	"defaultController" : "install",
 	"defaultAction"		: "index",
 
 	// List of additional routes
@@ -24,7 +24,7 @@
 			"url" : "/",
 			"param" : {
 				"route" :		null,
-				"controller" : 	"posts",
+				"controller" : 	"install",
 				"action" :		"index"
 			}
 		},
