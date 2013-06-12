@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @font-face {
   font-family: 'Ubuntu Condensed';
   font-style: normal;
@@ -239,4 +240,247 @@ form{
 	padding: 20px;
 	background-image: url('../img/Black_Hole.jpg');
 	background-position: center center;
+=======
+@font-face {
+  font-family: 'Ubuntu Condensed';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Ubuntu Condensed'), local('UbuntuCondensed-Regular'), url(../img/fonts/ubuntu-condensed.woff) format('woff');
+}
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	vertical-align: Middle;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+:focus {
+	outline: 0;
+}
+ins {
+	text-decoration: none;
+}
+del {
+	text-decoration: line-through;
+}
+
+html {
+	height: 100%;
+}
+header, nav, section, article, aside, footer {
+	display: block;
+}
+body {
+	font: 12px/18px "Ubuntu Condensed",Arial, Tahoma, Verdana, sans-serif;
+	height: 100%;
+	background: black;
+	background: url('../img/bg.jpg');
+}
+
+img {
+	border: none;
+}
+
+#wrapper {
+	width: 100%;
+	min-width: 500px;
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+}
+
+/* Links
+-----------------------------------------------------------------------------*/
+a {
+	color: black;
+	text-decoration: none;
+}
+a:hover {
+	color: grey;
+	text-decoration: none;
+}
+
+/* Header
+-----------------------------------------------------------------------------*/
+#header {
+	height: 95px;
+}
+
+#header img, #header h2{
+	display: inline;
+	color: white;
+	font-weight: normal;
+	padding: 10px;
+}
+
+#header-left{
+	float: left;
+}
+
+#header-right{
+	float: right;
+}
+
+/* Middle
+-----------------------------------------------------------------------------*/
+#middle {
+	width: 100%;
+	padding: 0 0 25px;
+	height: 1%;
+	position: relative;
+}
+#middle:after {
+	content: '';
+	clear: both;
+	display: table;
+}
+#container {
+	width: 100%;
+	float: left;
+	overflow: hidden;
+}
+#content {
+	margin: 0 0 0 60px;
+	padding: 20px;
+	background: white;
+	border-top-left-radius: 20px;
+	--moz-border-top-left-radius: 20px;
+	--webkit-border-top-left-radius: 20px;
+	border-bottom-left-radius: 20px;
+	--moz-border-bottom-left-radius: 20px;
+	--webkit-border-bottom-left-radius: 20px;
+}
+
+
+/* Sidebar Left
+-----------------------------------------------------------------------------*/
+#sideLeft {
+	float: left;
+	width: 59px;
+	margin-top: 20px;
+	padding: 10px;
+	margin-left: -100%;
+	position: relative;
+}
+
+#sideLeft .nav div{
+	display: inline-block;
+	width: 0px;
+	height: 19px;
+	max-height: 19px;
+	overflow:hidden;
+}
+
+#sideLeft .nav li a{
+	background: lightgrey;
+	max-height: 19px;
+}
+
+#sideLeft .nav li a:hover{
+	background: white;
+}
+
+
+/* Footer
+-----------------------------------------------------------------------------*/
+#footer {
+	margin: -25px auto 0;
+	min-width: 500px;
+	height: 25px;
+	position: relative;
+}
+
+/* Forms
+-----------------------------------------------------------------------------*/
+input[type="text"]{
+	font-family: 'Ubuntu Condensed', sans-serif;
+	padding: 0px 10px 0px 10px !important;
+	width: 340px;
+	height: 42px;
+}
+
+textarea{
+	font-family: 'Ubuntu Condensed', sans-serif;
+	padding: 10px 10px 10px 10px !important;
+	width: 340px !important;
+	min-height: 100px;
+}
+
+select{
+	font-family: 'Ubuntu Condensed', sans-serif;
+	padding: 13px !important;
+	height: 47px !important;
+	width: 363px !important;
+	margin-bottom: 24px !important;
+}
+
+input[type="submit"]{
+ 	font-family: 'Ubuntu Condensed', sans-serif;
+ 	width: 100% !important;
+ }
+
+label{
+	display: inline-block;
+	margin-bottom: 5px;
+	width: 235px;
+	border-bottom: 1px dotted #ccc;
+}
+
+form{
+	margin: 0 0 20px;
+	padding: 20px;
+	border: 1px dotted #888;
+	border-radius: 10px;
+	background: #eee;
+	width: 600px;*/
+}
+
+/* Tables
+-----------------------------------------------------------------------------*/
+.table th{
+	background-color: #808080 !important;
+	color: #EEE;
+}
+
+.table {
+	border: 1px solid #ddd;
+}
+
+.table tr:nth-child(odd){
+	background-color: #f7f7f7;
+}
+
+/* Blackhole
+-----------------------------------------------------------------------------*/
+.blackhole{
+	display: block;
+	color: white;
+	background: black;
+	text-align: center;
+	width: 500px;
+	height: 150px;
+	margin: 0 auto;
+	border: 1px solid grey;
+	border-radius: 50px;
+	--moz-border-radius: 50px;
+	--webkit-border-radius: 50px;
+	padding: 20px;
+	background-image: url('../img/Black_Hole.jpg');
+	background-position: center center;
+>>>>>>> 585760b57e1db7d012b8a3dc70593b19af28d8f9
 }

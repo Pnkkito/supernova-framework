@@ -193,7 +193,11 @@ class Html {
 		$data = "";
 		if (isset($args['url'])){
 			$data.= '<a href="'.Inflector::array_to_path($args['url']).'">';
+<<<<<<< HEAD
 			$data.= '<img src="'.SITE_URL.Inflector::getBasePath().'/img/'.$image.'" '.$ea.'/>';
+=======
+			$data.= '<img src="'.SITE_URL.Inflector::getBasePath().'img/'.$image.'" '.$ea.'/>';
+>>>>>>> 585760b57e1db7d012b8a3dc70593b19af28d8f9
 			$data.= '</a>';
 		}else{
 			$data.= '<img src="'.SITE_URL.Inflector::getBasePath().'/img/'.$image.'" '.$ea.'/>';	

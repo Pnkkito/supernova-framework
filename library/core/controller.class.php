@@ -57,8 +57,13 @@ class Controller {
 	/**
 	 * @ignore
 	 */
+<<<<<<< HEAD
 	function __construct($model, $controller, $action, $route, $url) {
 		$this->route = $route;
+=======
+	function __construct($model, $controller, $action, $url) {
+		//For public actions
+>>>>>>> 585760b57e1db7d012b8a3dc70593b19af28d8f9
 		$this->controller = $controller;
 		$this->action = str_replace($route.'_','',$this->action);
 		
