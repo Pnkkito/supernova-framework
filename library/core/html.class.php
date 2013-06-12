@@ -121,8 +121,8 @@ class Html {
 			case 'submit':	if (!$name){
 						$name = 'Submit';
 					}
+					$extrasParsed = '';
 					if (!empty($extras)){
-						$extrasParsed = '';
 						foreach ($extras as $k => $v){
 							$extrasParsed.=$k."='".$v."'";
 						}
@@ -145,11 +145,15 @@ class Html {
 	* @return string $data link element
 	*/
 	function link($text,$path, $extras = array()) {
-		$path = (is_array($path)) ? Inflector::array_to_path($path) : $path;
+		$path = (is_array($path)) ? Inflector::generateUrl($path) : $path;
 		// $path = ( strpos($path,'http://') !== false) ? $path : SITE_URL.Inflector::getBasePath().$path;
 		$ext = '';
 		$confirmMessage = null;
 		if(!empty($extras)){
+			if (isset($extras['icon'])){
+				$text = "<i class='icon-align-".$extras['icon']."'></i><div>".$text."</div>";
+				unset($extras['icon']);
+			}
 			if (isset($extras['prompt']) && !empty($extras['prompt'])){
 				$confirmMessage = $extras['prompt'];
 				unset ($extras['prompt']);
@@ -161,6 +165,7 @@ class Html {
 			}
 			
 		}
+
 		if ($confirmMessage) {
 			$data = '<a href="'.$path.'" '.$ext.' onclick="javascript:return confirm(\''.$confirmMessage.'\')">'.utf8_decode($text).'</a>';
 		} else {
@@ -177,20 +182,21 @@ class Html {
 	* @return string $data image element
 	*/
 	function image($image, $args = null){
+		$ea = "";
 		if (is_array($args)){
-			$ea = "";
 			foreach ($args as $k => $v){
 				if ($k!='url'){
 					$ea.= " $k='$v'";
 				}
 			}
 		}
+		$data = "";
 		if (isset($args['url'])){
-			$data = '<a href="'.Inflector::array_to_path($args['url']).'">';
-			$data.= '<img src="'.SITE_URL.Inflector::getBasePath().'img/'.$image.'" '.$ea.'/>';
+			$data.= '<a href="'.Inflector::array_to_path($args['url']).'">';
+			$data.= '<img src="'.SITE_URL.Inflector::getBasePath().'/img/'.$image.'" '.$ea.'/>';
 			$data.= '</a>';
 		}else{
-			$data.= '<img src="'.SITE_URL.Inflector::getBasePath().'img/'.$image.'" '.$ea.'/>';	
+			$data.= '<img src="'.SITE_URL.Inflector::getBasePath().'/img/'.$image.'" '.$ea.'/>';	
 		}
 		return $data;
 	}
@@ -518,11 +524,12 @@ class Html {
 	 * @return	object		Formed html table
 	 */
 	function table($data = array(), $options = array()){
-		$fields = ($options['fields']) ? $options['fields'] : null;
-		$fielded = ($options['fields']) ? true : false;
-		$type = ($options['type']) ? $options['type'] : false;
-		$actions = ($options['actions']) ? $options['actions'] : false;
-		$class = ($option['class']) ? $options['class'] : 'table';  
+		$optionsArray = array('fields','type','actions','class');
+		foreach ($optionsArray as $eachOption){
+			$$eachOption = (isset($options[$eachOption]) && !empty($options[$eachOption])) ? $options[$eachOption] : ($eachOption == 'class') ? 'table' : false;
+		}
+		
+		$out = "";
 		if (!empty($data)){
 			$modelName = array_keys($data);
 			$modelName = $modelName[0];
@@ -556,7 +563,7 @@ class Html {
 				$out.="<th style='width: 20px;'>&nbsp</th>";
 			}
 			
-			if (!empty($fields)){
+			if (!empty($fields) || $fields !== false){
 				$keyFields = array_keys($fields);
 			}else{
 				if (!empty($data) && is_array($data)){
@@ -567,7 +574,7 @@ class Html {
 				}
 			}
 			
-			if (!empty($fields)){
+			if (!empty($fields) || $fields !== false){
 				foreach ($fields as $k => $fieldName){
 					$out.="<th>";
 					$out.= $fieldName;
@@ -600,7 +607,7 @@ class Html {
 						$out.="</td>";
 					}
 
-					if (!$fielded){
+					if ($fields !== false){
 						foreach ($level as $k => $v){
 							$checkID = strpos($k,'_ID');
 							if ($checkID !== false){
@@ -796,7 +803,7 @@ class Html {
 	 * @param	String	$fileName	Filename without extension
 	 */
 	function includeJs($fileName) {
-		$data = '<script src="'.SITE_URL.Inflector::getBasePath().'js/'.$fileName.'.js"></script>';
+		$data = '<script src="'.SITE_URL.Inflector::getBasePath().'/js/'.$fileName.'.js"></script>';
 		return $data;
 	}
 
@@ -819,7 +826,7 @@ class Html {
 	 * @param	String	$media		CSS type
 	 */
 	function includeCss($fileName, $media ='screen') {
-		$data =  '<link rel="stylesheet" href="'.SITE_URL.Inflector::getBasePath().'css/'.$fileName.'.css" type="text/css" media="'.$media.'">';
+		$data =  '<link rel="stylesheet" href="'.SITE_URL.Inflector::getBasePath().'/css/'.$fileName.'.css" type="text/css" media="'.$media.'">';
 		return $data;
 	}
 	
