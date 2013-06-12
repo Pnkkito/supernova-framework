@@ -25,7 +25,7 @@ class Controller {
 	/**
 	 * @ignore 
 	 */
-	protected $data, $get;
+	protected $data, $get, $errors;
 	/**
 	 * @ignore
 	 */
@@ -51,37 +51,22 @@ class Controller {
 	 * @ignore
 	 */
 	function __get($class){
-		if (class_exists($class)){
-			return new $class;
-		}
+		return (class_exists($class)) ? new $class : trigger_error("Model or Extension '</strong>".$class."</strong>' does not exist", E_USER_ERROR);
 	}
 
 	/**
 	 * @ignore
 	 */
-	function __construct($model, $controller, $action, $url, $admin) {
-		//For public actions
+	function __construct($model, $controller, $action, $route, $url) {
+		$this->route = $route;
 		$this->controller = $controller;
-		$this->action = $action;
-		
-		//Find any route
-		$routings = explode(';',ROUTES);
-		if (!empty($routings)){
-			foreach ($routings as $routing){
-				$pos = strpos($this->action, $routing."_");
-				if ($pos !== false){
-					$this->route = $routing;
-					$this->action = str_replace($routing.'_','',$this->action);
-				}
-			}
-		}
+		$this->action = str_replace($route.'_','',$this->action);
 		
 		//Internal
 		$this->_controller = $controller;
 		$this->_action = $action;
 		$this->_model = $model;
 		$this->_url = $url;
-		$this->_admin = $admin;
 
 		$this->$model = new $model; //Call the modtemplate->_elname
 
@@ -248,15 +233,6 @@ class Controller {
 		}
 		$this->_template->_redirect = $url;
 		header('Location:'.$url);
-	}
-	
-	/**
-	 * Check if layout is Ajax or not
-	 *
-	 * @return boolean
-	 */
-	function isAjax(){
-		return $this->_ajax;
 	}
 	
 }
