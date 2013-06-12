@@ -504,6 +504,11 @@ class SQLQuery {
 				$counter++;
 			}
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+		}else{
+			trigger_error("No database connection detected", E_USER_ERROR);
+>>>>>>> 585760b57e1db7d012b8a3dc70593b19af28d8f9
 =======
 		}else{
 			trigger_error("No database connection detected", E_USER_ERROR);

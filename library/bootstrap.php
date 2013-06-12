@@ -37,6 +37,7 @@
 
 	/**
 <<<<<<< HEAD
+<<<<<<< HEAD
 	 * Site friendly name
 	 */
 	if (!defined('SITE_NAME')){
@@ -46,6 +47,11 @@
 	 * Define Paths
 	 * @ignore
 	 */
+=======
+	 * Define Paths
+	 * @ignore
+	 */
+>>>>>>> 585760b57e1db7d012b8a3dc70593b19af28d8f9
 	define('VIEW_PATH', ROOT . DS . 'application' . DS . 'views' . DS);
 	define('LAYOUT_PATH', VIEW_PATH . 'layouts' . DS);
 	define('ERRORS_PATH', VIEW_PATH . 'errors' . DS);
@@ -53,6 +59,9 @@
 	define('LIBRARY_PATH', ROOT . DS . 'library' . DS);
 	define('CORE_PATH', LIBRARY_PATH . DS . 'core' . DS);
 	define('EXTENSIONS_PATH', LIBRARY_PATH . DS . 'extensions' . DS);
+<<<<<<< HEAD
+>>>>>>> 585760b57e1db7d012b8a3dc70593b19af28d8f9
+=======
 >>>>>>> 585760b57e1db7d012b8a3dc70593b19af28d8f9
 
 	/**
@@ -125,12 +134,16 @@
 				warning("Config file ".$eachFile.".ini is missing");
 				include ($errors_path . '500.php');
 				die();
+<<<<<<< HEAD
+>>>>>>> 585760b57e1db7d012b8a3dc70593b19af28d8f9
+=======
 >>>>>>> 585760b57e1db7d012b8a3dc70593b19af28d8f9
 			}
 		}
 	}
 
 	/**
+<<<<<<< HEAD
 <<<<<<< HEAD
 	 * Check if Database vars are set
 	 * @ignore
@@ -140,6 +153,8 @@
 		foreach ($db_vars as $each_db_vars){ if(!defined('DB_'.strtoupper($each_db_vars))){ define('DB_'.strtoupper($each_db_vars),''); }}
 		define('DBS','_'); unset($db_vars);
 =======
+=======
+>>>>>>> 585760b57e1db7d012b8a3dc70593b19af28d8f9
 	 * PHP INI Environment variables
 	 */
 	ini_set('display_errors','Off');
@@ -184,6 +199,9 @@
 	    	include (ERRORS_PATH . '500.php');
 			die();
 	    }
+<<<<<<< HEAD
+>>>>>>> 585760b57e1db7d012b8a3dc70593b19af28d8f9
+=======
 >>>>>>> 585760b57e1db7d012b8a3dc70593b19af28d8f9
 	}
 
@@ -251,6 +269,9 @@
 			}else{
 				if (ENVIRONMENT == 'dev'){
 					trigger_error("Controller '</strong>".$controllerName."</strong>' does not exist", E_USER_ERROR);
+<<<<<<< HEAD
+>>>>>>> 585760b57e1db7d012b8a3dc70593b19af28d8f9
+=======
 >>>>>>> 585760b57e1db7d012b8a3dc70593b19af28d8f9
 				}
 				die();
@@ -273,13 +294,25 @@
 		return $name;
 	}
 
+	function convertName($className){
+		$className[0] = strtolower($className[0]);
+		$func = create_function('$c', 'return "_" . strtolower($c[1]);');
+		$strName = preg_replace_callback('/([A-Z])/', $func, $className);
+		$name = strtolower($strName);
+		return $name;
+	}
+
 	/**
 	 * Autoload any classes that are required
 	 * @ignore
 	 */
 	function supernova_autoloader($className){
 <<<<<<< HEAD
+<<<<<<< HEAD
 		$name = Inflector::getControllerFromModel($className);
+=======
+		$name = convertName($className);
+>>>>>>> 585760b57e1db7d012b8a3dc70593b19af28d8f9
 =======
 		$name = convertName($className);
 >>>>>>> 585760b57e1db7d012b8a3dc70593b19af28d8f9
@@ -351,6 +384,7 @@
 			echo "</p></div>";
 		}
 <<<<<<< HEAD
+<<<<<<< HEAD
 	}
 
 	/**
@@ -405,6 +439,10 @@
 =======
 	}
 
+=======
+	}
+
+>>>>>>> 585760b57e1db7d012b8a3dc70593b19af28d8f9
 	function showError($error){
 		$errorType = array (
 			E_ERROR              => 'Error',
@@ -431,6 +469,9 @@
 			echo "<p>In <strong>".$error['file']."</strong> -> Line <strong>".$error['line']."</strong><br/></p>";
 		// }
 		echo "</div>";
+<<<<<<< HEAD
+>>>>>>> 585760b57e1db7d012b8a3dc70593b19af28d8f9
+=======
 >>>>>>> 585760b57e1db7d012b8a3dc70593b19af28d8f9
 	}
 
