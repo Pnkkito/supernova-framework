@@ -1,12 +1,21 @@
 <?php
 class installController extends AppController {
 	
-	// function authExample(){
-	// 	$this->Auth = new Auth();
-	// 	$hash = $this->Auth->passwordHash('hola mundo');
-	// 	$verify = $this->Auth->passwordVerify('holamundo','hola mundo');
-	// }
+	//Internal functions
+	function parseFiles(){
+		switch ($fileName){
+			case "database.json": break;
+			case "schema.json":
+				
+			break;
+		}
+	}
 
+	//Blackhole2
+	function blackhole2(){
+		$user = $this->Install->find('all');
+	}
+	
 	//Configure database first
 	function index(){
 		$this->layout("default");
