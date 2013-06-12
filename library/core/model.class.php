@@ -66,6 +66,8 @@ class Model extends SQLQuery {
 	public static function raise($modelName){
 		if (class_exists($modelName)){
 			return new $modelName;
+		}else{
+			trigger_error("Model '</strong>".$modelName."</strong>' does not exist", E_USER_ERROR);
 		}
 	}
 
