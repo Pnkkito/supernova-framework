@@ -3,4 +3,5 @@
     RewriteCond %{REQUEST_URI} !^/cgi-bin/ [NC]
     RewriteRule    ^$   public/ [L]
     RewriteRule    (.*) public/$1 [L]
+    SetEnv SupernovaCheck on
 </IfModule>
