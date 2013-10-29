@@ -1,0 +1,31 @@
+{
+	"defaultRoute"		: null,
+	"defaultController" : "install",
+	"defaultAction"		: "index",
+
+	// List of additional routes
+	"routes" : [ "admin" ],
+
+	// Shortcuts helps to get some url with alias (fantasy urls)
+	"shortcuts" : {
+
+		// "alias" : {
+		// 		"url" : "/fantasyurl",
+		// 		"param" : {
+		// 			"route" : 		"admin",
+		// 			"controller" :	"posts",
+		// 			"action" : 		"otheraction",
+		// 		}
+		// }
+
+		"homepage" : {
+			"url" : "/",
+			"param" : {
+				"route" :		null,
+				"controller" : 	"install",
+				"action" :		"index"
+			}
+		},
+
+	}
+}

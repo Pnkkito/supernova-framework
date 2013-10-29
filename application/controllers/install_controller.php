@@ -9,7 +9,7 @@ class installController extends AppController {
 
 	//Configure database first
 	function index(){
-		$this->layout("default");
+		$this->layout("admin");
 		if ($this->data){
 			$SQL = new SQLQuery;
 			$host = $this->data['Install']['host'];
@@ -33,7 +33,7 @@ class installController extends AppController {
 
 	//Blackhole MVC maker
 	function blackhole(){
-		$this->layout("default");
+		$this->layout("admin");
 		$SQL = new SQLQuery;
 		if (!$SQL->connect()){
 			$this->setMessage('Seems you have some problems with your database conection, please check','error');

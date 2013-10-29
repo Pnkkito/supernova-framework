@@ -14,7 +14,7 @@ class Inflector {
 	 *
 	 * @return string
 	 */
-	public static function getQueryUrl(){
+	public static function getQueryString(){
 		$url = $_SERVER['QUERY_STRING'];
 		$pos = strrpos($url, "url=");
 		$url = ($pos !== false) ? str_replace('url=','',$url) : '';
@@ -45,10 +45,9 @@ class Inflector {
 	 * @return	object			Parse table name		
 	 */
 	public static function tableName($modelName){
-		$modelVars = get_class_vars($modelName);
-		$index = $modelVars['index'];
-		$val = DBPREFIX.$index.DBS.strtoupper(Inflector::camel_to_under(Inflector::pluralize($modelName)));
-		return $val;
+		$prefix = DB_PREFIX;
+		$val = Inflector::getModelPrefix($modelName).Inflector::camel_to_under(Inflector::pluralize($modelName));
+		return (!empty($prefix)) ? strtoupper($val) : strtolower($val);
 	}
 	
 	/**
@@ -62,7 +61,9 @@ class Inflector {
 	public static function getModelPrefix($modelName){
 		if (!empty($modelName) && class_exists($modelName)){
 			$modelVars = get_class_vars($modelName);
-			return DBPREFIX.$modelVars['index'].DBS;
+			$index = (isset($modelVars['index'])) ? $modelVars['index'] : '';
+			$prefix = ( defined('DB_PREFIX') && DB_PREFIX != '') ? DB_PREFIX : '';
+			return ( !empty($index) && !empty($prefix) ) ? $prefix.$index.DBS : '';
 		}
 	}
 
@@ -112,61 +113,112 @@ class Inflector {
 	}
 
 	/**
-	 * Generate relative url path from array (DEPRECATED)
+	 * Get route name from path
+	 * @param  Array  $path Path array
+	 * @return String       String with route name
+	 */
+	public static function getRoute($path){
+		global $_routingData;
+		if (is_array($path)){
+			if (!empty($_routingData['routes'])){
+				if (isset($path[0]) && in_array($path[0], $_routingData['routes'])){
+					return $path[0];
+				}
+			}
+		}else{
+			if (!empty($_routingData['routes'])){
+				foreach ($_routingData['routes'] as $eachRoute){
+					$check = strpos($path, $eachRoute.'_');
+					if ($check !== false)
+						return $eachRoute;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Get action name from path
+	 * @param  Array  $path Path array
+	 * @return String       String with action name
+	 */
+	public static function getAction($path){
+		$route = false;
+		global $_routingData;
+		if (is_array($path)){
+			if (!empty($_routingData['routes'])){
+				if (in_array($path[0], $_routingData['routes'])){
+					$route = $path[0];
+				}
+			}
+			array_shift($path);
+			array_shift($path);
+			$actionName = empty($path[0]) ? $_routingData['defaultAction'] : $path[0];
+		}else{
+			if (!empty($_routingData['routes'])){
+				foreach ($_routingData['routes'] as $eachRoute){
+					$path = str_replace($eachRoute.'_','', $path);
+				}
+			}
+			return $path;
+		}
+		return ($route) ? $route."_".$actionName : $actionName;
+	}
+
+	/**
+	 * Get controller name from path
+	 * @param  Array  $path Path array
+	 * @return String       String with controller name
+	 */
+	public static function getController($path){
+		global $_routingData;
+		if (!empty($_routingData['routes'])){
+			if (in_array($path[0], $_routingData['routes'])){
+				array_shift($path);
+			}
+		}
+		return empty($path[0]) ? $_routingData['defaultController'] : $path[0];
+	}
+
+	/**
+	 * Generate relative url from array
+	 * TODO: Routings
 	 * @param	array	$path	Parse array to form correct path
-	 * @return	string		Parsed path
+	 * @return	string			Url
 	 */
 	public static function generateUrl($path){
-		//Find any route
-		$routings = explode(';',ROUTES);
-		$route = false;
-		if (!empty($routings)){
-			foreach ($routings as $routing){
-				$pos = null;
-				$pos = strpos($path['action'], $routing."_");
-				if ($pos !== false){
-					$route = $routing;
-					$path['action'] = str_replace($routing.'_','',$path['action']);
-					$path[$routing] = $routing;
-				}
-				if (array_key_exists($routing, $path)){
-					$path['action'] = str_replace($routing.'_','',$path['action']);
-					$path[$routing] = $routing;
-					$route = $routing;
-				}
-			}	
-		}
-
 		if (is_array($path)){
-			$x=0;
+			$newpath = array();	$x=0;
+
+			//Route
+			if ( !isset($path['route']) || ( isset($path['route']) && empty($path['route']) ) )
+				$path['route'] = Inflector::getRoute($path['action']);
+			
 			foreach ($path as $k => $v){
-				if ((string)$k != (string)$route){
-					switch ((string)$k){
-						case 'language' : $newpath[0] = $v; break;
-						case 'plugin': $newpath[2] = $v; break;
-						case 'controller': $newpath[3] = $v; break;
-						case 'action': $newpath[4] = $v; break;
-						case 'params' : break;
-						default: $newpath[$x+5]= $v ; break;
-					}
+				switch ((string)$k){
+					case 'language' : $newpath[0] = $v; break;
+					case 'route' : $newpath[1] = $v; break;
+					case 'plugin': $newpath[2] = $v; break;
+					case 'controller': $newpath[3] = $v; break;
+					case 'action': $newpath[4] = Inflector::getAction($v); break;
+					case 'params' : break;
+					default: $newpath[$x+5]= $v ; break;
 				}
 				$x++;
 			}
-			if (!empty($route) || $route != false){ $newpath[1] = $route; }
-
 			ksort($newpath);
 			$path = implode('/',$newpath);
 		}else{
 			$path = str_replace(' ','-',$path);	
 		}
-
-		return SITE_URL.Inflector::getBasePath().$path;
+		return SITE_URL.Inflector::getBasePath().'/'.$path;
 	}
 
 	/**
 	 * Transform Array to String Path (DEPRECATED)
 	 * @param	array	$path	Parse array to form correct path
 	 * @return	string		Parsed path
+	 * @deprecated
 	 */
 	public static function array_to_path($path){
 		return Inflector::generateUrl($path);
@@ -178,9 +230,13 @@ class Inflector {
 	* @return string $str Inflected text
 	**/
 	public static function camel_to_under($str){
-		$str[0] = strtolower($str[0]);
-		$func = create_function('$c', 'return "_" . strtolower($c[1]);');
-		return preg_replace_callback('/([A-Z])/', $func, $str);
+		if (is_string($str) && !empty($str)){
+			$str[0] = strtolower($str[0]);
+			$func = create_function('$c', 'return "_" . strtolower($c[1]);');
+			return preg_replace_callback('/([A-Z])/', $func, (string)$str);
+		}else{
+			return $str;
+		}
 	}
 	
 	/**
@@ -189,11 +245,15 @@ class Inflector {
 	* @return array $aux2 Inflected array
 	**/
 	public static function camel_to_array($str){
-		$str[0] = strtolower($str[0]);
-		$func = create_function('$c', 'return "/" . strtolower($c[1]);');
-		$aux = preg_replace_callback('/([A-Z])/', $func, $str);
-		$aux2 = explode('/',$aux);
-		return $aux2;
+		if (is_string($str) && !empty($str)){
+			$str[0] = strtolower($str[0]);
+			$func = create_function('$c', 'return "/" . strtolower($c[1]);');
+			$aux = preg_replace_callback('/([A-Z])/', $func, $str);
+			$aux2 = explode('/',$aux);
+			return $aux2;
+		}else{
+			return $str;
+		}
 	}
 	
 	/**
@@ -202,12 +262,16 @@ class Inflector {
 	 * @param	Boolean	$capitaliseFirst	Capitalize first character
 	 * @return	String				Inflected string
 	 */
-	public static function under_to_camel($str, $capitaliseFirst = true) {
-		if($capitaliseFirst) {
-			$str[0] = strtoupper($str[0]);
+	public static function under_to_camel($str = '', $capitaliseFirst = true) {
+		if (!empty($str)){
+			if($capitaliseFirst) {
+				$str[0] = strtoupper($str[0]);
+			}
+			$func = create_function('$c', 'return strtoupper($c[1]);');
+			return preg_replace_callback('/_([a-z])/', $func, $str);
+		}else{
+			return false;
 		}
-		$func = create_function('$c', 'return strtoupper($c[1]);');
-		return preg_replace_callback('/_([a-z])/', $func, $str);
 	}
 	
 	/**
@@ -216,11 +280,17 @@ class Inflector {
 	* @return string $str Inflected text
 	**/
 	public static function singularize($str){
-		//$origin = array('/([rln])es([A-Z]|_|$)/','/ises([A-Z]|_|$)/','/ices([A-Z]|_|$)/','/([d])es([A-Z]|_|$)/','/([rbtaeiou])s([A-Z]|_|$)/'); //Spanish inflector
-		$origin = array('/([ln])es([A-Z]|_|$)/','/ises([A-Z]|_|$)/','/ices([A-Z]|_|$)/','/([d])es([A-Z]|_|$)/','/([rbtaeioun])s([A-Z]|_|$)/'); //English inflector
+		switch (LANGUAGE){
+			case 'es' : // Spanish inflector
+						$origin = array('/([rln])es([A-Z]|_|$)/','/ises([A-Z]|_|$)/','/ices([A-Z]|_|$)/','/([d])es([A-Z]|_|$)/','/([rbtaeiou])s([A-Z]|_|$)/');
+						break;
+
+			default   : // English inflector
+						$origin = array('/([ln])es([A-Z]|_|$)/','/ises([A-Z]|_|$)/','/ices([A-Z]|_|$)/','/([d])es([A-Z]|_|$)/','/([rbtaeioun])s([A-Z]|_|$)/');
+						break; 
+		}
 		$destiny = array('\1\2','\1is','\1iz','\1','\1\2');
-		$str = preg_replace($origin,$destiny,$str);
-		return $str;	    
+		return preg_replace($origin,$destiny,$str);
 	}
 		
 	/**
@@ -229,11 +299,17 @@ class Inflector {
 	* @return string $str Inflected text
 	**/
 	public static function pluralize($str){
-		// $origin = array('/([rtbaeiou])([A-Z]|_|$)/','/([rlnd])([A-Z]|_|$)/', '/(is)([A-Z]|_|$)/','/(i)(z)([A-Z]|_|$)/'); //Spanish inflector
-		$origin = array('/([rtbaeioun])([A-Z]|_|$)/','/([rld])([A-Z]|_|$)/', '/(is)([A-Z]|_|$)/','/(i)(z)([A-Z]|_|$)/'); //English inflector
+		switch (LANGUAGE){
+			case 'es' : // Spanish inflector
+						$origin = array('/([rtbaeiou])([A-Z]|_|$)/','/([rlnd])([A-Z]|_|$)/', '/(is)([A-Z]|_|$)/','/(i)(z)([A-Z]|_|$)/'); 
+						break;
+
+			default   : // English inflector
+						$origin = array('/([rtbaeioun])([A-Z]|_|$)/','/([rld])([A-Z]|_|$)/', '/(is)([A-Z]|_|$)/','/(i)(z)([A-Z]|_|$)/');
+						break; 
+		}
 		$destiny = array('\1s\2','\1es\2','\1es','\1ces');
-		$str = preg_replace($origin,$destiny,$str);
-		return $str;
+		return preg_replace($origin,$destiny,$str);
 	}
 
 	/**
@@ -275,4 +351,32 @@ class Inflector {
 		$name = strtolower($strName);
 		return $name;
 	}
+
+	public static function getControllerClass($controller){
+		$controller = ucwords($controller).'Controller';
+		$controller[0] = strtolower($controller[0]);
+		return $controller;
+	}
+
+	public static function parseJsonFile($filename){
+		$r = fopen($filename, 'r');
+		$rout = "";
+		while (!feof($r)){
+			$line = fgets($r);
+			$line = trim(preg_replace('/\s\s+/', ' ', $line));
+			$line = str_replace(" :", ':', $line);
+			$line = str_replace(": ", ':', $line);
+			$line = str_replace("} ", '}', $line);
+			$line = str_replace(" }", '}', $line);
+			$line = str_replace("{ ", '{', $line);
+			$line = str_replace(" {", '{', $line);
+			$line = preg_replace("@\s*//.*$@", "", $line);
+			$rout.= $line;
+		}
+		fclose($r);
+		$rout = str_replace(",}", "}", $rout);
+		$result = json_decode($rout,true);
+		return $result;
+	}
+
 }

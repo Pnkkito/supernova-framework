@@ -35,7 +35,11 @@ class Session{
 	 * @return	string		Value for key
 	 */
 	function read($key){ 
-		return $_SESSION[$key];
+		if (isset($_SESSION[$key]) && !empty($_SESSION[$key])){
+			return $_SESSION[$key];
+		}else{
+			return null;
+		}
 	}
 }
 

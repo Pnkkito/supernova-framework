@@ -13,18 +13,20 @@ class Security {
 	/**
 	 * Clean all GPC
 	 * @param array &$target 
-	 * @param string $etiquetas 
+	 * @param string $labels 
 	 * @param int $limit 
 	 * @return array
 	 * @ignore
 	 */
- 	public static function _limpia_gpc(&$target, $etiquetas, $limit= 3) {
+ 	public static function _limpia_gpc(&$target, $labels, $limit= 3) {
  		if ($target){
 	        foreach ($target as $key => $value) {
 	            if (is_array($value) && $limit > 0) {
-	                Security::_limpia_gpc($value, $etiquetas, $limit - 1);
+	                Security::_limpia_gpc($value, $labels, $limit - 1);
 	            } else {
-	                $target[$key] = preg_replace($etiquetas, "", $value);
+	                $target[$key] = preg_replace_callback($labels, function($matches) {
+					    return "";
+					}, $value);
 	            }
 	        }
 	        return $target;
@@ -45,9 +47,9 @@ class Security {
 		        unset ($$key);
 		    }
 		}
-		$etiquetas = array (
+		$labels = array (
 		    '@<script[^>]*?>.*?</script>@si',
-		    '@&#(\d+);@e',
+		    '@&#(\d+);@',
 		    '@\[\[(.*?)\]\]@si',
 		    '@\[!(.*?)!\]@si',
 		    '@\[\~(.*?)\~\]@si',
@@ -56,14 +58,15 @@ class Security {
 		    '@\[\+(.*?)\+\]@si',
 		    '@\[\*(.*?)\*\]@si'
 		);
-		Security::_limpia_gpc($_GET, $etiquetas);
-		Security::_limpia_gpc($_POST, $etiquetas);
-		Security::_limpia_gpc($_COOKIE, $etiquetas);
-		Security::_limpia_gpc($_REQUEST, $etiquetas);
 
+		foreach (array($_GET,$_POST,$_COOKIE,$_REQUEST) as $eachClean){
+			Security::_limpia_gpc($eachClean, $labels);
+		}
+		
 		foreach (array ('PHP_SELF', 'HTTP_USER_AGENT', 'HTTP_REFERER', 'QUERY_STRING') as $key) {
 		    $_SERVER[$key] = isset ($_SERVER[$key]) ? htmlspecialchars($_SERVER[$key], ENT_QUOTES) : null;
 		}
+
 		unset ($etiquetas, $key, $value);
 	}
 

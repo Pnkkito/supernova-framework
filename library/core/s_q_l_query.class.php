@@ -58,6 +58,15 @@ class SQLQuery {
 	// }
 
 	/**
+	 * SQL on destruct
+	 * @ignore
+	 */
+	function __destruct() {
+		// Debug all sql consults
+		// debug ($this->_SQLDebug);
+	}
+
+	/**
 	 * Connects to Database
 	 * @param	string	$address	Host address
 	 * @param	string	$username	Username
@@ -65,34 +74,32 @@ class SQLQuery {
 	 * @param	string	$database	Database name
 	 * @return	boolean			
 	 */
-	function connect($address = DB_HOST, $username = DB_USER, $password = DB_PASS, $database = DB_NAME, $dbdriver = DB_DRIVER) {
+	function connect($address = DB_HOST, $username = DB_USERNAME, $password = DB_PASSWORD, $database = DB_DATABASE, $dbdriver = DB_DRIVER) {
 		try {
 			$dbn = $dbdriver.":host=".$address.";dbname=".$database;
 			$this->_dbHandle = new PDO($dbn , $username, $password);
 			$this->_dbHandle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			$this->_dbHandle->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE,PDO::FETCH_ASSOC);
+			$this->_dbHandle->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 		} catch (PDOException $e) {
-			switch ($e->getCode()){
-				case '0' : warning('Conection failed :: Check your conection parameters'); break;
-				case '2002': warning('Conection failed :: Database <strong>Host</strong> incorrect'); break;
-				case '1044': warning('Conection failed :: Database <strong>Username</strong> incorrect'); break;
-				case '1045': warning('Conection failed :: Database <strong>Password</strong> incorrect'); break;
-				case '1049': warning('Conection failed :: Database <strong>Name</strong> incorrect'); break;
-			}
+			$this->PDOErrors($e);
 			return false;
 		}
 		return true;
 	}
- 
-	/**
-	 * SQL on destruct
-	 * @ignore
-	 */
-	function __destruct() {
-		// Debug all sql consults
-		// $this->DebugSQL();
-	}
 
+	function PDOErrors($e){
+		switch ($e->getCode()){
+			case '0' : warning('Conection failed :: No conection parameters :: Check your database configuration file'); break;
+			case '2002': warning('Conection failed :: Database <strong>Host</strong> incorrect :: Check your database configuration file'); break;
+			case '1044': warning('Conection failed :: Database <strong>Username</strong> incorrect :: Check your database configuration file'); break;
+			case '1045': warning('Conection failed :: Database <strong>Password</strong> incorrect :: Check your database configuration file'); break;
+			case '1049': warning('Conection failed :: Database <strong>Name</strong> incorrect :: Check your database configuration file'); break;
+			case '42S02': warning('Conection failed :: <strong>Table '.Inflector::tableName($this->_model).'</strong> not found in database'); break;
+			//case '42S22': warning('Conection failed :: <strong>Column</strong> not found in table <strong>'.Inflector::tableName($this->_model).'</strong>'); break;
+			default: warning('SQL Error :: '.$e->errorInfo[2]); break;
+		}
+	}
+ 
 	/**
 	 * Returns SQL Querys on screen
 	 * @ignore
@@ -115,7 +122,11 @@ class SQLQuery {
 			if (is_array($args['scopes'])){
 				foreach ($args['scopes'] as $eachScopeName){
 					$instance = new $_model;
-					$args['conditions'][] = $_model->scope($eachScopeName);
+					if ($_model->scope($eachScopeName)){
+						$args['conditions'][] = $_model->scope($eachScopeName);
+					}else{
+						trigger_error("Scope '</strong>".$eachScopeName."</strong>' not found in Model </strong>".$_model."</strong>", E_USER_ERROR);
+					}
 				}
 				unset ($args['scopes']);
 				return $args;
@@ -129,14 +140,20 @@ class SQLQuery {
 	 * @param	array	$args	Query conditions
 	 */
 	public function __call($func, $args){
-		switch (count($args)){
-			case '1' : 	return $this->{$func.$args[0]}(); break;
-			case '2' :	$args[1] = $this->getScopes($args[1]);
-						return $this->{$func.$args[0]}($args[1]);
-						break;
-			case '3' : 	return $this->{$func}($args[0],$args[1]);break;
-			default  : 	return $this->{'find'.$func}($args[0],$args[1],$args[2]); break;
+		try {
+			switch (count($args)){
+				case '1' : 	$result = $this->{$func.$args[0]}(); break;
+				case '2' :	$args[1] = $this->getScopes($args[1]);
+							$result = $this->{$func.$args[0]}($args[1]);
+							break;
+				case '3' : 	$result = $this->{$func}($args[0],$args[1]);break;
+				case '4' : 	$result = $this->{'find'.$func}($args[0],$args[1],$args[2]); break;
+			}
+			return $result;
+		} catch (Exception $e){
+			trigger_error("Function '</strong>".$func."</strong>' does not exist", E_USER_ERROR);
 		}
+		return false;
 	}
     
 	/**
@@ -176,8 +193,12 @@ class SQLQuery {
 	function findBy($pk = null, $arg = null){
 		$args = array('conditions' => array($pk => $arg),'limit' => '1');
 		$ar = $this->getQuery($this->_model,$args);
-		$aux[$this->_model]=$ar[$this->_model][0];
-		return $aux;
+		if (isset($ar[$this->_model])){
+			$aux[$this->_model] = $ar[$this->_model][0];
+			return $aux;
+		}else{
+			return false;
+		}
 	}
     
 	/**
@@ -290,7 +311,7 @@ class SQLQuery {
 	function findall($args = null){
 		if (key_exists('pageItems', $this->_controller)){
 			$limitNum = $this->_controller['pageItems'];
-			$pageNum = $limitNum * ($this->_controller['page']-1);
+			$pageNum = (isset($this->_controller['page'])) ? ($limitNum * ($this->_controller['page']-1)) : 0;
 			$args['limit'] = ($pageNum !== false && $pageNum >= 0)?$pageNum.','.$limitNum:$limitNum;
 		}
 		$args['order'] = (key_exists('asort', $this->_controller))?$this->_controller['asort']:null;
@@ -399,11 +420,12 @@ class SQLQuery {
 		foreach ($models as $eachTMM){
 			if ($eachTMM!=$modelName){
 				$table = Inflector::tableName($HTMModel);
-				$prefixTMM = $this->getPrefix($eachTMM);
+				$prefixTMM = Inflector::getModelPrefix($eachTMM);
+				$table = ($prefixTMM) ? strtoupper($table) : strtolower($table);
 				$modelTMM = get_class_vars($eachTMM);
 				$tableTMM = Inflector::tableName($eachTMM);
 				$actualTMM = $prefixTMM.$modelTMM['primaryKey'];
-				$queryMany = 'SELECT * FROM `'.strtoupper($table).'` '.($this->parseConditions($manyArgs_TOOMANY,$eachTMM));
+				$queryMany = 'SELECT * FROM `'.$table.'` '.($this->parseConditions($manyArgs_TOOMANY,$eachTMM));
 				$this->_SQLDebug['Find HasTooMany '.$eachTMM][]=$queryMany;
 				foreach ($this->_dbHandle->query($queryMany) as $row){
 					foreach ($row as $n => $eachSet){
@@ -440,59 +462,69 @@ class SQLQuery {
 		$recursive_level = (isset($this->_controller['recursive']) && !empty($this->_controller['recursive']) ) ? $this->_controller['recursive'] : 1 ;
 		
 		$model = get_class_vars($modelName);
-		$modelFK = $modelName.DBS.$model['primaryKey'];
 		$table = Inflector::tableName($modelName);
-		$query = 'SELECT '.strtoupper($in).' FROM `'.strtoupper($table).'` '.($this->parseConditions($args,$modelName));
+		$prefix = Inflector::getModelPrefix($modelName);
+		$modelFK = ($prefix) ? $modelName.DBS.$model['primaryKey'] : strtolower($model['primaryKey']);
+		$table = ($prefix) ? strtoupper($table) : strtolower($table);
+		$in = ($prefix) ? strtoupper($in) : strtolower($in); 
+		$query = 'SELECT '.$in.' FROM `'.$table.'` '.($this->parseConditions($args,$modelName));
 		$this->_SQLDebug['Find '.$modelName][]=$query;
 		$counter = 0;
-		foreach ($this->_dbHandle->query($query) as $row){
-			$ar[$modelName][$counter]=$this->unparseId($row,$modelName);
-			/* Image behavior */
-			if(is_array($model['thumbs'])){
-				foreach($model['thumbs'] as $imageField => $thumbOptions){
-					$imageData = $ar[$modelName][$counter][$imageField];
-					if (!empty($imageData)){
-						$ar[$modelName][$counter][$imageField] = array();
-						$ar[$modelName][$counter][$imageField]['full'] = $imageData;
-						foreach($thumbOptions as $thumbPrefix => $thumbData){
-							$thumbArr = explode('/',$imageData);
-							$thumbArr[count($thumbArr)-1] = $thumbPrefix."/".$thumbPrefix.".".$thumbArr[count($thumbArr)-1];
-							$thumbURL = implode('/',$thumbArr);
-							$ar[$modelName][$counter][$imageField][$thumbPrefix] = $thumbURL;
+		try{
+			if (!empty($this->_dbHandle)){
+				foreach ($this->_dbHandle->query($query) as $row){
+					$ar[$modelName][$counter]=$this->unparseId($row,$modelName);
+					/* Image behavior */
+					if (isset($model['thumbs']) && is_array($model['thumbs'])){
+						foreach($model['thumbs'] as $imageField => $thumbOptions){
+							$imageData = $ar[$modelName][$counter][$imageField];
+							if (!empty($imageData)){
+								$ar[$modelName][$counter][$imageField] = array();
+								$ar[$modelName][$counter][$imageField]['full'] = $imageData;
+								foreach($thumbOptions as $thumbPrefix => $thumbData){
+									$thumbArr = explode('/',$imageData);
+									$thumbArr[count($thumbArr)-1] = $thumbPrefix."/".$thumbPrefix.".".$thumbArr[count($thumbArr)-1];
+									$thumbURL = implode('/',$thumbArr);
+									$ar[$modelName][$counter][$imageField][$thumbPrefix] = $thumbURL;
+								}
+							}
 						}
 					}
-				}
-			}
-			
-			/* Related hasMany */
-			if (isset($model['hasMany']) && !empty($model['hasMany'])){
-				foreach ($model['hasMany'] as $hasManyModel){
-					$arrayQuery = $ar[$modelName][$counter];
-					$ar[$modelName][$counter][$hasManyModel] = $this->getQueryMore($hasManyModel,$arrayQuery, $recursive);
-				}
-			}
-			
-			/* Check recursivity */
-			if ($recursive < $recursive_level){
-				/* Related BelongsTo */
-				if (isset($model['belongsTo']) && !empty($model['belongsTo'])){
-					foreach ($model['belongsTo'] as $belongsToModel){
-						$arrayQuery = $ar[$modelName][$counter];
-						$ar[$modelName][$counter][$belongsToModel] = $this->getQueryMore($belongsToModel,$arrayQuery, $recursive);
+					
+					/* Related hasMany */
+					if (isset($model['hasMany']) && !empty($model['hasMany'])){
+						foreach ($model['hasMany'] as $hasManyModel){
+							$arrayQuery = $ar[$modelName][$counter];
+							$ar[$modelName][$counter][$hasManyModel] = $this->getQueryMore($hasManyModel,$arrayQuery, $recursive);
+						}
 					}
-				}
+					
+					/* Check recursivity */
+					if ($recursive < $recursive_level){
+						/* Related BelongsTo */
+						if (isset($model['belongsTo']) && !empty($model['belongsTo'])){
+							foreach ($model['belongsTo'] as $belongsToModel){
+								$arrayQuery = $ar[$modelName][$counter];
+								$ar[$modelName][$counter][$belongsToModel] = $this->getQueryMore($belongsToModel,$arrayQuery, $recursive);
+							}
+						}
 
-				/* Related hasTooMany */
-				if (isset($model['hasTooMany']) && !empty($model['hasTooMany']) && $modelName!=$model['hasTooMany']){
-					$lastModelID_TOOMANY = $ar[$modelName][$counter][$model['primaryKey']];
-					$manyArgs_TOOMANY = array('conditions' => array($modelFK => $lastModelID_TOOMANY));
-					foreach ($model['hasTooMany'] as $HTMModel => $models){
-						$ar[$modelName][$counter][$HTMModel] = $this->getQueryHasTooMany($HTMModel,$models);
+						/* Related hasTooMany */
+						if (isset($model['hasTooMany']) && !empty($model['hasTooMany']) && $modelName!=$model['hasTooMany']){
+							$lastModelID_TOOMANY = $ar[$modelName][$counter][$model['primaryKey']];
+							$manyArgs_TOOMANY = array('conditions' => array($modelFK => $lastModelID_TOOMANY));
+							foreach ($model['hasTooMany'] as $HTMModel => $models){
+								$ar[$modelName][$counter][$HTMModel] = $this->getQueryHasTooMany($HTMModel,$models);
+							}
+						}	
 					}
-				}	
+					
+					$counter++;
+				}
 			}
-			
-			$counter++;
+		}catch (PDOException $e) {
+			$this->PDOErrors($e);
+			return false;
 		}
 		
 		/* Pagination */
@@ -519,7 +551,7 @@ class SQLQuery {
 		$separatedVals = explode(DBS,$val);
 		$valPrimaryKey = end($separatedVals);
 		$modelName = ($model) ? $model : get_class($this);
-		$prefix = ($model) ? $this->getPrefix($model) : $this->getPrefix($modelName);
+		$prefix = ($model) ? Inflector::getModelPrefix($model) : Inflector::getModelPrefix($modelName);
 		$val = $prefix.$val;
 		if (count($separatedVals) > 0){
 			$modelName = str_replace(DBS,'',str_replace($prefix,'',Inflector::under_to_camel(str_replace($valPrimaryKey,'',$val))));
@@ -527,7 +559,7 @@ class SQLQuery {
 		if (!empty($modelName) && class_exists($modelName)){
 			$modelVars = get_class_vars($modelName);
 			if ($valPrimaryKey == $modelVars['primaryKey']){
-				$val = $this->getPrefix($modelName).$valPrimaryKey;
+				$val = Inflector::getModelPrefix($modelName).$valPrimaryKey;
 			}
 		}
 		if (!empty($valPrimaryKey)){
@@ -546,9 +578,12 @@ class SQLQuery {
 		if (is_array($val)){
 			$newval = $val;
 			foreach($newval as $_k => $_v){
-				$new_key = $this->unparseId($_k,$modelName);
-				$newval[$new_key] = $_v;
-				unset($newval[$_k]);
+				$prefix = Inflector::getModelPrefix($modelName);
+				if ($prefix){
+					$new_key = $this->unparseId($_k,$modelName);
+					$newval[$new_key] = $_v;
+					unset($newval[$_k]);
+				}
 			}
 			return $newval;
 		} else {
@@ -558,42 +593,29 @@ class SQLQuery {
 				$belongs = $this->belongsTo;
 			}else{
 				$modelData = get_class_vars($modelName);
-				$has = $modelData['hasMany'];
-				$belongs = $modelData['belongsTo'];
+				$has = (isset($modelData['hasMany'])) ? $modelData['hasMany'] : null;
+				$belongs = (isset($modelData['belongsTo'])) ? $modelData['belongsTo'] : null;
 			}
-			$prefix = $this->getPrefix($modelName);
 			if (strpos($val,$prefix) !== false){
 				return str_replace($prefix,'',$val);
 			}else{
 				if (isset($has) && !empty($has) ){
 					foreach ($has as $eachModel){
-						$foreingPrefix = $this->getPrefix($eachModel);
+						$foreingPrefix = Inflector::getModelPrefix($eachModel);
 						if (strpos($val,$foreingPrefix) !== false){
 							return $eachModel.DBS.str_replace($foreingPrefix,'',$val);
 						}
-					}	
-				}
-				if (isset($belongs) && !empty($belongs) ){
-					foreach ($belongs as $eachModel){
-						$foreingPrefix = $this->getPrefix($eachModel);
-						if (strpos($val,$foreingPrefix) !== false){
-							return $eachModel.DBS.str_replace($foreingPrefix,'',$val);
-						}
-					}	
+					}
+					if (isset($belongs) && !empty($belongs) ){
+						foreach ($belongs as $eachModel){
+							$foreingPrefix = Inflector::getModelPrefix($eachModel);
+							if (strpos($val,$foreingPrefix) !== false){
+								return $eachModel.DBS.str_replace($foreingPrefix,'',$val);
+							}
+						}	
+					}
 				}
 			}
-		}
-	}
-	
-	/**
-	 * Get prefix from model
-	 * @param	String	$modelName	Model name
-	 * @return	String			Prefix string
-	 */
-	function getPrefix($modelName){
-		if (!empty($modelName) && class_exists($modelName)){
-			$modelVars = get_class_vars($modelName);
-			return DBPREFIX.$modelVars['index'].DBS;
 		}
 	}
 	
@@ -716,6 +738,8 @@ class SQLQuery {
 	 */
 	function insertQuery($data,$eachModel){
 		$eachTable = Inflector::tableName($eachModel);
+		$prefix = Inflector::getModelPrefix($this->_model);
+		$eachTable = ($prefix) ? strtoupper($eachTable) : strtolower($eachTable);
 		$uc = "";
 		$uv = "";
 		if (SQLQuery::checkField(Inflector::getModelPrefix($eachModel).'CREATED',$eachTable)){
@@ -812,16 +836,22 @@ class SQLQuery {
 				}else{
 					// Save just one
 					$eachTable = Inflector::tableName($eachModel);
-					$id = $data[$eachModel][$modelData['primaryKey']];
-					if (empty($id)){
-						if($modelData['primaryKey']){
+					$id = false;
+					$prefix = DB_PREFIX;
+					$primaryKey = (!empty($prefix)) ? $modelData['primaryKey'] : strtolower($modelData['primaryKey']);
+					if (isset($data[$eachModel][$primaryKey]) && !empty($data[$eachModel][$primaryKey]))
+						$id = $data[$eachModel][$primaryKey];
+
+					if ($id == false){
+						if($primaryKey){
 							// Save Insert
 							$query = $this->insertQuery($data,$eachModel);
 							if ($query){
 								$this->_SQLDebug['Save Insert'][]=$query;
-								$this->_dbHandle->exec($query);
-								$errors = $this->_dbHandle->errorInfo();
-								if ($errors[1] != 0){
+								try{
+									$this->_dbHandle->exec($query);
+								} catch (PDOException $e) {
+									$this->PDOErrors($e);
 									return false;
 								}
 								$this->_lastInsertedId[$eachModel] = $results_ids[$eachModel][] = $this->_dbHandle->lastInsertId();
@@ -916,9 +946,11 @@ class SQLQuery {
 		if (key_exists('pageItems', $this->_controller)){
 			if ($query){
 				$realQuery = explode('LIMIT', $query);
-				$count = $this->_dbHandle->exec($realQuery[0]);
-				$totalPages = ceil($count/$this->_controller['pageItems']);
-				return $totalPages;
+				if (!empty($this->_dbHandle)){
+					$count = $this->_dbHandle->exec($realQuery[0]);
+					$totalPages = ceil($count/$this->_controller['pageItems']);
+					return $totalPages;
+				}
 			}
 		}
 	}
@@ -972,4 +1004,53 @@ class SQLQuery {
 		}
 		return $fields;
 	}
+
+	/**
+	 * Create table in database
+	 * @todo
+	 * @param  [type] $table  [description]
+	 * @param  [type] $fields [description]
+	 * @return [type]         [description]
+	 */
+	function createTable($table,$fields)
+	{
+		if (!empty($this->_dbHandle)){
+			$sql = "CREATE TABLE IF NOT EXISTS `$table` (";
+			$pk  = '';
+
+			foreach($fields as $field => $type){
+				$sql.= "`$field` $type,";
+				if (preg_match('/AUTO_INCREMENT/i', $type))
+					$pk = $field;
+			}
+
+			$sql = rtrim($sql,',') . ' PRIMARY KEY (`'.$pk.'`)';
+			$sql .= ") CHARACTER SET utf8 COLLATE utf8_general_ci";
+
+			//debug($sql);
+			
+			try{
+				$this->_dbHandle->exec($sql);
+			} catch (PDOException $e) {
+				$this->PDOErrors($e);
+				return false;
+			}
+
+			return true;
+		}
+	}
+	/*
+	CREATE TABLE IF NOT EXISTS `page` (
+	`page_ID` INT AUTO_INCREMENT NOT NULL,
+	`url` varchar(200) NOT NULL,
+	`title` varchar(200),
+	`subtitle` TEXT,
+	`content` TEXT,
+	`parent` varchar(10),
+	`privacy` varchar(1),
+	`status` varchar(1),
+	`creation` varchar(30),
+	PRIMARY KEY (`page_ID`)) 
+	CHARACTER SET utf8 COLLATE utf8_general_ci
+	 */
 }

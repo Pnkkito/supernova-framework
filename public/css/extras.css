@@ -1,0 +1,88 @@
+body{
+	background-image: url('../img/background.jpg');
+	background-position: top center;
+	/*background-size: auto;*/
+	/*background-attachment: fixed;*/
+	font-family: 'Ubuntu', sans-serif;
+	font-size: 75%;
+}
+
+.hero-unit {
+	margin-top: 20px;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 10px;
+	border-top-right-radius: 10px;
+	border-top-left-radius: 0;
+	background-image: url('../img/arkangel_logo.png');
+	background-position: right 60px bottom 20px;
+	background-repeat: no-repeat;
+	background-size: 180px;
+	background-color: black;
+	color: white;
+}
+
+.boxphone{
+	color: white;
+	background: black;
+	text-align: center;
+	padding:10px;
+	margin: 20px;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 10px;
+	border-top-right-radius: 10px;
+	border-top-left-radius: 0;
+}
+
+.span4, .span3, .span6 {
+	background: white;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 10px;
+	border-top-right-radius: 10px;
+	border-top-left-radius: 0;
+}
+
+.titles{
+	color: white;
+}
+
+.span4 .subtitle, .span4 p, .span3 .subtitle, .span3 p,  .span6 .subtitle, .span6 p{
+	padding: 10px;
+	text-align: justify;
+	display: inline-block;
+}
+
+.block{
+	display: block;
+}
+
+.social-background{
+	background-image: url('../img/social-icons.png');
+	display: inline-block;
+	overflow: hidden;
+	width: 32px;
+	height: 32px;
+	position: relative;
+	top: -10px;
+}
+
+.social-linkedin{
+	background-position: 32px 0;
+}
+
+.social-facebook{
+	background-position: 0 0;
+}
+
+.social-twitter{
+	background-position: 74px 0;
+}
+
+.posfix{
+	position: fixed;
+	margin: 0;
+	margin-bottom: -10px;
+}
+
+.btn-left{
+	float:left !important;
+}

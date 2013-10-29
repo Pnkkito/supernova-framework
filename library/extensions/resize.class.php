@@ -53,30 +53,41 @@ Class Resize{
 	 */
 	function createThumbs($args, $fileName){
 		if (is_array($fileName['file'])){
-			$count = count($fileName['file']);
-			for ($each = 0; $each < $count; $each++){
-				$this->image = $this->openImage($fileName['file'][$each],$fileName['type'][$each]);
-				$this->width  = imagesx($this->image);
-				$this->height = imagesy($this->image);
-				$pathArray = explode('/', $_SERVER["DOCUMENT_ROOT"]."/public/".$fileName['file'][$each]);
-				$fisicalFileName = $pathArray[count($pathArray)-1];
-				$pathArray[count($pathArray)-1] = null;
-				$this->basePath = implode('/',$pathArray);
-				foreach($args as $key => $arg){
-					if (!file_exists($this->basePath.$key.'/')){
-						$create = mkdir($this->basePath.$key.'/', 0777, TRUE);
-					}
-					$argWidth = ($arg['width']) ? $arg['width'] : -1 ;
-					$argHeight = ($arg['height']) ? $arg['height'] : -1 ;
-					$this->resizeImage($argWidth, $argHeight, $arg['type'][$each]);
-					$ret[$key] = str_replace($_SERVER["DOCUMENT_ROOT"]."/public/", '',$this->saveImage($this->basePath.$key.'/'.$key.'.'.$fisicalFileName, 100));
-				}
+			/*
+			[fileName] => Array
+	        (
+	            [file] => 
+	            	[0] => uploads/Post/d6a5d1_roflmao1.jpg
+	            	[1] => uploads/Post/d6a5d1_roflmao1.jpg
+	            	[2] => uploads/Post/d6a5d1_roflmao1.jpg
+
+	            [type] =>
+	            	[0] => image/jpeg
+	            	[1] => image/jpeg
+	            	[2] => image/jpeg
+	        )
+			*/
+			foreach ($filename['file'] as $count => $newFile){
+				$files[$count]['file'] = $newFile;
+			}
+			foreach ($filename['type'] as $count => $newFile){
+				$files[$count]['type'] = $newFile;
+			}
+			foreach ($files as $file){
+				$this->createThumbs($args,$file);
 			}
 		}else{
+			/*
+			[fileName] => Array
+	        (
+	            [file] => uploads/Post/d6a5d1_roflmao1.jpg
+	            [type] => image/jpeg
+	        )
+			*/
 			$this->image = $this->openImage($fileName['file'],$fileName['type']);
 			$this->width  = imagesx($this->image);
 			$this->height = imagesy($this->image);
-			$pathArray = explode('/', $_SERVER["DOCUMENT_ROOT"]."/public/".$fileName['file']);
+			$pathArray = explode('/', $_SERVER["DOCUMENT_ROOT"].DS.Inflector::getBasePath().WEBROOT.DS.$fileName['file']);
 			$fisicalFileName = $pathArray[count($pathArray)-1];
 			$pathArray[count($pathArray)-1] = null;
 			$this->basePath = implode('/',$pathArray);
@@ -84,10 +95,10 @@ Class Resize{
 				if (!file_exists($this->basePath.$key.'/')){
 					$create = mkdir($this->basePath.$key.'/', 0777, TRUE);
 				}
-				$argWidth = ($arg['width']) ? $arg['width'] : -1 ;
-				$argHeight = ($arg['height']) ? $arg['height'] : -1 ;
-				$this->resizeImage($argWidth, $argHeight, $arg['type']);
-				$ret[$key] = str_replace($_SERVER["DOCUMENT_ROOT"]."/public/", '',$this->saveImage($this->basePath.$key.'/'.$key.'.'.$fisicalFileName, 100));
+				$argWidth = (isset($arg['width']) && !empty($arg['width'])) ? $arg['width'] : -1 ;
+				$argHeight = (isset($arg['height']) && !empty($arg['height'])) ? $arg['height'] : -1 ;
+				$this->resizeImage($argWidth, $argHeight, (isset($arg['type']) && !empty($arg['type'])) ? $arg['type'] : null );
+				$ret[$key] = str_replace($_SERVER["DOCUMENT_ROOT"].WEBROOT.DS, '',$this->saveImage($this->basePath.$key.'/'.$key.'.'.$fisicalFileName, 100));
 			}
 		}
 		return $ret;
@@ -100,8 +111,8 @@ Class Resize{
 	 * @return object
 	 */
 	private function openImage($file,$type){
-		if (file_exists($_SERVER["DOCUMENT_ROOT"]."/public/".$file)){
-			$file = $_SERVER["DOCUMENT_ROOT"]."/public/".$file;
+		if (file_exists($_SERVER["DOCUMENT_ROOT"].WEBROOT.DS.$file)){
+			$file = $_SERVER["DOCUMENT_ROOT"].WEBROOT.DS.$file;
 		}
 		// *** Get extension
 		$extension = strtolower(strrchr($file, '.'));

@@ -56,7 +56,7 @@ class Validator {
 		$this->_model = $modelName;
 		$this->_modelData = get_class_vars($modelName);
 		$this->_pk = $this->_modelData['primaryKey'];
-		$this->_id = $data[$this->_model][$this->_pk];
+		$this->_id = (isset($data[$this->_model][$this->_pk]) && !empty($data[$this->_model][$this->_pk])) ? $data[$this->_model][$this->_pk] : null;
 		if (is_array($data) && !empty($data)){
 			if(!empty($valArr)){
 				foreach($data[$this->_model] as $keyItem => $validateItem){
@@ -86,8 +86,8 @@ class Validator {
 	 * @param	string	$var	String to validate
 	 * @return	mixed $ret	Error
 	 */
-	function notempty($var){
-		return (trim($var) == '') ? "error" : false;
+	function notEmpty($var){
+		return (trim($var) == '') ? "Field can't be empty" : '';
 	}
 	
 	/**
@@ -96,7 +96,7 @@ class Validator {
 	 * @return	mixed $ret	Error
 	 */
 	function numeric($var){
-		return (!filter_var($var, FILTER_VALIDATE_INT)) ? "error" : false;
+		return (!filter_var($var, FILTER_VALIDATE_INT)) ? "Field need to be numeric" : '';
 	}
 	
 	/**
@@ -110,13 +110,13 @@ class Validator {
 		$max = (isset($options['max'])) ? $options['max'] : null;
 
 		if ($min && $max){
-			return (strlen($var) >= $min && strlen($var) <= $max) ? false : 'error';
+			return (strlen($var) >= $min && strlen($var) <= $max) ? '' : 'Execeed minimal and maximal values';
 		}else{
 			if ($min){
-				return (strlen($var) >= $min) ? false : 'error';
+				return (strlen($var) >= $min) ? '' : 'Exceed minimal values';
 			}
 			if ($max){
-				return (strlen($var) <= $max) ? false : 'error';
+				return (strlen($var) <= $max) ? '' : 'Exceed maximal values';
 			}
 			return 'error';
 		}
@@ -128,7 +128,7 @@ class Validator {
 	 * @return	mixed $ret	Error
 	 */
 	function email($var){
-		return (!filter_var($var, FILTER_VALIDATE_EMAIL)) ? "error" : false;
+		return (!filter_var($var, FILTER_VALIDATE_EMAIL)) ? "Email not valid" : '';
 	}
 	
 	/**
@@ -142,10 +142,10 @@ class Validator {
 			$varArr = explode('.',$var);
 			$extension = end($varArr);
 			if(!in_array($extension, $types)){
-				return 'error';	
+				return 'File type not allowed';	
 			}
 		} else {
-			return 'error';	
+			return '';	
 		}
 	}
 	
@@ -155,7 +155,7 @@ class Validator {
 	 * @return	mixed $ret	Error
 	 */
 	function alphanumeric($var){
-		return (!preg_match('/^[A-Za-z0-9_]+$/',$var)) ? "error" : false;
+		return (!preg_match('/^[A-Za-z0-9_]+$/',$var)) ? "Field should be only alphanumeric" : '';
 	}
 	
 	/**
@@ -164,7 +164,7 @@ class Validator {
 	 * @return	mixed $ret	Error
 	 */
 	function url($var){
-		return (!filter_var($var, FILTER_VALIDATE_URL)) ? "error" : false;
+		return (!filter_var($var, FILTER_VALIDATE_URL)) ? "Invalid URL" : '';
 	}
 	
 	
@@ -191,9 +191,9 @@ class Validator {
 			$rut = $aux[0];
 			$digito_v = strtoupper($aux[1]);
 			$verifica = $this->dv($rut);
-			return ($digito_v == $verifica) ? false : "error";
+			return ($digito_v == $verifica) ? '' : "Rut Invalido";
 		}else{
-			return 'error';
+			return 'Rut invalido';
 		}
 	}
 	
@@ -206,9 +206,9 @@ class Validator {
 		$modelObj = new $this->_model;
 		$find = $modelObj->findBy($this->_key,$var);
 		if (!empty($find)){
-			return ($find[$this->_model][$this->_pk] == $this->_id) ? false : "error";
+			return ($find[$this->_model][$this->_pk] == $this->_id) ? '' : "Field need to be unique";
 		}else{
-			return false;
+			return '';
 		}
 	}
 	

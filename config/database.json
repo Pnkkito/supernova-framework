@@ -1,0 +1,19 @@
+{
+	"dev" : {
+		"driver" : "mysql",
+		"host" : "localhost",
+		"database" : "supernova",
+		"username" : "root",
+		"password" : "",
+		"prefix" : ""
+	},
+	
+	"pro" : {
+		"driver" : "mysql",
+		"host" : "localhost",
+		"database" : "supernova",
+		"username" : "root",
+		"password" : "",
+		"prefix" : ""
+	}
+}

@@ -20,9 +20,9 @@ class Bcrypt {
 	 * @ignore
 	 */
 	public function __construct($rounds = 12) {
-		// if(CRYPT_BLOWFISH != 1) {
-		// 	// warning("bcrypt not supported in this installation. See http://php.net/crypt");
-		// }
+		if(CRYPT_BLOWFISH != 1  && ENCRYPTION_TYPE =='bcrypt') {
+			warning("bcrypt is not supported in your server. See http://php.net/crypt");
+		}
 		$this->rounds = $rounds;
 	}
 
@@ -33,7 +33,7 @@ class Bcrypt {
 	 * @return string $hash Hashed string of false in errors
 	 */
 	public function hash($input) {
-		if (CRYPT_BLOWFISH == 1){
+		if (CRYPT_BLOWFISH == 1 && ENCRYPTION_TYPE =='bcrypt'){
 			$hash = crypt($input, $this->getSalt());
 			if(strlen($hash) > 13) return $hash;
 			return false;
@@ -51,7 +51,7 @@ class Bcrypt {
 	 * @return boolean
 	 */
 	public function verify($input, $existingHash) {
-		if (CRYPT_BLOWFISH == 1){
+		if (CRYPT_BLOWFISH == 1 && ENCRYPTION_TYPE =='bcrypt'){
 			$hash = crypt($input, $existingHash);
 			return $hash === $existingHash;	
 		}else{

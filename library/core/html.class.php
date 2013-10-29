@@ -116,13 +116,13 @@ class Html {
 						$path = Inflector::camel_to_array($name);
 						$this->_formController = Inflector::pluralize($path[0]);
 					}
-					$data = "<form name='".$name."' action='".Inflector::array_to_path($path)."' enctype='multipart/form-data' method='POST'>";
+					$data = "<form name='".$name."' action='".Inflector::generateUrl($path)."' enctype='multipart/form-data' method='POST'>";
 					break;
 			case 'submit':	if (!$name){
 						$name = 'Submit';
 					}
+					$extrasParsed = '';
 					if (!empty($extras)){
-						$extrasParsed = '';
 						foreach ($extras as $k => $v){
 							$extrasParsed.=$k."='".$v."'";
 						}
@@ -145,11 +145,15 @@ class Html {
 	* @return string $data link element
 	*/
 	function link($text,$path, $extras = array()) {
-		$path = (is_array($path)) ? Inflector::array_to_path($path) : $path;
+		$path = (is_array($path)) ? Inflector::generateUrl($path) : $path;
 		// $path = ( strpos($path,'http://') !== false) ? $path : SITE_URL.Inflector::getBasePath().$path;
 		$ext = '';
 		$confirmMessage = null;
 		if(!empty($extras)){
+			if (isset($extras['icon'])){
+				$text = "<i class='icon-align-".$extras['icon']."'></i><div>".$text."</div>";
+				unset($extras['icon']);
+			}
 			if (isset($extras['prompt']) && !empty($extras['prompt'])){
 				$confirmMessage = $extras['prompt'];
 				unset ($extras['prompt']);
@@ -161,6 +165,7 @@ class Html {
 			}
 			
 		}
+
 		if ($confirmMessage) {
 			$data = '<a href="'.$path.'" '.$ext.' onclick="javascript:return confirm(\''.$confirmMessage.'\')">'.utf8_decode($text).'</a>';
 		} else {
@@ -177,20 +182,21 @@ class Html {
 	* @return string $data image element
 	*/
 	function image($image, $args = null){
+		$ea = "";
 		if (is_array($args)){
-			$ea = "";
 			foreach ($args as $k => $v){
 				if ($k!='url'){
 					$ea.= " $k='$v'";
 				}
 			}
 		}
+		$data = "";
 		if (isset($args['url'])){
-			$data = '<a href="'.Inflector::array_to_path($args['url']).'">';
-			$data.= '<img src="'.SITE_URL.Inflector::getBasePath().'img/'.$image.'" '.$ea.'/>';
+			$data.= '<a href="'.Inflector::array_to_path($args['url']).'">';
+			$data.= '<img src="'.SITE_URL.Inflector::getBasePath().'/img/'.$image.'" '.$ea.'/>';
 			$data.= '</a>';
 		}else{
-			$data.= '<img src="'.SITE_URL.Inflector::getBasePath().'img/'.$image.'" '.$ea.'/>';	
+			$data.= '<img src="'.SITE_URL.Inflector::getBasePath().'/img/'.$image.'" '.$ea.'/>';	
 		}
 		return $data;
 	}
@@ -224,8 +230,6 @@ class Html {
 			}
 		}
 
-		
-		
 		$data ="<div>";
 		$ext='';
 		
@@ -286,16 +290,20 @@ class Html {
 		$ext = '';
 		if(!empty($items)){
 			foreach($items as $key => $extra){
-				if($key != '' && $extra != $type){
+				if (!is_array($extra)){
+					if($key != '' && $extra != $type){
+						$ext .= "$key = '$extra'";
+					}
+				}else{
+					$extra = $extra['full'];
 					$ext .= "$key = '$extra'";
 				}
 			}
-			
 		}
 		if(!is_array($name)){
 			if (isset($this->data[$model][$name])){
 				$value = $this->data[$model][$name];
-			}	
+			}
 		}
 		
 
@@ -307,11 +315,13 @@ class Html {
 				//	}
 				}
 				//$data .= ($type == 'checkbox') ? '<p class="checkboxtext">'.$title.'</p>' : '';
-				$data .= "<input type='$type' name='data[$model][$name]$check' value='$value' id='$name' $ext/>";
-				if($this->errors[$name]){
-					$errorArr = array_unique($this->errors[$name]);
-					$data .= "<span class='errorSpan'>".implode('<br />',$errorArr)."</span>";
+				if (is_array($value)){
+					$data.="<label>Image preview</label><span><img src='".SITE_URL.Inflector::getBasePath().DS.$value['home']."'/></span>";
+					$value = $value['full'];
 				}
+				
+				$data .= "<input type='$type' name='data[$model][$name]$check' value='$value' id='$name' $ext/>";
+				$data .= $this->checkErrors($this->errors,$name);
 			} else {
 				if(is_array($name)){
 					$data = "";
@@ -323,10 +333,7 @@ class Html {
 						$data .="<div>";
 						$data .= "<label for='$n'>".$title[$k]."</label>";
 						$data .= "<input type='datetime' name='data[".$modelArr[$k]."][".$nameArr[$k]."]' value='".$value[$k]."' id='".str_replace('.', '', $n)."' $ext/>";
-						if($this->errors[$n]){
-							$errorArr = array_unique($this->errors[$n]);
-							$data .= "<span class='errorSpan'>".implode('<br />',$errorArr)."</span>";
-						}
+						$data .= $this->checkErrors($this->errors,$name);
 						$data .= "</div>";
 					}
 					$data.= "
@@ -378,11 +385,9 @@ class Html {
 				$data .= "<label for='$name'>$title</label>";
 			}
 			$data .= "<textarea name='data[$model][$name]$check' $ext>$value</textarea>";
-			if($this->errors[$name]){
-				$errorArr = array_unique($this->errors[$name]);
-				$data .= "<span class='errorSpan'>".implode('<br />',$errorArr)."</span>";
-			}
+			$data .= $this->checkErrors($this->errors,$name);
 		}
+
 		$data .="</div>";
 		
 		if ($type == 'datetime'){
@@ -421,6 +426,23 @@ class Html {
 		return $data;
 	}
 	
+	function checkErrors($errors,$name){
+		$output = "";
+		if(isset($errors[$name]) && !empty($errors[$name])){
+			$errorArr = array_unique($errors[$name]);
+			$errorMessage="";
+			foreach ($errorArr as $k => $msg){
+				if (!empty($msg)){
+					$errorMessage.="<p>".$msg."</p>";
+				}
+			}
+			if (!empty($errorMessage)){
+				$output = "<span class='errorSpan'>".$errorMessage."</span>";
+			}
+		}
+		return $output;
+	}
+
 	/**
 	 * Create Ajax Input (adding and removing dinamicly)
 	 * @param	String	$name	Database name
@@ -518,16 +540,18 @@ class Html {
 	 * @return	object		Formed html table
 	 */
 	function table($data = array(), $options = array()){
-		$fields = ($options['fields']) ? $options['fields'] : null;
-		$fielded = ($options['fields']) ? true : false;
-		$type = ($options['type']) ? $options['type'] : false;
-		$actions = ($options['actions']) ? $options['actions'] : false;
-		$class = ($option['class']) ? $options['class'] : 'table';  
+		$optionsArray = array('fields','type','actions','class');
+		foreach ($optionsArray as $eachOption){
+			$$eachOption = (isset($options[$eachOption]) && !empty($options[$eachOption])) ? $options[$eachOption] : ($eachOption == 'class') ? 'table' : false;
+		}
+		
+		$out = "";
 		if (!empty($data)){
 			$modelName = array_keys($data);
 			$modelName = $modelName[0];
 			$modelData = get_class_vars($modelName);
-			$modelFK = $modelData['primaryKey'];
+			$prefix = Inflector::getModelPrefix($modelName);
+			$modelFK = ($prefix) ? $modelData['primaryKey'] : strtolower($modelData['primaryKey']);
 			
 			if (!$this->_formController){
 				$controller = $this->cm['controller'];
@@ -536,15 +560,16 @@ class Html {
 			}
 			
 			//Find any route
-			$routings = explode(';',ROUTES);
-			if (!empty($routings)){
-				foreach ($routings as $routing){
-					$pos = strpos($this->cm['action'], $routing."_");
-					if ($pos !== false){
-						$route = $routing;
-					}
-				}
-			}
+			$route = Inflector::getRoute($this->cm['action']);
+			// $routings = explode(';',ROUTES);
+			// if (!empty($routings)){
+			// 	foreach ($routings as $routing){
+			// 		$pos = strpos($this->cm['action'], $routing."_");
+			// 		if ($pos !== false){
+			// 			$route = $routing;
+			// 		}
+			// 	}
+			// }
 
 			$out ="<table class='".$class."'>";
 			
@@ -556,7 +581,7 @@ class Html {
 				$out.="<th style='width: 20px;'>&nbsp</th>";
 			}
 			
-			if (!empty($fields)){
+			if (!empty($fields) || $fields !== false){
 				$keyFields = array_keys($fields);
 			}else{
 				if (!empty($data) && is_array($data)){
@@ -567,7 +592,7 @@ class Html {
 				}
 			}
 			
-			if (!empty($fields)){
+			if (!empty($fields) || $fields !== false){
 				foreach ($fields as $k => $fieldName){
 					$out.="<th>";
 					$out.= $fieldName;
@@ -600,7 +625,7 @@ class Html {
 						$out.="</td>";
 					}
 
-					if (!$fielded){
+					if ($fields !== false){
 						foreach ($level as $k => $v){
 							$checkID = strpos($k,'_ID');
 							if ($checkID !== false){
@@ -611,8 +636,9 @@ class Html {
 							if (in_array($k,$keyFields)){
 								$out.="<td>";
 								if ($v !== null){
-									if (is_array($v) && isset($v['thumb'])){
-										$out.='<img src="/'.$v['thumb'].'" />';
+									if (is_array($v) && isset($v['full'])){
+										$file = SITE_URL.Inflector::getBasePath().DS.$v['mini'];
+										$out.='<img src="'.$file.'" style="width:40px" />';
 									}else{
 										$out.=$v;
 									}
@@ -651,12 +677,12 @@ class Html {
 					if ($actions){
 						$out.="<td>";
 						if (!is_array($actions)){
-							$out.=$this->link('<i class="icon-edit"></i> Edit', array('controller' => $controller, 'action' => 'edit', $route => true, $level[$modelFK]),array('class' => 'btn btn-mini'));
+							$out.=$this->link('<i class="icon-edit"></i> Edit', array('controller' => $controller, 'action' => 'edit', 'route' => $route, $level[$modelFK]),array('class' => 'btn btn-mini'));
 							$out.="&nbsp;";
-							$out.=$this->link('<i class="icon-remove"></i> Delete', array('controller' => $controller, 'action' => 'delete', $route => true, $level[$modelFK]),array('class' => 'btn btn-mini'));	
+							$out.=$this->link('<i class="icon-remove"></i> Delete', array('controller' => $controller, 'action' => 'delete', 'route' => $route, $level[$modelFK]),array('class' => 'btn btn-mini'));	
 						}else{
 							foreach ($actions as $name => $action){
-								$out.=$this->link($name, array('controller' => $controller, 'action' => $action, $route => true, $level[$modelFK]));
+								$out.=$this->link($name, array('controller' => $controller, 'action' => $action, 'route' => $route, $level[$modelFK]));
 							}
 						}
 						$out.="</td>";
@@ -796,7 +822,7 @@ class Html {
 	 * @param	String	$fileName	Filename without extension
 	 */
 	function includeJs($fileName) {
-		$data = '<script src="'.SITE_URL.Inflector::getBasePath().'js/'.$fileName.'.js"></script>';
+		$data = '<script src="'.SITE_URL.Inflector::getBasePath().'/js/'.$fileName.'.js"></script>';
 		return $data;
 	}
 
@@ -819,7 +845,7 @@ class Html {
 	 * @param	String	$media		CSS type
 	 */
 	function includeCss($fileName, $media ='screen') {
-		$data =  '<link rel="stylesheet" href="'.SITE_URL.Inflector::getBasePath().'css/'.$fileName.'.css" type="text/css" media="'.$media.'">';
+		$data =  '<link rel="stylesheet" href="'.SITE_URL.Inflector::getBasePath().'/css/'.$fileName.'.css" type="text/css" media="'.$media.'">';
 		return $data;
 	}
 	
