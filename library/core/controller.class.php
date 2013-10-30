@@ -25,7 +25,7 @@ class Controller {
 	/**
 	 * @ignore 
 	 */
-	protected $data, $get, $errors;
+	protected $post, $get, $errors;
 	/**
 	 * @ignore
 	 */
@@ -70,9 +70,9 @@ class Controller {
 
 		$this->$model = new $model; //Call the modtemplate->_elname
 
-		/* Converting $_POST values into "data" for model */
+		/* Converting $_POST values into "post" for model */
 		if (!empty($_POST) || !empty($_FILES)){
-			$this->data = $_POST['data'];
+			$this->post = $_POST['post'];
 
 			// Transbank Post
 			if (array_key_exists('TBK_ORDEN_COMPRA', $_POST)){
@@ -94,38 +94,38 @@ class Controller {
 			// Files
 			if(!empty($_FILES)){
 				$retFiles = $this->Behavior->file($_FILES);
-				$aux = array_keys($_FILES['data']['name']);
+				$aux = array_keys($_FILES['post']['name']);
 				$fileModel = $aux[0];
 				if($fileModel===0){
-					$fileModelKeys = array_keys($_FILES['data']['name'][0]);
+					$fileModelKeys = array_keys($_FILES['post']['name'][0]);
 					$fileModel = $fileModelKeys[0];
 				}
-				$fileModelData = get_class_vars($fileModel);
+				$fileModelpost = get_class_vars($fileModel);
 				if (isset($retFiles) && !empty($retFiles)){
 					if (!isset($retFiles[0])){
 						// For one file
 						foreach($retFiles as $key => $eachFile){
 							if(strpos($eachFile['type'],'image') !== false){
-								if($fileModelData['thumbs']){
-									foreach($fileModelData['thumbs'] as $thumbOptions){
+								if(isset($fileModelpost['thumbs']) && !empty($fileModelpost['thumbs'])){
+									foreach($fileModelpost['thumbs'] as $thumbOptions){
 										$this->Resize->createThumbs($thumbOptions, $eachFile);
 									}
 								}
 							}
-							$this->data[$fileModel][$key] = $eachFile['file'];
+							$this->post[$fileModel][$key] = $eachFile['file'];
 						}
 					}else{
 						// For many files
 						foreach($retFiles as $keyOne => $eachFiles){
 							foreach($eachFiles as $key => $eachFile){
 								if(strpos($eachFile['type'],'image') !== false){
-									if($fileModelData['thumbs']){
-										foreach($fileModelData['thumbs'] as $thumbOptions){
+									if(isset($fileModelpost['thumbs']) && !empty($fileModelpost['thumbs'])){
+										foreach($fileModelpost['thumbs'] as $thumbOptions){
 											$this->Resize->createThumbs($thumbOptions, $eachFile);
 										}
 									}
 								}
-								$this->data[$fileModel][$keyOne][$key] = $eachFile['file'];
+								$this->post[$fileModel][$keyOne][$key] = $eachFile['file'];
 							}
 						}
 					}
@@ -134,16 +134,16 @@ class Controller {
 				unset ($_FILES);
 			}
 			
-			// This data validation
+			// This post validation
 			if (isset($this->$model->validate)){
 				if (!empty($this->$model->validate)){
 					$validation = $this->$model->validate;
-					$this->errors =	$this->Validator->validate($validation, $this->data, $model);
+					$this->errors =	$this->Validator->validate($validation, $this->post, $model);
 					$this->$model->errors = $this->errors;
 				}
 			}
 		}else{
-			$this->data = null;
+			$this->post = null;
 		}
 		unset ($_POST);
 		
@@ -166,7 +166,7 @@ class Controller {
 
 		$this->_template = new View($controller,$action,$parse_id);
 		$this->_template->errors = $this->errors;
-		$this->_template->data = $this->data;
+		$this->_template->post = $this->post;
 		// $this->_template->params = $params;
 	}
 	
@@ -183,13 +183,6 @@ class Controller {
 		}else{
 			$this->_template->set($name,$value);
 		}
-	}
-	
-	/**
-	 * @ignore
-	 */
-	function __destruct() {
-	 	$this->_template->render();
 	}
 	
 	/**
@@ -217,7 +210,7 @@ class Controller {
 	 */
 	function setMessage($message, $class = 'notice'){
 		$output = "<div class='alert alert-$class'>";
-		$output.= "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
+		$output.= "<button type='button' class='close' post-dismiss='alert'>&times;</button>";
 		$output.= $message;
 		$output.= "</div>";
 		$this->_template->setMessage($output);
@@ -229,10 +222,21 @@ class Controller {
 	 */
 	function redirect($url = null){
 		if (is_array($url)){
-			$url = Inflector::array_to_path($url);
+			$url = Inflector::generateUrl($url);
 		}
 		$this->_template->_redirect = $url;
+		ob_start();
 		header('Location:'.$url);
+		ob_flush();
+		die();
+	}
+
+	/**
+	 * @ignore
+	 */
+	function __destruct() {
+		if ($this->_template)
+			$this->_template->render();
 	}
 	
 }
