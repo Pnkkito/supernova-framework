@@ -2,17 +2,15 @@
 	"dev" : {
 		"driver" : "mysql",
 		"host" : "localhost",
-		"database" : "",
-		"username" : "",
-		"password" : "",
-		"prefix" : "SN"
+		"database" : "supernova",
+		"username" : "root",
+		"password" : ""
 	},
 	"pro" : {
 		"driver" : "mysql",
 		"host" : "localhost",
-		"database" : "",
-		"username" : "",
-		"password" : "",
-		"prefix" : "SN"
+		"database" : "supernova",
+		"username" : "root",
+		"password" : ""
 	}
 }

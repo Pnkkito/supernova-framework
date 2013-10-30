@@ -1,39 +1,35 @@
 <?php
 class installController extends AppController {
 	
-	//Internal functions
-	function parseFiles(){
-		switch ($fileName){
-			case "database.json": break;
-			case "schema.json":
-				
-			break;
-		}
-	}
-
-	//Blackhole2
-	function blackhole2(){
-		$user = $this->Install->find('all');
-	}
-	
-	//Configure database first
+	//Setting database and models
 	function index(){
-		$this->layout("default");
-		if ($this->data){
+		$this->layout("admin");
+		if ($this->post){
 			$SQL = new SQLQuery;
-			$host = $this->data['Install']['host'];
-			$user = $this->data['Install']['user'];
-			$pass = $this->data['Install']['pass'];
-			$dbname = $this->data['Install']['dbname'];
-			$driver = $this->data['Install']['driver'];
-			$prefix = $this->data['Install']['prefix'];
+			$host = $this->post['Install']['host'];
+			$user = $this->post['Install']['user'];
+			$pass = $this->post['Install']['pass'];
+			$dbname = $this->post['Install']['dbname'];
+			$driver = $this->post['Install']['driver'];
 			if ($SQL->connect($host,$user,$pass,$dbname,$driver)){
-				//Save params in database.ini
-				$this->set(compact('host','user','pass','dbname','driver','prefix'));
+				
+				//Generate database.json file
+				$this->set(compact('host','user','pass','dbname','driver'));
 				$this->layout("ajax");
-				$this->render('templates/databaseOutput','file',ROOT.'/config/database.ini');
+				$this->render('templates/databaseOutput','file',ROOT.'/config/database.json');
+
+				//Create build.properties files based on database.json file
+				Propel::generate('config');
+
+				//Generate obtect model files
+				Propel::generate('model'); // propel-gen om
+
+				//Generate SQL Schema File (schema.sql) from database for backup purposes
+				Propel::generate('sql');
+
 				$this->setMessage('Your database conection has saved, now Blackhole your Supernova','success');
 				$this->redirect(array('controller' => 'install','action' => 'blackhole'));
+
 			}else{
 				$this->setMessage('Please check again your conection parameters');
 			}
@@ -42,7 +38,9 @@ class installController extends AppController {
 
 	//Blackhole MVC maker
 	function blackhole(){
-		$this->layout("default");
+		$this->layout("admin");
+		
+		//Check for connection
 		$SQL = new SQLQuery;
 		if (!$SQL->connect()){
 			$this->setMessage('Seems you have some problems with your database conection, please check','error');
@@ -50,37 +48,20 @@ class installController extends AppController {
 		}
 
 		$tables = $SQL->getTables();
-		$this->Install->_tables = $tables;
+		if ($this->post){
+			$table = $this->post['Install']['tablename'];
 
-		if ($this->data){
-			$table = $this->data['Install']['tablename'];
 			if ($table == "Choose your model..."){
-				$this->setMessage('Please select your table to Blackhole it','error');
+				$this->setMessage('Please select your model to Blackhole it','error');
 			}else{
-				//Get table prefix and index
-				$prefix = substr($table,0,2);
-				$index = substr($table,2,2);
 
-				//Set default ForeingKey
-				$defaultPK = "ID";
-
-				//Set default DisplayField
-				$defaultDisplayField = "ID";
-
-				//Get model name
 				$modelName = $tables[$table];
+				$queryModel = ucfirst($modelName).'Peer';
+				$Table = $queryModel::getTableMap();
+				$Columns = $Table->getColumns();
+				$this->set(compact('modelName','Table','Columns'));
+				// http://propelorm.org/Propel/cookbook/runtime-introspection.html
 
-				//Get fields for model
-				$fields = $SQL->getFields($table);
-				$fieldsUnparsed = Inflector::unparseFields($fields,$modelName);
-
-				$this->set(compact('modelName','index','defaultPK','defaultDisplayField','table','prefix','fields','fieldsUnparsed'));
-
-				//Build Model file
-				$dirName = ROOT.'/application/models/';
-				$fileName = strtolower($modelName).".php";
-				$this->render("templates/outputModel", "file", $dirName.$fileName);
-				
 				//Build Controller file
 				$fileName = Inflector::pluralize(Inflector::camel_to_under($modelName))."_controller.php";
 				$dirName = ROOT.'/application/controllers/';
@@ -108,18 +89,22 @@ class installController extends AppController {
 		}
 		$this->set(compact('tables'));
 	}
-	
-	function ajaxRequest(){
-		$this->layout('ajax');
-		if ($this->data){ // format in ajax request -> { data : { action:actionName, key:var, key2:var2, etc... } }
-			switch ($this->data['action']){
-				case 'getRelatedModels':
-					//New functions always should go inside the model class
-					$relations = $this->Install->searchForRelations($this->data['table']);
-					$this->set(compact('relations'));
-				break;
-			}
-		}
+
+	function regenerateModels(){
+		//Create build.properties files based on database.json file
+		Propel::generate('config');
+
+		//Generate obtect model files
+		Propel::generate('model'); // propel-gen om
+
+		//Generate SQL Schema File (schema.sql) from database for backup purposes
+		Propel::generate('sql');
 	}
+
+	// function authExample(){
+	// 	$this->Auth = new Auth();
+	// 	$hash = $this->Auth->passwordHash('hola mundo');
+	// 	$verify = $this->Auth->passwordVerify('holamundo','hola mundo');
+	// }
 
 }

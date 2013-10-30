@@ -1,8 +1,17 @@
-[Database]
-DB_NAME = "<?php echo $this->data['Install']['dbname'];?>"
-DB_USER = "<?php echo $this->data['Install']['user'];?>"
-DB_PASS = "<?php echo $this->data['Install']['pass'];?>"
-DB_HOST = "<?php echo $this->data['Install']['host'];?>"
-DB_DRIVER = "<?php echo $this->data['Install']['driver'];?>"
-DBPREFIX = "<?php echo $this->data['Install']['prefix'];?>"
-DBS = "_"
+{
+	"dev" : {
+		"driver" : "<?php echo $this->data['Install']['driver'];?>",
+		"host" : "<?php echo $this->data['Install']['host'];?>",
+		"database" : "<?php echo $this->data['Install']['dbname'];?>",
+		"username" : "<?php echo $this->data['Install']['user'];?>",
+		"password" : "<?php echo $this->data['Install']['pass'];?>",
+	},
+	
+	"pro" : {
+		"driver" : "<?php echo $this->data['Install']['driver'];?>",
+		"host" : "<?php echo $this->data['Install']['host'];?>",
+		"database" : "<?php echo $this->data['Install']['dbname'];?>",
+		"username" : "<?php echo $this->data['Install']['user'];?>",
+		"password" : "<?php echo $this->data['Install']['pass'];?>",
+	}
+}

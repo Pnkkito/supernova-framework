@@ -1,44 +1,50 @@
 <?php
 
+$tableName = $Table->getPhpName();
+
 $outputController = '<?php
-class '.strtolower(Inflector::pluralize($modelName)).'Controller extends AppController {
+class '.$tableName.'Controller extends AppController {
 
 	function index(){
-		$'.strtolower(Inflector::pluralize($modelName)).' = $this->'.$modelName.'->find("all");
-		$this->set(compact("'.strtolower(Inflector::pluralize($modelName)).'"));
+		$'.$tableName.' = '.$tableName.'Query::create()->find();
+		$this->set(compact("'.$tableName.'"));
 	}
 
 	function add(){
-		if ($this->data){
-			$this->'.$modelName.'->save($this->data);
+		if ($this->post){
+			$'.$tableName.' = new '.$tableName.'();
+			$'.$tableName.'->fromArray($this->post);
+			$'.$tableName.'->save();
 			$this->setMessage("New data saved","success");
-			$this->redirect(array("controller" => "'.strtolower(Inflector::pluralize($modelName)).'", "action" => "index"));	
+			$this->redirect(array("controller" => "'.$tableName.'", "action" => "index"));	
 		}
 	}
 
 	function edit($id = null){
-		if ($this->data){
-			$this->'.$modelName.'->save($this->data);
+		if ($this->post){
+			$'.$tableName.' = '.$tableName.'Query::create()->findPk($id);
+			$'.$tableName.'->fromArray($this->post);
+			$'.$tableName.'->save();
 			$this->setMessage("Data saved","success");
-			$this->redirect(array("controller" => "'.strtolower(Inflector::pluralize($modelName)).'", "action" => "index"));
+			$this->redirect(array("controller" => "'.$tableName.'", "action" => "index"));
 		}
 		if ($id){
-			$'.strtolower($modelName).' = $this->'.$modelName.'->findBy("ID",$id);
-			$this->set(compact("'.strtolower($modelName).'"));
+			$'.$tableName.' = $'.$tableName.'Query::create()->findPk($id);
+			$this->set(compact("'.$tableName.'"));
 		}else{
 			$this->setMessage("Incorrect ID","error");
-			$this->redirect(array("controller" => "'.strtolower(Inflector::pluralize($modelName)).'", "action" => "index"));
+			$this->redirect(array("controller" => "'.$tableName.'", "action" => "index"));
 		}
 	}
 
 	function delete($id = null){
 		if ($id){
-			$this->'.$modelName.'->delete($id);
+			$'.$modelName.'Query::create()->findPk($id)->delete();
 			$this->setMessage("Data deleted","success");
-			$this->redirect(array("controller" => "'.strtolower(Inflector::pluralize($modelName)).'", "action" => "index"));		
+			$this->redirect(array("controller" => "'.$tableName.'", "action" => "index"));		
 		}else{
 			$this->setMessage("Incorrect ID","error");
-			$this->redirect(array("controller" => "'.strtolower(Inflector::pluralize($modelName)).'", "action" => "index"));
+			$this->redirect(array("controller" => "'.$tableName.'", "action" => "index"));
 		}
 	}
 }
