@@ -1,8 +1,7 @@
 <h3>Welcome to Supernova Framework</h3>
 
 <p>To establishing database conections, you need to provide some info.<br/>
-	Please fill the next fields with the correct data to<br/>
-	make it possible</p>
+	Please fill the next fields with the correct data to make it possible<br/>&nbsp;<br/></p>
 
 <?php echo $this->html->form('create'); ?>
 <?php echo $this->html->select('driver','Select your conection type', array('options' => array('mysql' => 'MySql conection'))); ?>
