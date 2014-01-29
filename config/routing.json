@@ -1,6 +1,6 @@
 {
 	"defaultRoute"		: null,
-	"defaultController" : "install",
+	"defaultController" 	: "install",
 	"defaultAction"		: "index",
 
 	// List of additional routes
@@ -18,14 +18,12 @@
 		// 		}
 		// }
 
-		// 
-
 		"homepage" : {
-			"url" : "/",
+			"url" 	: "/",
 			"param" : {
-				"route" :		null,
-				"controller" : 	"install",
-				"action" :		"index"
+				"route" 	: null,
+				"controller" 	: "install",
+				"action" 	: "index"
 			}
 		},
 
