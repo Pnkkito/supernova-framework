@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 @font-face {
   font-family: 'Ubuntu Condensed';
   font-style: normal;
@@ -129,7 +128,7 @@ a:hover {
 -----------------------------------------------------------------------------*/
 #sideLeft {
 	float: left;
-	width: 59px;
+	width: 150px;
 	margin-top: 20px;
 	padding: 10px;
 	margin-left: -100%;
@@ -138,7 +137,7 @@ a:hover {
 
 #sideLeft .nav div{
 	display: inline-block;
-	width: 0px;
+	width: 150px;
 	height: 19px;
 	max-height: 19px;
 	overflow:hidden;
@@ -353,7 +352,7 @@ a:hover {
 	overflow: hidden;
 }
 #content {
-	margin: 0 0 0 60px;
+	margin: 0 0 0 160px;
 	padding: 20px;
 	background: white;
 	border-top-left-radius: 20px;
@@ -369,7 +368,7 @@ a:hover {
 -----------------------------------------------------------------------------*/
 #sideLeft {
 	float: left;
-	width: 59px;
+	width: 155px;
 	margin-top: 20px;
 	padding: 10px;
 	margin-left: -100%;

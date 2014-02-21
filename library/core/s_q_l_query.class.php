@@ -65,12 +65,12 @@ class SQLQuery {
 	 * @param	string	$database	Database name
 	 * @return	boolean			
 	 */
-	function connect($address = DB_HOST, $username = DB_USERNAME, $password = DB_PASSWORD, $database = DB_DATABASE, $dbdriver = DB_DRIVER) {
+	public static function connect($address = DB_HOST, $username = DB_USERNAME, $password = DB_PASSWORD, $database = DB_DATABASE, $dbdriver = DB_DRIVER) {
 		try {
 			$dbn = $dbdriver.":host=".$address.";dbname=".$database;
-			$this->_dbHandle = new PDO($dbn , $username, $password);
-			$this->_dbHandle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			$this->_dbHandle->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+			self::$sql = new PDO($dbn , $username, $password);
+			self::$sql->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			self::$sql->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 		} catch (PDOException $e) {
 			switch ($e->getCode()){
 				case '0' : warning('Conection failed :: Check your conection parameters'); break;
@@ -175,20 +175,6 @@ class SQLQuery {
 	}
     
 	/**
-	 * Find result by one simple argument
-	 *
-	 * @param string $pk Field key
-	 * @param string $arg Field value
-	 * @return array $aux Return results from database
-	 */
-	function findBy($pk = null, $arg = null){
-		$args = array('conditions' => array($pk => $arg),'limit' => '1');
-		$ar = $this->getQuery($this->_model,$args);
-		$aux[$this->_model]=$ar[$this->_model][0];
-		return $aux;
-	}
-    
-	/**
 	* Find All results by one simple argument
 	* 
 	* @param string $pk Field key
@@ -227,30 +213,30 @@ class SQLQuery {
 	* @param array $args Conditions from controller
 	* @return array $ar Return list with primaryKey => displayName
 	*/
-	function findlist($args = null){
+	public static function getList($args = null){
 		/* Fields parser */
-		$pk = $this->parseId($this->primaryKey);
-		$df = $this->parseId($this->displayField);
+		$model = get_called_class();
+		$table = Inflector::tableName($model);
+		$pk = $model::$primaryKey;
+		$df = $model::$displayField;
 		$in = '';
 		if (isset($args['fields']) and !empty($args['fields'])){
-			if (!isset($args['fields'][$this->primaryKey])){
-				array_push($args['fields'], $this->primaryKey);
+			if ( !isset( $args['fields'][$pk] ) ){
+				array_push( $args['fields'] , $pk );
 			}
 			foreach ($args['fields'] as $fields){
-				$in.= $this->parseID($fields).',';
+				$in.= $fields.',';
 			}
-			//$in.= $this->primaryKey;
 			$in = substr($in,0,-1);
 		}else{
 			$in = '`'.$pk.'`,`'.$df.'`';
 		}
 		
-		$query = 'SELECT '.$in.' FROM '.$this->_table.' '.$this->parseConditions($args);
-		$this->_SQLDebug['Find list '.$modelName][]=$query;
+		$query = 'SELECT '.$in.' FROM '.$table.' '.self::parseConditions($args);
 		$ar = array();
-		foreach ($this->_dbHandle->query($query) as $row){
+		foreach (self::$sql->query($query) as $row){
 			if (isset($args['fields']) and !empty($args['fields'])){
-				$ar[$row[$this->parseId($args['fields'][1])]] = $row[$this->parseId($args['fields'][0])];
+				$ar[$row[$args['fields'][1]]] = $row[$args['fields'][0]];
 			}else{
 				$ar[$row[$pk]] = $row[$df];	
 			}
@@ -361,25 +347,6 @@ class SQLQuery {
 		return $out;
 	}
 	
-	/**
-	* Field parser
-	*/
-	function fieldParser($args){
-		$arr = array();
-		if (isset($args['fields']) and !empty($args['fields'])){
-			if ($args['fields'] != array('COUNT(*)')){
-				foreach ($args['fields'] as $fields){
-					$arr[] = $this->parseID($fields);
-				}
-				return explode(',',$arr);
-			}else{
-				return 'COUNT(*)';
-			}
-		}else{
-			return '*';
-		}
-	}
-
 	/** 
 	* Get query for related models
 	* @ignore
@@ -411,7 +378,7 @@ class SQLQuery {
 				$modelTMM = get_class_vars($eachTMM);
 				$tableTMM = Inflector::tableName($eachTMM);
 				$actualTMM = $prefixTMM.$modelTMM['primaryKey'];
-				$queryMany = 'SELECT * FROM `'.strtoupper($table).'` '.($this->parseConditions($manyArgs_TOOMANY,$eachTMM));
+				$queryMany = 'SELECT * FROM `'.$table.'` '.($this->parseConditions($manyArgs_TOOMANY,$eachTMM));
 				$this->_SQLDebug['Find HasTooMany '.$eachTMM][]=$queryMany;
 				foreach ($this->_dbHandle->query($queryMany) as $row){
 					foreach ($row as $n => $eachSet){
@@ -450,7 +417,7 @@ class SQLQuery {
 		$model = get_class_vars($modelName);
 		$modelFK = $modelName.DBS.$model['primaryKey'];
 		$table = Inflector::tableName($modelName);
-		$query = 'SELECT '.strtoupper($in).' FROM `'.strtoupper($table).'` '.($this->parseConditions($args,$modelName));
+		$query = 'SELECT '.$in.' FROM `'.$table.'` '.($this->parseConditions($args,$modelName));
 		$this->_SQLDebug['Find '.$modelName][]=$query;
 		$counter = 0;
 		if (!empty($this->_dbHandle)){
@@ -517,152 +484,6 @@ class SQLQuery {
 	}	
 	
 	/**
-	 * Parse ID
-	 *
-	 * Parse value from human readable model name to database column format
-	 * 
-	 * @param	String	$val	Human readable model name
-	 * @param   String 	$model 	Model name
-	 * @return	String			Database oracle column format
-	 */
-	function parseId($val, $model = null){
-		$separatedVals = explode(DBS,$val);
-		$valPrimaryKey = end($separatedVals);
-		$modelName = ($model) ? $model : get_class($this);
-		$prefix = ($model) ? $this->getPrefix($model) : $this->getPrefix($modelName);
-		$val = $prefix.$val;
-		if (count($separatedVals) > 0){
-			$modelName = str_replace(DBS,'',str_replace($prefix,'',Inflector::under_to_camel(str_replace($valPrimaryKey,'',$val))));
-		}
-		if (!empty($modelName) && class_exists($modelName)){
-			$modelVars = get_class_vars($modelName);
-			if ($valPrimaryKey == $modelVars['primaryKey']){
-				$val = $this->getPrefix($modelName).$valPrimaryKey;
-			}
-		}
-		if (!empty($valPrimaryKey)){
-			return $val;
-		}
-	}
-	
-	/**
-	 * Unparse ID
-	 * 
-	 * @param	mixed	$val		String or array in oracle database column format
-	 * @param	String	$modelName	Model name
-	 * @return	object				String or array in human readable column result
-	 */
-	function unparseId($val, $modelName = null){
-		if (is_array($val)){
-			$newval = $val;
-			foreach($newval as $_k => $_v){
-				$new_key = $this->unparseId($_k,$modelName);
-				$newval[$new_key] = $_v;
-				unset($newval[$_k]);
-			}
-			return $newval;
-		} else {
-			if (!$modelName){
-				$modelName = $this->_model;
-				$has = $this->hasMany;
-				$belongs = $this->belongsTo;
-			}else{
-				$modelData = get_class_vars($modelName);
-				$has = $modelData['hasMany'];
-				$belongs = $modelData['belongsTo'];
-			}
-			$prefix = $this->getPrefix($modelName);
-			if (strpos($val,$prefix) !== false){
-				return str_replace($prefix,'',$val);
-			}else{
-				if (isset($has) && !empty($has) ){
-					foreach ($has as $eachModel){
-						$foreingPrefix = $this->getPrefix($eachModel);
-						if (strpos($val,$foreingPrefix) !== false){
-							return $eachModel.DBS.str_replace($foreingPrefix,'',$val);
-						}
-					}	
-				}
-				if (isset($belongs) && !empty($belongs) ){
-					foreach ($belongs as $eachModel){
-						$foreingPrefix = $this->getPrefix($eachModel);
-						if (strpos($val,$foreingPrefix) !== false){
-							return $eachModel.DBS.str_replace($foreingPrefix,'',$val);
-						}
-					}	
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Get prefix from model
-	 * @param	String	$modelName	Model name
-	 * @return	String			Prefix string
-	 */
-	function getPrefix($modelName){
-		if (!empty($modelName) && class_exists($modelName)){
-			$modelVars = get_class_vars($modelName);
-			return DB_PREFIX.$modelVars['index'].DBS;
-		}
-	}
-	
-	/**
-	 * Parse Conditions
-	 * 
-	 * Conditions to format database query
-	 * 
-	 * @param	array	$conditions	Array with conditions
-	 * @param	string	$model		Model name
-	 * @return	object			Parsed database query
-	 */
-	function parseConditions($conditions, $model = null){
-		$rv = " WHERE '1'='1' ";
-		if (is_array($conditions)){
-			if (key_exists('conditions',$conditions)){
-				if (is_array($conditions['conditions'])){
-					foreach ($conditions['conditions'] as $k2 => $v2){
-						if (!empty($v2)){
-							$rv.=" AND ";
-							$k2 = ($model) ? $this->parseId($k2,$model) : $this->parseId($k2); 
-							if (!is_array($v2)){
-								/* Buscamos por algun operador de condicion */
-								if (substr($k2,-2) == '>=' || substr($k2,-2) == '<='){
-									$rv.=" `".substr(Security::sanitize($k2),0,-3)."` ".substr($k2,-2)." '".Security::sanitize($v2)."'";
-								}else if (substr($k2,-1) == '>' || substr($k2,-1) == '<' ){
-									$rv.=" `".substr(Security::sanitize($k2),0,-2)."` ".substr($k2,-1)." '".Security::sanitize($v2)."'";
-								}else if(substr($k2,-1) == '!'){
-									$rv.=" `".trim(substr(Security::sanitize($k2),0,-1))."` ".substr($k2,-1)."= '".Security::sanitize($v2)."'";
-								}else{
-									$rv.=" `".Security::sanitize($k2)."`='".Security::sanitize($v2)."'";
-								}
-							}else{
-								$k2 = str_replace('!',' NOT ',$k2);
-								$rq=" ".Security::sanitize($k2)." IN (";
-								foreach ($v2 as $v3){
-									$rq.= $v3.',';
-								}
-								$rq= substr($rq,0,-1).")";
-								$rv.=$rq;
-							}
-							if(count($conditions['conditions']) > 1){
-								$rv.=" AND ";
-							}
-						}
-					}
-					if(count($conditions['conditions']) > 1){
-						$rv = substr($rv,0,-4);
-					}
-				}
-			}
-			$rv.=(key_exists('group',$conditions)) ? " GROUP BY ".Security::sanitize($this->parseId($conditions['group'])) : "";
-			$rv.=(key_exists('order',$conditions)) ? " ORDER BY ".Security::sanitize($this->parseId($conditions['order'])) : "";
-			$rv.=(key_exists('limit',$conditions)) ? " LIMIT ".Security::sanitize($conditions['limit']) : "";
-		}
-		return $rv;
-	}
-    
-	/**
 	* Custom Query
 	* 
 	* @param string $query SQL Database custom query
@@ -678,13 +499,6 @@ class SQLQuery {
 	}
 
 	/**
-	* Delete from Database
-	* 
-	* @param string $id ID from the table called in controller
-	* @return boolean
-	*/
-
-	/**
 	 * Delete from Database
 	 * 
 	 * @param int 		$id 		ID from database
@@ -692,24 +506,14 @@ class SQLQuery {
 	 * @param String 	$modelName2 Model name with Hasmany or HasTooMany
 	 * @return type
 	 */
-	function delete($id, $modelName = null, $modelName2 = null){
-		$model = ($modelName) ? $modelName : $this->_model;
-		$table = ($modelName) ? Inflector::tableName($modelName) : $this->_table;
-		$modelData = get_class_vars($model);
-		if ($modelName2){
-			$modelData2 = get_class_vars($modelName2);
-		}
-		
+	public static function delete($id){
+	    $model = get_called_class();
+		$table = Inflector::tableName($model);
 		if ($id){
-			if ($modelName2){
-				$idKey = $this->parseId($modelData2['primaryKey'], $modelName2);
-			}else{
-				$idKey = $this->parseId($modelData['primaryKey'], $model);
-			}
-			$query = 'DELETE FROM '.$table.' WHERE `'.$idKey.'`=\''.Security::sanitize($id).'\'';
-			$this->_SQLDebug['Delete'][]=$query;
-			$this->_dbHandle->exec($query);
-			$errors = $this->_dbHandle->errorInfo();
+		    $primaryKey = self::getTablePrimaryKey($table);
+		    $query = 'DELETE FROM '.$table.' WHERE `'.$primaryKey.'`=\''.Security::sanitize($id).'\'';
+		    self::$sql->exec($query);
+			$errors = self::$sql->errorInfo();
 			if ($errors[1] == 0){
 				return true;
 			}
@@ -724,7 +528,7 @@ class SQLQuery {
 	 * @param string $eachModel Model name
 	 * @return string Formed query for sql insertion
 	 */
-	function insertQuery($data,$eachModel){
+	public static function insertQuery($data,$eachModel){
 		$eachTable = Inflector::tableName($eachModel);
 		$uc = "";
 		$uv = "";
@@ -737,7 +541,7 @@ class SQLQuery {
 		if (is_array($data[$eachModel])){
 			foreach ($data[$eachModel] as $k => $v){
 				if (!empty($k) && (!empty($v) || $v==0)){
-					$columnName = Security::sanitize($this->parseId($k,$eachModel));
+					$columnName = Security::sanitize($k);
 					$value = Security::sanitize((string)$v);
 					$uc .= $columnName;
 					$uv .= '\''.$value.'\'';
@@ -766,7 +570,7 @@ class SQLQuery {
 	 * @param int $id updated id
 	 * @return string Formed query for sql updating
 	 */
-	function updateQuery($data,$eachModel,$id){
+	public static function updateQuery($data,$eachModel,$id){
 		$eachTable = Inflector::tableName($eachModel);
 		$modelData = get_class_vars($eachModel);
 		unset($data[$eachModel][$modelData['primaryKey']]);
@@ -777,14 +581,14 @@ class SQLQuery {
 		if (is_array($data[$eachModel])){
 			foreach ($data[$eachModel] as $k => $v){
 				if (!empty($k) && (!empty($v) || $v==0)){
-					$columnName = Security::sanitize($this->parseId($k,$eachModel));
+					$columnName = Security::sanitize($k);
 					$value = Security::sanitize((string)$v);
 					$uv .= $columnName.'=\''.$value.'\'';
 					if(count($data[$eachModel]) > 1){ $uv.=", "; }
 				}
 			}
 			if (count($data[$eachModel]) > 1){ $uv = substr($uv,0,-2); }
-			$idKey = $this->parseId($modelData['primaryKey'],$eachModel);
+			$idKey = $modelData['primaryKey'];
 			$query = 'UPDATE '.$eachTable.' SET '.$uv.' WHERE '.$idKey.'=\''.Security::sanitize($id).'\'';
 			return $query;
 		}else{
@@ -798,7 +602,7 @@ class SQLQuery {
 	* @param array $data Formated data from controlller
 	* @return boolean
 	*/
-	function save($data = null){
+	public static function save($data = null){
 		$results_ids = array();
 		$hasTooMany = false;
 		if ($data){
@@ -816,35 +620,33 @@ class SQLQuery {
 					if (is_array($data[$eachModel])){
 						foreach ($data[$eachModel] as $eachData){
 							$newData[$eachModel] = $eachData;
-							$this->save($newData);	
+							$eachModel::save($newData);	
 						}
 					}
 				}else{
 					// Save just one
 					$eachTable = Inflector::tableName($eachModel);
-					$id = $data[$eachModel][$modelData['primaryKey']];
+					$id = (isset($data[$eachModel][$modelData['primaryKey']])) ? $data[$eachModel][$modelData['primaryKey']] : '';
 					if (empty($id)){
 						if($modelData['primaryKey']){
 							// Save Insert
-							$query = $this->insertQuery($data,$eachModel);
+							$query = self::insertQuery($data,$eachModel);
 							if ($query){
-								$this->_SQLDebug['Save Insert'][]=$query;
-								$this->_dbHandle->exec($query);
-								$errors = $this->_dbHandle->errorInfo();
+								self::$sql->exec($query);
+								$errors = self::$sql->errorInfo();
 								if ($errors[1] != 0){
 									return false;
 								}
-								$this->_lastInsertedId[$eachModel] = $results_ids[$eachModel][] = $this->_dbHandle->lastInsertId();
+								self::$lastInsertedId[$eachModel] = $results_ids[$eachModel][] = self::$sql->lastInsertId();
 							}
 						}
 					}else{
 						if($modelData['primaryKey']){
 							// Save update
-							$query = $this->updateQuery($data,$eachModel,$id);
+							$query = self::updateQuery($data,$eachModel,$id);
 							if ($query){
-								$this->_SQLDebug['Save Update'][]=$query;
-								$this->_dbHandle->exec($query);
-								$errors = $this->_dbHandle->errorInfo();
+								self::$sql->exec($query);
+								$errors = self::$sql->errorInfo();
 								if ($errors[1] != 0){
 									return false;
 								}
@@ -869,7 +671,7 @@ class SQLQuery {
 					// Get Column names
 					$uc2 = '';
 					foreach ($assocModelData as $assocModelName => $assocPrimaryKey){
-						$uc2.= $this->parseId($assocPrimaryKey,$assocModelName).", ";
+						$uc2.= $assocPrimaryKey.", ";
 					}
 					$uc2 = substr($uc2,0,-2);
 
@@ -885,9 +687,8 @@ class SQLQuery {
 										if($eachPrimaryValue != 0 && $each_id != 0 && $eachPrimaryValue != '' && $each_id != ''){
 											$uv2 = $eachPrimaryValue.", ".$each_id;
 											$query = 'INSERT INTO '.$table.' ('.$uc2.') VALUES ('.$uv2.')';
-											$this->_SQLDebug['Save Insert HasTooMany'][]=$query;
-											$this->_dbHandle->exec($query);
-											$errors = $this->_dbHandle->errorInfo();
+											self::$sql->exec($query);
+											$errors = self::$sql->errorInfo();
 											if ($errors[1] != 0){
 												return false;
 											}	
@@ -935,53 +736,187 @@ class SQLQuery {
 		}
 	}
 
-	/**
-	 * Check if field exist in database
-	 * 
-	 * @param string $field Field name
-	 * @param string $table Table name
-	 * @return boolean
-	 */
-	function checkField($field,$table){
-		$query = "SHOW columns from `".$table."` where field='".$field."'";
-		if (!empty($this->_dbHandle)){
-			foreach ($this->_dbHandle->query($query) as $row){
-				return (empty($row)) ? false : true;
-			}
-		}
-		return false;
+	public static function checkField($field,$table){
+		$file = file_get_contents(ROOT.'/cache/'.$table.'.php');
+	    $rows = json_decode($file);
+	    $found = false;
+	    foreach ($rows as $row){
+	        if ( $row->Field == $field )
+	            $found = true;
+	    }
+		return $found;
 	}
-
-	/**
-	 * Get tables from database
-	 * @return mixed 	Returns array with tables or false in error
-	 */
-	function getTables(){
-		$query = 'SHOW TABLES FROM '.DB_NAME;
+	
+	public static function getTables(){
+		$query = 'SHOW TABLES FROM '.DB_DATABASE;
 		$tables = array();
-		if (!empty($this->_dbHandle)){
-			foreach ($this->_dbHandle->query($query) as $row){
-				$tables[$row['Tables_in_'.DB_NAME]]=Inflector::under_to_camel(Inflector::singularize(strtolower(substr($row['Tables_in_'.DB_NAME],5))));
+		if (!empty(self::$sql)){
+			foreach (self::$sql->query($query) as $row){
+				$tables[$row['Tables_in_'.DB_DATABASE]]=Inflector::under_to_camel(Inflector::singularize(strtolower($row['Tables_in_'.DB_DATABASE])));
 			}
 		}
 		return $tables;
 	}
 
-	/**
-	 * Get fields from table
-	 * @param string $table Table name
-	 * @return array $fields Fields from table
-	 */
-	function getFields($table){
-		$fields = array();
-		if (!empty($table)){
-			$query = 'SHOW FIELDS FROM '.$table;
-			if (!empty($this->_dbHandle)){
-				foreach ($this->_dbHandle->query($query) as $row){
-					$fields[$row['Field']] = $row['Type'];
+	public static function getTablePrimaryKey($table){
+	    $file = file_get_contents(ROOT.'/cache/'.$table.'.php');
+	    $rows = json_decode($file);
+	    $primaryKey = false;
+	    foreach ($rows as $row){
+	        if ( $row->Key == 'PRI' )
+	            $primaryKey = $row->Field;
+	    }
+        return $primaryKey;
+    }
+    
+    public static function getTableDisplayField($table){
+        $file = file_get_contents(ROOT.'/cache/'.$table.'.php');
+	    $rows = json_decode($file);
+	    return $rows[1]->Field;
+    }
+    
+    public static function getTableForeingKeys($table){
+        $file = file_get_contents(ROOT.'/cache/fk_'.$table.'.php');
+        $rows = json_decode($file);
+        return $rows;
+    }
+    
+    public static function storeTableRelationsInCache($table){
+        $file = file_get_contents(ROOT.'/cache/'.$table.'.php');
+        $rows = json_decode($file);
+        $foreingKeys = array();
+        foreach ($rows as $row){
+            $fieldName = $row->Field;
+            $fieldName = explode('_',$fieldName);
+            $tableFK = Inflector::pluralize($fieldName[0]);
+            if( file_exists(ROOT.'/cache/'.$tableFK.'.php') ){
+                $tableFKPK = self::getTablePrimaryKey($tableFK);
+                if (isset($fieldName[1]) && $tableFKPK == $fieldName[1]){
+                    $foreingKeys[ucfirst($fieldName[0])] = $row->Field;
+                }
+            }
+        }
+        file_put_contents(ROOT.'/cache/fk_'.$table.'.php',json_encode($foreingKeys));
+        return $foreingKeys;
+    }
+    
+    public static function storeTableInCache($table){
+        // Get table fields
+        $query = "DESCRIBE `".DB_DATABASE."`.`{$table}`";
+        $result = self::fetchQuery($query);
+		// Store schema in cache
+		file_put_contents(ROOT.'/cache/'.$table.'.php',json_encode($result));
+		return $result;
+    }
+    
+    //
+    //
+    // Static functions query models
+    //
+    //
+    
+    public static function fetchQuery($query){
+        if (!empty(self::$sql)){
+			$sqlQuery = self::$sql->prepare($query);
+			$sqlQuery->execute();
+			$result = $sqlQuery->fetchAll();
+		}else{
+		    trigger_error('No conection to database');
+		}
+		return $result;
+    }
+    
+    public static $sql;
+    public static $lastInsertedId;
+    
+    public static function __callStatic($func, $args){
+        return call_user_func_array(array( self , $func ), $args );
+	}
+	
+	public static function fieldParser($args){
+		$arr = array();
+		if (isset($args['fields']) and !empty($args['fields'])){
+			if ($args['fields'] != array('COUNT(*)')){
+				foreach ($args['fields'] as $fields){
+					$arr[] = $fields;
+				}
+				return explode(',',$arr);
+			}
+			return 'COUNT(*)';
+		}
+		return '*';
+	}
+	
+	public static function parseConditions($conditions){
+		$rv = " WHERE '1'='1' ";
+		if (is_array($conditions)){
+			if (key_exists('conditions',$conditions)){
+				if (is_array($conditions['conditions'])){
+					foreach ($conditions['conditions'] as $k2 => $v2){
+						if (!empty($v2)){
+							$rv.=" AND ";
+							if (!is_array($v2)){
+								/* Buscamos por algun operador de condicion */
+								if (substr($k2,-2) == '>=' || substr($k2,-2) == '<='){
+									$rv.=" `".substr(Security::sanitize($k2),0,-3)."` ".substr($k2,-2)." '".Security::sanitize($v2)."'";
+								}else if (substr($k2,-1) == '>' || substr($k2,-1) == '<' ){
+									$rv.=" `".substr(Security::sanitize($k2),0,-2)."` ".substr($k2,-1)." '".Security::sanitize($v2)."'";
+								}else if(substr($k2,-1) == '!'){
+									$rv.=" `".trim(substr(Security::sanitize($k2),0,-1))."` ".substr($k2,-1)."= '".Security::sanitize($v2)."'";
+								}else{
+									$rv.=" `".Security::sanitize($k2)."`='".Security::sanitize($v2)."'";
+								}
+							}else{
+								$k2 = str_replace('!',' NOT ',$k2);
+								$rq=" ".Security::sanitize($k2)." IN (";
+								foreach ($v2 as $v3){
+									$rq.= $v3.',';
+								}
+								$rq= substr($rq,0,-1).")";
+								$rv.=$rq;
+							}
+							if(count($conditions['conditions']) > 1){
+								$rv.=" AND ";
+							}
+						}
+					}
+					if(count($conditions['conditions']) > 1){
+						$rv = substr($rv,0,-4);
+					}
 				}
 			}
+			$rv.=(key_exists('group',$conditions)) ? " GROUP BY ".Security::sanitize($conditions['group']) : "";
+			$rv.=(key_exists('order',$conditions)) ? " ORDER BY ".Security::sanitize($conditions['order']) : "";
+			$rv.=(key_exists('limit',$conditions)) ? " LIMIT ".Security::sanitize($conditions['limit']) : "";
 		}
-		return $fields;
+		return $rv;
 	}
+	
+	public static function find($args = null){
+	    $model = get_called_class();
+		$table = Inflector::tableName($model);
+	    $modelVars = get_class_vars($model);
+		$primaryKey = $modelVars['primaryKey'];
+		$in = self::fieldParser($args);
+		$query = 'SELECT '.$in.' FROM `'.$table.'` '.self::parseConditions($args);
+		$result[$model] = self::fetchQuery($query); 
+		return $result;
+	}
+	
+	/**
+	 * Find result by one simple argument
+	 *
+	 * @param string $pk Field key
+	 * @param string $arg Field value
+	 * @return array $aux Return results from database
+	 */
+	public static function findBy($pk = null, $arg = null){
+	    $model = get_called_class();
+		$table = Inflector::tableName($model);
+		$args = array('conditions' => array($pk => $arg),'limit' => '1');
+		$findOne = self::find($args);
+		$result[$model] = $findOne[$model][0];
+		return $result;
+	}
+
 }

@@ -5,27 +5,17 @@ class installController extends AppController {
 	function index(){
 		$this->layout("admin");
 		if ($this->post){
-			$SQL = new SQLQuery;
 			$host = $this->post['Install']['host'];
 			$user = $this->post['Install']['user'];
 			$pass = $this->post['Install']['pass'];
 			$dbname = $this->post['Install']['dbname'];
 			$driver = $this->post['Install']['driver'];
-			if ($SQL->connect($host,$user,$pass,$dbname,$driver)){
+			if (SQLQuery::connect($host,$user,$pass,$dbname,$driver)){
 				
 				//Generate database.json file
 				$this->set(compact('host','user','pass','dbname','driver'));
 				$this->layout("ajax");
 				$this->render('templates/databaseOutput','file',ROOT.'/config/database.json');
-
-				//Create build.properties files based on database.json file
-				Propel::generate('config');
-
-				//Generate obtect model files
-				Propel::generate('model'); // propel-gen om
-
-				//Generate SQL Schema File (schema.sql) from database for backup purposes
-				Propel::generate('sql');
 
 				$this->setMessage('Your database conection has saved, now Blackhole your Supernova','success');
 				$this->redirect(array('controller' => 'install','action' => 'blackhole'));
@@ -41,26 +31,36 @@ class installController extends AppController {
 		$this->layout("admin");
 		
 		//Check for connection
-		$SQL = new SQLQuery;
-		if (!$SQL->connect()){
+		if (!SQLQuery::connect()){
 			$this->setMessage('Seems you have some problems with your database conection, please check','error');
 			$this->redirect(array('controller' => 'install','action' => 'index'));
 		}
 
-		$tables = $SQL->getTables();
-		if ($this->post){
-			$table = $this->post['Install']['tablename'];
-
+        $tables = SQLQuery::getTables();
+		if ($this->data){
+			$table = $this->data['Install']['tablename'];
 			if ($table == "Choose your model..."){
 				$this->setMessage('Please select your model to Blackhole it','error');
 			}else{
-
+			    // Store schema in cache
+			    $fields = SQLQuery::storeTableInCache($table);
+			    $foreingKeys = SQLQuery::storeTableRelationsInCache($table);
+			    
+			    // Set default ForeingKey
+				$defaultPK = SQLQuery::getTablePrimaryKey($table);
+				$defaultDisplayField = SQLQuery::getTableDisplayField($table);
+				
+				//Get model name
 				$modelName = $tables[$table];
-				$queryModel = ucfirst($modelName).'Peer';
-				$Table = $queryModel::getTableMap();
-				$Columns = $Table->getColumns();
-				$this->set(compact('modelName','Table','Columns'));
-				// http://propelorm.org/Propel/cookbook/runtime-introspection.html
+            
+				$this->set(compact('modelName','table','fields','foreingKeys','defaultPK','defaultDisplayField'));
+                
+                umask(0);
+                
+                //Build Model file
+				$dirName = ROOT.'/application/models/';
+				$fileName = strtolower($modelName).".php";
+				$this->render("templates/outputModel", "file", $dirName.$fileName);
 
 				//Build Controller file
 				$fileName = Inflector::pluralize(Inflector::camel_to_under($modelName))."_controller.php";
@@ -73,7 +73,14 @@ class installController extends AppController {
 				chdir('./application/views');
 				$modelDirName = Inflector::pluralize(Inflector::camel_to_under($modelName));
 				if (!file_exists($modelDirName)){
-					mkdir($modelDirName, 0777, true);
+				    if ( !is_writable(getcwd()) )
+    				{
+    				    warning ("Can't create directory <strong>".$modelDirName.'</strong> into: '.getcwd().'. Permission problems perhaps?');
+    				    include (ERRORS_PATH . '500.php');
+    			        die();
+    				}else{
+					    mkdir($modelDirName, 0777, true);
+    				}
 				}
 				$this->render("templates/indexOutputFile", "file", $dirName."/index.php");
 				$this->render("templates/editOutputFile", "file", $dirName."/edit.php");
@@ -82,23 +89,17 @@ class installController extends AppController {
 				//Generate new link into the sidebar
 				$newLink = "\n"."<!-- ".$modelName." -->"."\n";
 				$newLink.= '<li><?=$this->html->link("<i class=\'icon-align-justify\'></i> '.$modelName.'",array("controller" => "'.Inflector::pluralize(Inflector::camel_to_under($modelName)).'", "action" => "index"));?></li>'."\n";
-				file_put_contents(ROOT.'/application/views/elements/sidebar.php',$newLink,FILE_APPEND);
-
+				if ( is_writable( ROOT.'/application/views/elements' ) && is_writable( ROOT.'/application/views/elements/sidebar.php' )){
+				    file_put_contents(ROOT.'/application/views/elements/sidebar.php',$newLink,FILE_APPEND);
+				}else{
+				    warning ("Can't create/modify file <strong>sidebar.php</strong> into: <strong>/application/views/elements</strong>. Permission problems perhaps?");
+				    include (ERRORS_PATH . '500.php');
+			        die();
+				}
 				$this->setMessage('The Blackhole has received your model, now all your files has been created successfully','success');
 			}
 		}
 		$this->set(compact('tables'));
-	}
-
-	function regenerateModels(){
-		//Create build.properties files based on database.json file
-		Propel::generate('config');
-
-		//Generate obtect model files
-		Propel::generate('model'); // propel-gen om
-
-		//Generate SQL Schema File (schema.sql) from database for backup purposes
-		Propel::generate('sql');
 	}
 
 	// function authExample(){

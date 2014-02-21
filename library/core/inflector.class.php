@@ -65,7 +65,7 @@ class Inflector {
 	 * @return	object			Parse table name		
 	 */
 	public static function tableName($modelName){
-		$prefix = DB_PREFIX;
+		$prefix = ( defined('DB_PREFIX') && DB_PREFIX != '') ? DB_PREFIX : '';
 		$val = Inflector::getModelPrefix($modelName).Inflector::camel_to_under(Inflector::pluralize($modelName));
 		return (!empty($prefix)) ? strtoupper($val) : strtolower($val);
 	}
@@ -106,11 +106,13 @@ class Inflector {
 			return $newval;
 		} else {
 			$auxData = get_class_vars($modelName);
-			$has = $auxData['hasMany'];
-			$belongs = $auxData['belongsTo'];
+			$has = (isset($auxData['hasMany'])) ? $auxData['hasMany'] : null;
+			$belongs = (isset($auxData['belongsTo'])) ? $auxData['belongsTo'] : null;
 			$prefix = Inflector::getModelPrefix($modelName);
-			if (strpos($val,$prefix) !== false){
-				return str_replace($prefix,'',$val);
+			if ($prefix){
+			    if (strpos($val,$prefix) !== false){
+				    return str_replace($prefix,'',$val);
+			    }
 			}else{
 				if (isset($has) && !empty($has) ){
 					foreach ($has as $eachModel){
@@ -169,9 +171,9 @@ class Inflector {
 			if (!empty($_routingData['routes'])){
 				if (in_array($path[0], $_routingData['routes'])){
 					$route = $path[0];
+					array_shift($path);
 				}
 			}
-			array_shift($path);
 			array_shift($path);
 			$actionName = empty($path[0]) ? $_routingData['defaultAction'] : $path[0];
 		}else{
@@ -231,7 +233,7 @@ class Inflector {
 		}else{
 			$path = str_replace(' ','-',$path);	
 		}
-		return SITE_URL.Inflector::getBasePath().'/'.$path;
+		return SITE_URL.$path;
 	}
 
 	/**

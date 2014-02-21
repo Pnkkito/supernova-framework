@@ -1,50 +1,54 @@
 <?php
 
-$tableName = $Table->getPhpName();
+$foreingKeyConsult='';
+if (!empty($foreingKeys)){
+    foreach ($foreingKeys as $FKModel => $FK){
+        $foreingKeyConsult.="\n".'       $'.$FKModel.' = '.$FKModel.'::getList();'."\n";
+    }
+    $foreingKeyConsult.='       $this->set(compact("'.implode(',',array_keys($foreingKeys)).'"));'."\n";
+}
 
 $outputController = '<?php
-class '.$tableName.'Controller extends AppController {
+class '.strtolower(Inflector::pluralize($modelName)).'Controller extends AppController {
 
 	function index(){
-		$'.$tableName.' = '.$tableName.'Query::create()->find();
-		$this->set(compact("'.$tableName.'"));
+		$'.strtolower(Inflector::pluralize($modelName)).' = '.$modelName.'::find("all");
+		$this->set(compact("'.strtolower(Inflector::pluralize($modelName)).'"));
 	}
 
 	function add(){
-		if ($this->post){
-			$'.$tableName.' = new '.$tableName.'();
-			$'.$tableName.'->fromArray($this->post);
-			$'.$tableName.'->save();
+		if ($this->data){
+			'.$modelName.'::save($this->data);
 			$this->setMessage("New data saved","success");
-			$this->redirect(array("controller" => "'.$tableName.'", "action" => "index"));	
+			$this->redirect(array("controller" => "'.strtolower(Inflector::pluralize($modelName)).'", "action" => "index"));	
 		}
+		'.$foreingKeyConsult.'
 	}
 
 	function edit($id = null){
-		if ($this->post){
-			$'.$tableName.' = '.$tableName.'Query::create()->findPk($id);
-			$'.$tableName.'->fromArray($this->post);
-			$'.$tableName.'->save();
+		if ($this->data){
+			'.$modelName.'::save($this->data);
 			$this->setMessage("Data saved","success");
-			$this->redirect(array("controller" => "'.$tableName.'", "action" => "index"));
+			$this->redirect(array("controller" => "'.strtolower(Inflector::pluralize($modelName)).'", "action" => "index"));
 		}
 		if ($id){
-			$'.$tableName.' = $'.$tableName.'Query::create()->findPk($id);
-			$this->set(compact("'.$tableName.'"));
+			$'.strtolower($modelName).' = '.$modelName.'::findBy("ID",$id);
+			$this->set(compact("'.strtolower($modelName).'"));
 		}else{
 			$this->setMessage("Incorrect ID","error");
-			$this->redirect(array("controller" => "'.$tableName.'", "action" => "index"));
+			$this->redirect(array("controller" => "'.strtolower(Inflector::pluralize($modelName)).'", "action" => "index"));
 		}
+		'.$foreingKeyConsult.'
 	}
 
 	function delete($id = null){
 		if ($id){
-			$'.$modelName.'Query::create()->findPk($id)->delete();
+			'.$modelName.'::delete($id);
 			$this->setMessage("Data deleted","success");
-			$this->redirect(array("controller" => "'.$tableName.'", "action" => "index"));		
+			$this->redirect(array("controller" => "'.strtolower(Inflector::pluralize($modelName)).'", "action" => "index"));		
 		}else{
 			$this->setMessage("Incorrect ID","error");
-			$this->redirect(array("controller" => "'.$tableName.'", "action" => "index"));
+			$this->redirect(array("controller" => "'.strtolower(Inflector::pluralize($modelName)).'", "action" => "index"));
 		}
 	}
 }

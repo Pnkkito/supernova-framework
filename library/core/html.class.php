@@ -116,7 +116,7 @@ class Html {
 						$path = Inflector::camel_to_array($name);
 						$this->_formController = Inflector::pluralize($path[0]);
 					}
-					$data = "<form name='".$name."' action='".Inflector::array_to_path($path)."' enctype='multipart/form-data' method='POST'>";
+					$data = "<form name='".$name."' action='".Inflector::generateUrl($path)."' enctype='multipart/form-data' method='POST'>";
 					break;
 			case 'submit':	if (!$name){
 						$name = 'Submit';
@@ -543,16 +543,19 @@ class Html {
 			}
 			
 			//Find any route
-			$routings = explode(';',ROUTES);
-			if (!empty($routings)){
-				foreach ($routings as $routing){
-					$pos = strpos($this->cm['action'], $routing."_");
-					if ($pos !== false){
-						$route = $routing;
-					}
-				}
+			$route = false;
+			if (defined('ROUTES')){
+    			$routings = explode(';',ROUTES);
+    			if (!empty($routings)){
+    				foreach ($routings as $routing){
+    					$pos = strpos($this->cm['action'], $routing."_");
+    					if ($pos !== false){
+    						$route = $routing;
+    					}
+    				}
+    			}
 			}
-
+			
 			$out ="<table class='".$class."'>";
 			
 			/* Head */
@@ -566,7 +569,7 @@ class Html {
 			if (!empty($fields) || $fields !== false){
 				$keyFields = array_keys($fields);
 			}else{
-				if (!empty($data) && is_array($data)){
+			    if (!empty($data) && is_array($data)){
 					foreach ($data[$modelName] as $level){
 						$fields = array_keys($level);
 						$keyFields = array_keys($level);
@@ -658,12 +661,12 @@ class Html {
 					if ($actions){
 						$out.="<td>";
 						if (!is_array($actions)){
-							$out.=$this->link('<i class="icon-edit"></i> Edit', array('controller' => $controller, 'action' => 'edit', $route => true, $level[$modelFK]),array('class' => 'btn btn-mini'));
+							$out.=$this->link('<i class="icon-edit"></i> Edit', array('controller' => $controller, 'action' => 'edit', 'route' => $route, $level[$modelFK]),array('class' => 'btn btn-mini'));
 							$out.="&nbsp;";
-							$out.=$this->link('<i class="icon-remove"></i> Delete', array('controller' => $controller, 'action' => 'delete', $route => true, $level[$modelFK]),array('class' => 'btn btn-mini'));	
+							$out.=$this->link('<i class="icon-remove"></i> Delete', array('controller' => $controller, 'action' => 'delete', 'route' => $route, $level[$modelFK]),array('class' => 'btn btn-mini'));	
 						}else{
 							foreach ($actions as $name => $action){
-								$out.=$this->link($name, array('controller' => $controller, 'action' => $action, $route => true, $level[$modelFK]));
+								$out.=$this->link($name, array('controller' => $controller, 'action' => $action, 'route' => $route, $level[$modelFK]));
 							}
 						}
 						$out.="</td>";
@@ -921,4 +924,5 @@ class Html {
 	function translate($str = ''){
 		return $this->translater->__($str);
 	}
+	
 }

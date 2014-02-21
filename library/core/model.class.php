@@ -16,27 +16,9 @@
  * @package MVC_Model
  */
 class Model extends SQLQuery {
-	/**
-	 * Model Name
-	 * @var String
-	 */
-	protected $_model;
-	
-	/**
-	 * Model table
-	 * @var String 
-	 */
-	protected $_table;
-	
-	/**
-	 * Construct
-	 * @ignore
-	 */
+
 	function __construct(){
-		if ($this->connect()){
-			$this->_model = get_class($this);
-			$this->_table = Inflector::tableName($this->_model);
-		}
+	    self::connect();
 	}
 	
 	/**

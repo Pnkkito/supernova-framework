@@ -25,7 +25,7 @@ class Controller {
 	/**
 	 * @ignore 
 	 */
-	protected $post, $get, $errors;
+	protected $data, $get, $errors;
 	/**
 	 * @ignore
 	 */
@@ -72,7 +72,7 @@ class Controller {
 
 		/* Converting $_POST values into "post" for model */
 		if (!empty($_POST) || !empty($_FILES)){
-			$this->post = $_POST['post'];
+			$this->data = $_POST['data'];
 
 			// Transbank Post
 			if (array_key_exists('TBK_ORDEN_COMPRA', $_POST)){
@@ -112,7 +112,7 @@ class Controller {
 									}
 								}
 							}
-							$this->post[$fileModel][$key] = $eachFile['file'];
+							$this->data[$fileModel][$key] = $eachFile['file'];
 						}
 					}else{
 						// For many files
@@ -125,7 +125,7 @@ class Controller {
 										}
 									}
 								}
-								$this->post[$fileModel][$keyOne][$key] = $eachFile['file'];
+								$this->data[$fileModel][$keyOne][$key] = $eachFile['file'];
 							}
 						}
 					}
@@ -138,12 +138,12 @@ class Controller {
 			if (isset($this->$model->validate)){
 				if (!empty($this->$model->validate)){
 					$validation = $this->$model->validate;
-					$this->errors =	$this->Validator->validate($validation, $this->post, $model);
+					$this->errors =	$this->Validator->validate($validation, $this->data, $model);
 					$this->$model->errors = $this->errors;
 				}
 			}
 		}else{
-			$this->post = null;
+			$this->data = null;
 		}
 		unset ($_POST);
 		
@@ -166,7 +166,7 @@ class Controller {
 
 		$this->_template = new View($controller,$action,$parse_id);
 		$this->_template->errors = $this->errors;
-		$this->_template->post = $this->post;
+		$this->_template->data = $this->data;
 		// $this->_template->params = $params;
 	}
 	

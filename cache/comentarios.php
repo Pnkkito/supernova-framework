@@ -1,0 +1,1 @@
+[{"Field":"id","Type":"int(11)","Null":"NO","Key":"PRI","Default":null,"Extra":"auto_increment"},{"Field":"post_id","Type":"int(11)","Null":"NO","Key":"","Default":null,"Extra":""},{"Field":"comentario","Type":"text","Null":"NO","Key":"","Default":null,"Extra":""}]

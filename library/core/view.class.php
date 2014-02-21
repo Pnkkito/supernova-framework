@@ -181,14 +181,26 @@ class View {
 		$this->html = new Html; // HTML helper
 
 		if ($type == "file"){
-			$viewFile = ROOT . DS . 'application' . DS . 'views' . DS . $this->_controller . DS . ((is_null($view)) ? $this->_action : $view) . '.php';
+		    $relativePath = DS . 'application' . DS . 'views' . DS . $this->_controller;
+		    $relativeFile = ((is_null($view)) ? $this->_action : $view).'.php';
+			$viewFile = ROOT . $relativePath . DS . $relativeFile;
+			$explodedFile = explode('/', $filename);
+		    $file = array_pop($explodedFile);
+			$pathfile = implode('/',$explodedFile);
 			if(file_exists($viewFile)){
 				extract($this->variables);
 				ob_start();
 				include($viewFile);
 				$content = ob_get_contents();
 				ob_end_clean();
-				file_put_contents($filename, $content);
+				if ( !is_writable($pathfile) )
+				{
+				    warning ("Can't write the file <strong>".$file.'</strong> into <strong>'.$pathfile.'</strong>. Permission problems perhaps?');
+				    include (ERRORS_PATH . '500.php');
+			        die();
+				}else{
+				    file_put_contents($filename, $content);
+				}
 			}
 			return;
 		}

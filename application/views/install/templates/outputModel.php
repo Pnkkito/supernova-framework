@@ -3,11 +3,12 @@
 $outputModel = '<?php
 
 class '.$modelName.' extends Model {
-
-	var $index = "'.$index.'";
-	var $primaryKey = "'.$defaultPK.'";
-	var $displayField = "'.$defaultDisplayField.'";
-
+	
+	public static $primaryKey = "'.$defaultPK.'";
+	public static $displayField = "'.$defaultDisplayField.'";
+	
+	public static $belongsTo = array("'.implode( '","' , array_keys($foreingKeys) ).'");
+	
 }
 ';
 

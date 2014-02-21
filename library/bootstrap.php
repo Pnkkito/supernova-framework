@@ -8,6 +8,7 @@
  * @package MVC
  * 
  */
+    $start_time = microtime(TRUE);
 
 	/**
 	 * Define global paths // Do not touch this or you will break something ;)
@@ -162,7 +163,8 @@
 	
 		$modelName = Inflector::getModelFromController($controller);
 		$controllerClass = Inflector::getControllerClass($controller);
-		
+
+        
 		$values = $path;
 		if ($route){ array_shift($values); }
 		if ($controller){ array_shift($values); }
@@ -233,7 +235,7 @@
 	 * @param	mixed	$str	Mixed var
 	 */
 	function debug($str){
-		if (ENVIRONMENT == "dev"){
+		if (!defined("ENVIRONMENT") || ENVIRONMENT == "dev"){
 			$trace = debug_backtrace();
 			$file = $trace[0]['file'];
 			$file = str_replace($_SERVER['DOCUMENT_ROOT'],'',$file);
@@ -248,9 +250,9 @@
 			echo "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
 			echo "<h4>Debug</h4>";
 			echo "<p>In <strong>$object</strong> -> Line <strong>$line</strong><br/>(file <strong>$file</strong>)</p>";
-			// echo "<pre>";
-			// print_r($str);
-			// echo "</pre></div>";
+			echo "<pre>";
+			print_r($str);
+			echo "</pre></div>";
 		}
 	}
 
@@ -259,7 +261,7 @@
 	 * @ignore
 	 */
 	function warning($str){
-		if (ENVIRONMENT == "dev"){
+		if (!defined("ENVIRONMENT") || ENVIRONMENT == "dev"){
 			echo "<div class='alert alert-error' style='margin: 0;'>";
 			echo "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
 			echo "<h4>Warning</h4>";
@@ -293,7 +295,7 @@
 
 	function showError($error){
 		ob_clean();
-		if (ENVIRONMENT == "dev") {
+		if (!defined("ENVIRONMENT") || ENVIRONMENT == "dev"){
 			$errorType = array (
 				E_ERROR              => 'Error',
 				E_WARNING            => 'Warning',
@@ -316,12 +318,7 @@
 			echo "<button type='button' class='close' data-dismiss='alert'>&times;</button>";
 			echo "<h4>".$errorType[$error['type']]."</h4>";
 			echo "<h5>".$error['message']."</h5>";
-			if (strpos($error['file'], "library/") === false){ //Exclude library in errors
-				echo "<p>In <strong>".$error['file']."</strong> -> Line <strong>".$error['line']."</strong><br/></p>";
-			}
-			// if (isset($error['str'])){
-			// 	echo "<pre>".print_r($error['str'],true)."</pre>";
-			// }
+			echo "<p>In <strong>".$error['file']."</strong> -> Line <strong>".$error['line']."</strong><br/></p>";
 			echo "</div>";
 		}
 	}
@@ -329,4 +326,7 @@
 	loadDatabase();
 	checkDBVars();
 	callHook();
-
+    $end_time = microtime(TRUE);
+	$performance = $end_time - $start_time;
+	echo "<p style='position: fixed; width: 100%; text-align: center; bottom: 0px; color: yellow; font-size: 10px;'><strong>Performance: ".number_format($performance,3)." seconds</strong></p>";
+ 

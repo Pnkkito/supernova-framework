@@ -1,7 +1,7 @@
 {
 	"defaultRoute"		: null,
-	"defaultController" 	: "install",
-	"defaultAction"		: "index",
+	"defaultController" : "install",
+	"defaultAction"		: "blackhole",
 
 	// List of additional routes
 	"routes" : [ "admin" ],
