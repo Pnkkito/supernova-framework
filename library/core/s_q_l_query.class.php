@@ -737,6 +737,7 @@ class SQLQuery {
 	}
 
 	public static function checkField($field,$table){
+	    if (!file_exists(ROOT.'/cache/'.$table.'.php')) return false;
 		$file = file_get_contents(ROOT.'/cache/'.$table.'.php');
 	    $rows = json_decode($file);
 	    $found = false;
@@ -759,6 +760,7 @@ class SQLQuery {
 	}
 
 	public static function getTablePrimaryKey($table){
+	    if (!file_exists(ROOT.'/cache/'.$table.'.php')) return false;
 	    $file = file_get_contents(ROOT.'/cache/'.$table.'.php');
 	    $rows = json_decode($file);
 	    $primaryKey = false;
@@ -770,18 +772,21 @@ class SQLQuery {
     }
     
     public static function getTableDisplayField($table){
+        if (!file_exists(ROOT.'/cache/'.$table.'.php')) return false;
         $file = file_get_contents(ROOT.'/cache/'.$table.'.php');
 	    $rows = json_decode($file);
 	    return $rows[1]->Field;
     }
     
     public static function getTableForeingKeys($table){
+        if (!file_exists(ROOT.'/cache/'.$table.'.php')) return false;
         $file = file_get_contents(ROOT.'/cache/fk_'.$table.'.php');
         $rows = json_decode($file);
         return $rows;
     }
     
     public static function storeTableRelationsInCache($table){
+        if (!file_exists(ROOT.'/cache/'.$table.'.php')) return false;
         $file = file_get_contents(ROOT.'/cache/'.$table.'.php');
         $rows = json_decode($file);
         $foreingKeys = array();

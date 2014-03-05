@@ -4,7 +4,7 @@ class installController extends AppController {
 	//Setting database and models
 	function index(){
 		$this->layout("admin");
-		if ($this->post){
+		if ($this->data){
 			$host = $this->post['Install']['host'];
 			$user = $this->post['Install']['user'];
 			$pass = $this->post['Install']['pass'];
